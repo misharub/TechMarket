@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, SpecValueType } from "@prisma/client";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -21,6 +21,158 @@ const categories = [
   ["Аксессуары", "accessories", "Кабели, зарядные устройства, чехлы и полезные дополнения"],
 ];
 
+const brands = [
+  ["Apple", "apple", "Производитель компьютеров, смартфонов и персональной электроники"],
+  ["Lenovo", "lenovo", "Производитель ноутбуков, ПК и компьютерной техники"],
+  ["HP", "hp", "Производитель ноутбуков, ПК, принтеров и периферии"],
+  ["Samsung", "samsung", "Производитель смартфонов, телевизоров и бытовой техники"],
+  ["LG", "lg", "Производитель телевизоров, аудио и бытовой техники"],
+  ["Bosch", "bosch", "Производитель бытовой техники для дома и кухни"],
+  ["Sony", "sony", "Производитель аудио, видео, фото и gaming-устройств"],
+  ["Xiaomi", "xiaomi", "Производитель смартфонов, умных устройств и аксессуаров"],
+];
+
+const specTemplates = {
+  "laptops-computers": [
+    ["screenSize", "Диагональ экрана", SpecValueType.NUMBER, "дюйм", true, true, 10],
+    ["processor", "Процессор", SpecValueType.STRING, null, true, true, 20],
+    ["ram", "Оперативная память", SpecValueType.NUMBER, "GB", true, true, 30],
+    ["ssd", "Объем SSD", SpecValueType.NUMBER, "GB", true, true, 40],
+    ["os", "Операционная система", SpecValueType.STRING, null, false, true, 50],
+  ],
+  "phones-smartwatch": [
+    ["screenSize", "Диагональ экрана", SpecValueType.NUMBER, "дюйм", true, true, 10],
+    ["memory", "Встроенная память", SpecValueType.NUMBER, "GB", true, true, 20],
+    ["camera", "Основная камера", SpecValueType.NUMBER, "MP", false, true, 30],
+    ["nfc", "NFC", SpecValueType.BOOLEAN, null, false, true, 40],
+  ],
+  "home-appliances": [
+    ["deviceType", "Тип устройства", SpecValueType.STRING, null, true, true, 10],
+    ["energyClass", "Класс энергопотребления", SpecValueType.STRING, null, false, true, 20],
+    ["capacity", "Вместимость", SpecValueType.NUMBER, "л", false, true, 30],
+    ["color", "Цвет", SpecValueType.STRING, null, false, true, 40],
+  ],
+  "tv-audio": [
+    ["screenSize", "Диагональ экрана", SpecValueType.NUMBER, "дюйм", true, true, 10],
+    ["resolution", "Разрешение", SpecValueType.STRING, null, true, true, 20],
+    ["smartTv", "Smart TV", SpecValueType.BOOLEAN, null, false, true, 30],
+    ["power", "Мощность звука", SpecValueType.NUMBER, "Вт", false, true, 40],
+  ],
+};
+
+const products = [
+  {
+    title: "Lenovo IdeaPad 5 16",
+    slug: "lenovo-ideapad-5-16",
+    sku: "NB-LEN-0001",
+    description: "Ноутбук для учебы, работы и мультимедиа с большим экраном и быстрым SSD.",
+    price: 2599.99,
+    oldPrice: 2899.99,
+    categorySlug: "laptops-computers",
+    brandSlug: "lenovo",
+    stock: 12,
+    images: ["/uploads/products/lenovo-ideapad-5-16.jpg"],
+    specs: { screenSize: 16, processor: "Intel Core i5", ram: 16, ssd: 512, os: "Windows 11" },
+  },
+  {
+    title: "Apple MacBook Air 13 M3",
+    slug: "apple-macbook-air-13-m3",
+    sku: "NB-APL-0001",
+    description: "Легкий ноутбук Apple для учебы, работы и мобильного использования.",
+    price: 4399.99,
+    categorySlug: "laptops-computers",
+    brandSlug: "apple",
+    stock: 7,
+    images: ["/uploads/products/apple-macbook-air-13-m3.jpg"],
+    specs: { screenSize: 13.6, processor: "Apple M3", ram: 16, ssd: 512, os: "macOS" },
+  },
+  {
+    title: "HP Pavilion 15",
+    slug: "hp-pavilion-15",
+    sku: "NB-HP-0001",
+    description: "Универсальный ноутбук HP для дома, офиса и повседневной работы.",
+    price: 2199.99,
+    categorySlug: "laptops-computers",
+    brandSlug: "hp",
+    stock: 15,
+    images: ["/uploads/products/hp-pavilion-15.jpg"],
+    specs: { screenSize: 15.6, processor: "AMD Ryzen 5", ram: 16, ssd: 512, os: "Windows 11" },
+  },
+  {
+    title: "Samsung Galaxy S25",
+    slug: "samsung-galaxy-s25",
+    sku: "PH-SAM-0001",
+    description: "Смартфон Samsung с ярким экраном, производительным процессором и NFC.",
+    price: 3299.99,
+    oldPrice: 3499.99,
+    categorySlug: "phones-smartwatch",
+    brandSlug: "samsung",
+    stock: 18,
+    images: ["/uploads/products/samsung-galaxy-s25.jpg"],
+    specs: { screenSize: 6.2, memory: 256, camera: 50, nfc: true },
+  },
+  {
+    title: "Xiaomi Redmi Note 14",
+    slug: "xiaomi-redmi-note-14",
+    sku: "PH-XIA-0001",
+    description: "Смартфон Xiaomi с хорошей автономностью и большим объемом памяти.",
+    price: 1099.99,
+    categorySlug: "phones-smartwatch",
+    brandSlug: "xiaomi",
+    stock: 24,
+    images: ["/uploads/products/xiaomi-redmi-note-14.jpg"],
+    specs: { screenSize: 6.67, memory: 128, camera: 108, nfc: true },
+  },
+  {
+    title: "Bosch Serie 4 Refrigerator",
+    slug: "bosch-serie-4-refrigerator",
+    sku: "HA-BOS-0001",
+    description: "Холодильник Bosch с вместительной камерой и экономичным энергопотреблением.",
+    price: 2799.99,
+    categorySlug: "home-appliances",
+    brandSlug: "bosch",
+    stock: 6,
+    images: ["/uploads/products/bosch-serie-4-refrigerator.jpg"],
+    specs: { deviceType: "Холодильник", energyClass: "A++", capacity: 324, color: "White" },
+  },
+  {
+    title: "LG Washing Machine F2",
+    slug: "lg-washing-machine-f2",
+    sku: "HA-LG-0001",
+    description: "Стиральная машина LG с оптимальным набором программ для семьи.",
+    price: 1899.99,
+    categorySlug: "home-appliances",
+    brandSlug: "lg",
+    stock: 9,
+    images: ["/uploads/products/lg-washing-machine-f2.jpg"],
+    specs: { deviceType: "Стиральная машина", energyClass: "A+++", capacity: 8, color: "White" },
+  },
+  {
+    title: "Samsung QLED 55 Smart TV",
+    slug: "samsung-qled-55-smart-tv",
+    sku: "TV-SAM-0001",
+    description: "Телевизор Samsung QLED с поддержкой Smart TV и высоким разрешением.",
+    price: 2999.99,
+    categorySlug: "tv-audio",
+    brandSlug: "samsung",
+    stock: 11,
+    images: ["/uploads/products/samsung-qled-55-smart-tv.jpg"],
+    specs: { screenSize: 55, resolution: "4K UHD", smartTv: true, power: 40 },
+  },
+  {
+    title: "Sony Bravia 65 OLED",
+    slug: "sony-bravia-65-oled",
+    sku: "TV-SON-0001",
+    description: "OLED-телевизор Sony с глубоким черным цветом и качественным звуком.",
+    price: 5899.99,
+    categorySlug: "tv-audio",
+    brandSlug: "sony",
+    stock: 4,
+    images: ["/uploads/products/sony-bravia-65-oled.jpg"],
+    specs: { screenSize: 65, resolution: "4K UHD", smartTv: true, power: 60 },
+  },
+];
+
 async function main() {
   for (const [index, [name, slug, description]] of categories.entries()) {
     await prisma.category.upsert({
@@ -36,6 +188,90 @@ async function main() {
         slug,
         description,
         sortOrder: index + 1,
+      },
+    });
+  }
+
+  for (const [name, slug, description] of brands) {
+    await prisma.brand.upsert({
+      where: { slug },
+      update: {
+        name,
+        description,
+        isActive: true,
+      },
+      create: {
+        name,
+        slug,
+        description,
+      },
+    });
+  }
+
+  const categoryBySlug = Object.fromEntries(
+    (await prisma.category.findMany()).map((category) => [category.slug, category]),
+  );
+  const brandBySlug = Object.fromEntries((await prisma.brand.findMany()).map((brand) => [brand.slug, brand]));
+
+  for (const [categorySlug, templates] of Object.entries(specTemplates)) {
+    const category = categoryBySlug[categorySlug];
+
+    for (const [key, label, type, unit, isRequired, isComparable, sortOrder] of templates) {
+      await prisma.categorySpecTemplate.upsert({
+        where: { categoryId_key: { categoryId: category.id, key } },
+        update: {
+          label,
+          type,
+          unit,
+          isRequired,
+          isComparable,
+          sortOrder,
+        },
+        create: {
+          categoryId: category.id,
+          key,
+          label,
+          type,
+          unit,
+          isRequired,
+          isComparable,
+          sortOrder,
+        },
+      });
+    }
+  }
+
+  for (const product of products) {
+    const category = categoryBySlug[product.categorySlug];
+    const brand = brandBySlug[product.brandSlug];
+
+    await prisma.product.upsert({
+      where: { sku: product.sku },
+      update: {
+        title: product.title,
+        slug: product.slug,
+        description: product.description,
+        price: product.price,
+        oldPrice: product.oldPrice ?? null,
+        stock: product.stock,
+        images: product.images,
+        specs: product.specs,
+        isActive: true,
+        categoryId: category.id,
+        brandId: brand.id,
+      },
+      create: {
+        title: product.title,
+        slug: product.slug,
+        sku: product.sku,
+        description: product.description,
+        price: product.price,
+        oldPrice: product.oldPrice ?? null,
+        stock: product.stock,
+        images: product.images,
+        specs: product.specs,
+        categoryId: category.id,
+        brandId: brand.id,
       },
     });
   }

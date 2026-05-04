@@ -3,9 +3,11 @@ import { ConfigModule } from "@nestjs/config";
 import { join } from "node:path";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+import { BrandsModule } from "./brands/brands.module";
 import { CategoriesModule } from "./categories/categories.module";
 import { CategorySpecsModule } from "./category-specs/category-specs.module";
 import { PrismaModule } from "./prisma/prisma.module";
+import { ProductsModule } from "./products/products.module";
 
 @Module({
     imports: [
@@ -18,6 +20,8 @@ import { PrismaModule } from "./prisma/prisma.module";
         PrismaModule,
         CategoriesModule,
         CategorySpecsModule,
+        BrandsModule,
+        ProductsModule,
     ],
     controllers: [AppController],
     providers: [AppService],

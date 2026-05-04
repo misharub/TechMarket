@@ -24,6 +24,7 @@ model Category {
   parent        Category?              @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
   children      Category[]             @relation("CategoryTree")
   specTemplates CategorySpecTemplate[]
+  products      Product[]
 
   createdAt     DateTime               @default(now())
   updatedAt     DateTime               @updatedAt
@@ -63,4 +64,52 @@ model CategorySpecTemplate {
   @@index([categoryId])
   @@index([key])
   @@index([sortOrder])
+}
+
+// Brand вынесен в отдельную таблицу, чтобы фильтрация и администрирование брендов были надежнее.
+model Brand {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  logo        String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+// Product хранит основную карточку товара. Гибкие характеристики лежат в specs в формате JSON.
+model Product {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  sku         String   @unique
+  description String
+  price       Decimal  @db.Decimal(10, 2)
+  oldPrice    Decimal? @db.Decimal(10, 2)
+  stock       Int      @default(0)
+  images      String[] @default([])
+  specs       Json
+  isActive    Boolean  @default(true)
+
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  brandId     String
+  brand       Brand    @relation(fields: [brandId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([brandId])
+  @@index([price])
+  @@index([title])
+  @@index([slug])
+  @@index([sku])
+  @@index([isActive])
 }
