@@ -1,0 +1,11 @@
+node_modules
+.idea/
+apps/*/.git.backup/
+dist
+docs/tmp
+apps/*/node_modules
+apps/*/dist
+# Keep environment variables out of version control
+.env
+
+/generated/prisma
