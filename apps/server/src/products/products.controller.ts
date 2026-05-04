@@ -1,5 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Role } from "@prisma/client";
+import { Roles } from "../auth/decorators/roles.decorator";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { FindProductsDto } from "./dto/find-products.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
@@ -29,19 +33,28 @@ export class ProductsController {
     }
 
     @Post()
-    @ApiOperation({ summary: "Создать товар" })
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Создать товар, только ADMIN" })
     create(@Body() dto: CreateProductDto) {
         return this.productsService.create(dto);
     }
 
     @Patch(":id")
-    @ApiOperation({ summary: "Обновить товар" })
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Обновить товар, только ADMIN" })
     update(@Param("id") id: string, @Body() dto: UpdateProductDto) {
         return this.productsService.update(id, dto);
     }
 
     @Delete(":id")
-    @ApiOperation({ summary: "Скрыть товар" })
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Скрыть товар, только ADMIN" })
     remove(@Param("id") id: string) {
         return this.productsService.remove(id);
     }

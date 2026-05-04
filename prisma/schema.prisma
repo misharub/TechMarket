@@ -9,6 +9,73 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OAuthProvider {
+  GOOGLE
+  VK
+}
+
+enum SpecValueType {
+  STRING
+  NUMBER
+  BOOLEAN
+  SELECT
+}
+
+model User {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  passwordHash    String?
+  name            String
+  phone           String?
+  role            Role             @default(USER)
+  isBlocked       Boolean          @default(false)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  oauthAccounts   OAuthAccount[]
+  refreshSessions RefreshSession[]
+
+  @@index([email])
+  @@index([role])
+  @@index([isBlocked])
+}
+
+model OAuthAccount {
+  id             String        @id @default(cuid())
+  userId         String
+  provider       OAuthProvider
+  providerUserId String
+  email          String?
+  createdAt      DateTime      @default(now())
+
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
+  @@index([email])
+}
+
+model RefreshSession {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([revokedAt])
+}
+
 // Category хранит дерево каталога: основные категории и подкатегории.
 // Удаление мягкое: запись остается в базе, но скрывается через isActive=false.
 model Category {
@@ -33,13 +100,6 @@ model Category {
   @@index([parentId])
   @@index([isActive])
   @@index([sortOrder])
-}
-
-enum SpecValueType {
-  STRING
-  NUMBER
-  BOOLEAN
-  SELECT
 }
 
 // CategorySpecTemplate описывает поле характеристики для товаров конкретной категории.

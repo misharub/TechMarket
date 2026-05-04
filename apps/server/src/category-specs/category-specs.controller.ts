@@ -1,5 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Role } from "@prisma/client";
+import { Roles } from "../auth/decorators/roles.decorator";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
 import { CategorySpecsService } from "./category-specs.service";
 import { CreateCategorySpecDto } from "./dto/create-category-spec.dto";
 import { UpdateCategorySpecDto } from "./dto/update-category-spec.dto";
@@ -17,13 +21,19 @@ export class CategorySpecsController {
     }
 
     @Post()
-    @ApiOperation({ summary: "Создать шаблон характеристики категории" })
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Создать шаблон характеристики категории, только ADMIN" })
     create(@Param("categoryId") categoryId: string, @Body() dto: CreateCategorySpecDto) {
         return this.categorySpecsService.create(categoryId, dto);
     }
 
     @Patch(":specId")
-    @ApiOperation({ summary: "Обновить шаблон характеристики категории" })
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Обновить шаблон характеристики категории, только ADMIN" })
     update(
         @Param("categoryId") categoryId: string,
         @Param("specId") specId: string,
@@ -33,7 +43,10 @@ export class CategorySpecsController {
     }
 
     @Delete(":specId")
-    @ApiOperation({ summary: "Удалить шаблон характеристики категории" })
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Удалить шаблон характеристики категории, только ADMIN" })
     remove(@Param("categoryId") categoryId: string, @Param("specId") specId: string) {
         return this.categorySpecsService.remove(categoryId, specId);
     }

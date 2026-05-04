@@ -1,6 +1,7 @@
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
 
 async function bootstrap() {
@@ -13,6 +14,8 @@ async function bootstrap() {
         origin: ["http://localhost:5173", "http://localhost:3000"],
         credentials: true,
     });
+    // Cookie parser нужен, чтобы refresh token можно было читать из HTTP-only cookie.
+    app.use(cookieParser());
     // ValidationPipe проверяет DTO до попадания данных в service.
     app.useGlobalPipes(
         new ValidationPipe({

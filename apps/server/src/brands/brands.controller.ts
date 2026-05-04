@@ -1,5 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Role } from "@prisma/client";
+import { Roles } from "../auth/decorators/roles.decorator";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
 import { BrandsService } from "./brands.service";
 import { CreateBrandDto } from "./dto/create-brand.dto";
 import { FindBrandsDto } from "./dto/find-brands.dto";
@@ -23,19 +27,28 @@ export class BrandsController {
     }
 
     @Post()
-    @ApiOperation({ summary: "Создать бренд" })
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Создать бренд, только ADMIN" })
     create(@Body() dto: CreateBrandDto) {
         return this.brandsService.create(dto);
     }
 
     @Patch(":id")
-    @ApiOperation({ summary: "Обновить бренд" })
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Обновить бренд, только ADMIN" })
     update(@Param("id") id: string, @Body() dto: UpdateBrandDto) {
         return this.brandsService.update(id, dto);
     }
 
     @Delete(":id")
-    @ApiOperation({ summary: "Скрыть бренд" })
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Скрыть бренд, только ADMIN" })
     remove(@Param("id") id: string) {
         return this.brandsService.remove(id);
     }

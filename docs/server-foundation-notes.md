@@ -53,6 +53,160 @@ PrismaService
 PostgreSQL
 ```
 
+## Итерация 5: Пользователи, авторизация и OAuth
+
+На пятом этапе добавляется модуль пользователей и авторизации. После этого сервер начинает различать гостя, обычного пользователя и администратора.
+
+Главная идея:
+
+- пользователь регистрируется по email и паролю;
+- пароль не хранится в открытом виде, в базе лежит только `passwordHash`;
+- после входа сервер выдает короткоживущий `accessToken`;
+- `accessToken` отправляется клиентом в заголовке `Authorization`;
+- `refreshToken` хранится в HTTP-only cookie и нужен для получения нового access token;
+- администратор может управлять пользователями и назначать роль `ADMIN`;
+- обычный пользователь не может сам стать администратором.
+
+Схема токенов:
+
+```text
+POST /api/auth/login
+        |
+        v
+accessToken -> JSON response
+refreshToken -> HTTP-only cookie
+```
+
+Почему так удобно:
+
+- access token легко тестировать через Postman и Swagger;
+- refresh token не доступен JavaScript-коду в браузере;
+- при истечении access token пользователь может получить новый без повторного ввода пароля;
+- подход хорошо подходит для будущего frontend на React.
+
+Endpoints авторизации:
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh
+POST /api/auth/logout
+GET  /api/auth/me
+GET  /api/auth/google
+GET  /api/auth/google/callback
+GET  /api/auth/vk
+GET  /api/auth/vk/callback
+```
+
+Пример регистрации:
+
+```json
+{
+  "name": "Иван Иванов",
+  "email": "ivan@example.com",
+  "password": "Password123"
+}
+```
+
+Пример входа:
+
+```json
+{
+  "email": "admin@techmarket.local",
+  "password": "Admin12345"
+}
+```
+
+Пример успешного ответа:
+
+```json
+{
+  "accessToken": "jwt...",
+  "user": {
+    "id": "user-id",
+    "email": "admin@techmarket.local",
+    "name": "TechMarket Admin",
+    "role": "ADMIN"
+  }
+}
+```
+
+Защищенный запрос:
+
+```text
+Authorization: Bearer <accessToken>
+```
+
+Пользовательские endpoints:
+
+```text
+GET   /api/users/me
+PATCH /api/users/me
+```
+
+Административные endpoints пользователей:
+
+```text
+GET   /api/admin/users
+PATCH /api/admin/users/:id
+PATCH /api/admin/users/:id/block
+```
+
+Как появляются администраторы:
+
+- первый администратор создается через seed;
+- новые администраторы назначаются только существующим администратором;
+- регистрация обычного пользователя всегда создает роль `USER`;
+- роль можно изменить через `PATCH /api/admin/users/:id`.
+
+Тестовые пользователи:
+
+```text
+admin@techmarket.local / Admin12345
+user@techmarket.local / User12345
+```
+
+OAuth через Google и VK:
+
+- пользователь нажимает “Войти через Google” или “Войти через VK”;
+- backend перенаправляет его на страницу провайдера;
+- после подтверждения провайдер возвращает пользователя на callback endpoint;
+- backend получает email и provider id;
+- если пользователь уже есть по email, OAuth-аккаунт привязывается к нему;
+- если пользователя нет, создается новый пользователь с ролью `USER`;
+- если provider не вернул email, пользователь не создается.
+
+Переменные окружения для OAuth:
+
+```env
+CLIENT_URL=http://localhost:5173
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
+
+VK_CLIENT_ID=
+VK_CLIENT_SECRET=
+VK_CALLBACK_URL=http://localhost:5000/api/auth/vk/callback
+```
+
+Если ключи Google/VK не заполнены, OAuth endpoints возвращают понятную ошибку конфигурации. Email/password авторизация при этом работает.
+
+После добавления авторизации административные действия каталога закрываются:
+
+```text
+POST/PATCH/DELETE categories -> только ADMIN
+POST/PATCH/DELETE category specs -> только ADMIN
+POST/PATCH/DELETE brands -> только ADMIN
+POST/PATCH/DELETE products -> только ADMIN
+```
+
+Публичные `GET` endpoints каталога остаются доступными без входа.
+
+В дипломе можно написать:
+
+> В системе реализована ролевая модель доступа с ролями USER и ADMIN. Пароли пользователей хранятся только в виде bcrypt-хэша. Для авторизации используется JWT access token, а refresh token хранится в HTTP-only cookie, что повышает безопасность пользовательской сессии. Административные операции каталога защищены guard-ами NestJS и доступны только пользователям с ролью ADMIN. Дополнительно заложена архитектура OAuth-входа через Google и VK, позволяющая создавать или связывать внешние аккаунты с пользователем по email.
+
 Controller принимает HTTP-запросы. Service содержит бизнес-логику. PrismaService выполняет запросы к базе данных PostgreSQL.
 
 ## Как проходит запрос

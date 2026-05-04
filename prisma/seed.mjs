@@ -1,12 +1,28 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, SpecValueType } from "@prisma/client";
+import { PrismaClient, Role, SpecValueType } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
 });
 
 const prisma = new PrismaClient({ adapter });
+
+const users = [
+  {
+    email: "admin@techmarket.local",
+    password: "Admin12345",
+    name: "TechMarket Admin",
+    role: Role.ADMIN,
+  },
+  {
+    email: "user@techmarket.local",
+    password: "User12345",
+    name: "TechMarket User",
+    role: Role.USER,
+  },
+];
 
 const categories = [
   ["Ноутбуки и компьютеры", "laptops-computers", "Ноутбуки, ПК, моноблоки и компьютерные системы"],
@@ -174,6 +190,26 @@ const products = [
 ];
 
 async function main() {
+  for (const user of users) {
+    const passwordHash = await bcrypt.hash(user.password, 12);
+
+    await prisma.user.upsert({
+      where: { email: user.email },
+      update: {
+        name: user.name,
+        passwordHash,
+        role: user.role,
+        isBlocked: false,
+      },
+      create: {
+        email: user.email,
+        name: user.name,
+        passwordHash,
+        role: user.role,
+      },
+    });
+  }
+
   for (const [index, [name, slug, description]] of categories.entries()) {
     await prisma.category.upsert({
       where: { slug },
