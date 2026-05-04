@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { CategoriesModule } from "./categories/categories.module";
+import { CategorySpecsModule } from "./category-specs/category-specs.module";
 import { PrismaModule } from "./prisma/prisma.module";
 
 @Module({
@@ -16,15 +17,9 @@ import { PrismaModule } from "./prisma/prisma.module";
         // PrismaModule дает доступ к PrismaService во всех модулях приложения.
         PrismaModule,
         CategoriesModule,
+        CategorySpecsModule,
     ],
     controllers: [AppController],
     providers: [AppService],
 })
 export class AppModule {}
-
-
-
-
-
-
-
