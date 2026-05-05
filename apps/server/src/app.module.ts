@@ -9,9 +9,11 @@ import { CartModule } from "./cart/cart.module";
 import { CategoriesModule } from "./categories/categories.module";
 import { CategorySpecsModule } from "./category-specs/category-specs.module";
 import { OrdersModule } from "./orders/orders.module";
+import { ProductCompareModule } from "./product-compare/product-compare.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
+import { WishlistModule } from "./wishlist/wishlist.module";
 
 @Module({
     imports: [
@@ -30,6 +32,8 @@ import { UsersModule } from "./users/users.module";
         CategorySpecsModule,
         BrandsModule,
         ProductsModule,
+        WishlistModule,
+        ProductCompareModule,
     ],
     controllers: [AppController],
     providers: [AppService],
