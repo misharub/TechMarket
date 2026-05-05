@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, Role, SpecValueType } from "@prisma/client";
+import { OrderStatus, PrismaClient, Role, SpecValueType } from "@prisma/client";
 import bcrypt from "bcrypt";
 
 const adapter = new PrismaPg({
@@ -310,6 +310,84 @@ async function main() {
         brandId: brand.id,
       },
     });
+  }
+
+  const demoUser = await prisma.user.findUnique({
+    where: { email: "user@techmarket.local" },
+  });
+  const productBySku = Object.fromEntries((await prisma.product.findMany()).map((product) => [product.sku, product]));
+
+  if (demoUser) {
+    await prisma.order.deleteMany({
+      where: {
+        userId: demoUser.id,
+        comment: { startsWith: "Seed demo order" },
+      },
+    });
+
+    const demoOrders = [
+      {
+        status: OrderStatus.CONFIRMED,
+        items: [
+          { sku: "NB-LEN-0001", quantity: 1 },
+          { sku: "PH-XIA-0001", quantity: 1 },
+        ],
+        customerName: "TechMarket User",
+        customerPhone: "+375291112233",
+        customerEmail: "user@techmarket.local",
+        city: "Минск",
+        deliveryAddress: "ул. Ленина, 10-15",
+        deliveryMethod: "courier",
+        paymentMethod: "cash_on_delivery",
+        comment: "Seed demo order: confirmed",
+      },
+      {
+        status: OrderStatus.PROCESSING,
+        items: [{ sku: "TV-SAM-0001", quantity: 1 }],
+        customerName: "TechMarket User",
+        customerPhone: "+375291112233",
+        customerEmail: "user@techmarket.local",
+        city: "Минск",
+        deliveryAddress: "пр-т Победителей, 25",
+        deliveryMethod: "pickup_point",
+        paymentMethod: "card_mock",
+        comment: "Seed demo order: processing",
+      },
+    ];
+
+    for (const demoOrder of demoOrders) {
+      const totalPrice = demoOrder.items.reduce((sum, item) => {
+        const product = productBySku[item.sku];
+        return sum + Number(product.price) * item.quantity;
+      }, 0);
+
+      await prisma.order.create({
+        data: {
+          userId: demoUser.id,
+          status: demoOrder.status,
+          totalPrice,
+          customerName: demoOrder.customerName,
+          customerPhone: demoOrder.customerPhone,
+          customerEmail: demoOrder.customerEmail,
+          city: demoOrder.city,
+          deliveryAddress: demoOrder.deliveryAddress,
+          deliveryMethod: demoOrder.deliveryMethod,
+          paymentMethod: demoOrder.paymentMethod,
+          comment: demoOrder.comment,
+          items: {
+            create: demoOrder.items.map((item) => {
+              const product = productBySku[item.sku];
+
+              return {
+                productId: product.id,
+                quantity: item.quantity,
+                price: product.price,
+              };
+            }),
+          },
+        },
+      });
+    }
   }
 }
 

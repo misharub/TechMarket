@@ -5,8 +5,10 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
 import { BrandsModule } from "./brands/brands.module";
+import { CartModule } from "./cart/cart.module";
 import { CategoriesModule } from "./categories/categories.module";
 import { CategorySpecsModule } from "./category-specs/category-specs.module";
+import { OrdersModule } from "./orders/orders.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { ProductsModule } from "./products/products.module";
 import { UsersModule } from "./users/users.module";
@@ -22,6 +24,8 @@ import { UsersModule } from "./users/users.module";
         PrismaModule,
         AuthModule,
         UsersModule,
+        CartModule,
+        OrdersModule,
         CategoriesModule,
         CategorySpecsModule,
         BrandsModule,
