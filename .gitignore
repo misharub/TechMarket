@@ -3,6 +3,7 @@ node_modules
 apps/*/.git.backup/
 dist
 docs/tmp
+/uploads/
 apps/*/node_modules
 apps/*/dist
 # Keep environment variables out of version control
