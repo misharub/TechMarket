@@ -13,6 +13,7 @@ import { OrdersModule } from "./orders/orders.module";
 import { ProductCompareModule } from "./product-compare/product-compare.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { ProductsModule } from "./products/products.module";
+import { ReviewsModule } from "./reviews/reviews.module";
 import { UploadsModule } from "./uploads/uploads.module";
 import { UsersModule } from "./users/users.module";
 import { WishlistModule } from "./wishlist/wishlist.module";
@@ -35,6 +36,7 @@ import { WishlistModule } from "./wishlist/wishlist.module";
         CategorySpecsModule,
         BrandsModule,
         ProductsModule,
+        ReviewsModule,
         UploadsModule,
         WishlistModule,
         ProductCompareModule,

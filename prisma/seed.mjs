@@ -315,6 +315,9 @@ async function main() {
   const demoUser = await prisma.user.findUnique({
     where: { email: "user@techmarket.local" },
   });
+  const demoAdmin = await prisma.user.findUnique({
+    where: { email: "admin@techmarket.local" },
+  });
   const productBySku = Object.fromEntries((await prisma.product.findMany()).map((product) => [product.sku, product]));
 
   if (demoUser) {
@@ -415,6 +418,52 @@ async function main() {
               };
             }),
           },
+        },
+      });
+    }
+  }
+
+  const reviewAuthors = [demoUser, demoAdmin].filter(Boolean);
+
+  if (reviewAuthors.length) {
+    for (const author of reviewAuthors) {
+      await prisma.review.deleteMany({
+        where: {
+          userId: author.id,
+          comment: { startsWith: "Seed demo review" },
+        },
+      });
+    }
+
+    const demoReviews = [
+      { user: demoUser, sku: "NB-LEN-0001", rating: 5, comment: "Seed demo review: хороший ноутбук для учебы и работы." },
+      { user: demoAdmin, sku: "NB-LEN-0001", rating: 4, comment: "Seed demo review: сбалансированная модель с нормальным запасом мощности." },
+      { user: demoUser, sku: "PH-XIA-0001", rating: 5, comment: "Seed demo review: отличное соотношение цены и возможностей." },
+      { user: demoAdmin, sku: "TV-SAM-0001", rating: 4, comment: "Seed demo review: яркая картинка и удобный Smart TV." },
+    ];
+
+    for (const review of demoReviews) {
+      if (!review.user || !productBySku[review.sku]) {
+        continue;
+      }
+
+      await prisma.review.upsert({
+        where: {
+          userId_productId: {
+            userId: review.user.id,
+            productId: productBySku[review.sku].id,
+          },
+        },
+        update: {
+          rating: review.rating,
+          comment: review.comment,
+          isActive: true,
+        },
+        create: {
+          userId: review.user.id,
+          productId: productBySku[review.sku].id,
+          rating: review.rating,
+          comment: review.comment,
         },
       });
     }

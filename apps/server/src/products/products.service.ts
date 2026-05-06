@@ -26,9 +26,10 @@ export class ProductsService {
             }),
             this.prisma.product.count({ where }),
         ]);
+        const ratings = await this.getRatingsForProducts(items.map((item) => item.id));
 
         return {
-            items,
+            items: items.map((item) => this.withRating(item, ratings.get(item.id))),
             total,
             page,
             limit,
@@ -46,7 +47,7 @@ export class ProductsService {
             throw new NotFoundException("Product not found");
         }
 
-        return product;
+        return this.withRating(product, await this.getRatingForProduct(product.id));
     }
 
     async findBySlug(slug: string) {
@@ -59,7 +60,7 @@ export class ProductsService {
             throw new NotFoundException("Product not found");
         }
 
-        return product;
+        return this.withRating(product, await this.getRatingForProduct(product.id));
     }
 
     async create(dto: CreateProductDto) {
@@ -253,6 +254,59 @@ export class ProductsService {
         }
 
         return value as Record<string, unknown>;
+    }
+
+    private async getRatingsForProducts(productIds: string[]) {
+        if (!productIds.length) {
+            return new Map<string, { average: number; count: number }>();
+        }
+
+        const ratings = await this.prisma.review.groupBy({
+            by: ["productId"],
+            where: {
+                productId: { in: productIds },
+                isActive: true,
+            },
+            _avg: { rating: true },
+            _count: { rating: true },
+        });
+
+        return new Map(
+            ratings.map((rating) => [
+                rating.productId,
+                {
+                    average: this.roundRating(rating._avg.rating),
+                    count: rating._count.rating,
+                },
+            ]),
+        );
+    }
+
+    private async getRatingForProduct(productId: string) {
+        const rating = await this.prisma.review.aggregate({
+            where: {
+                productId,
+                isActive: true,
+            },
+            _avg: { rating: true },
+            _count: { rating: true },
+        });
+
+        return {
+            average: this.roundRating(rating._avg.rating),
+            count: rating._count.rating,
+        };
+    }
+
+    private withRating<T extends object>(product: T, rating: { average: number; count: number } | undefined) {
+        return {
+            ...product,
+            rating: rating ?? { average: 0, count: 0 },
+        };
+    }
+
+    private roundRating(value: number | null) {
+        return value === null ? 0 : Number(value.toFixed(2));
     }
 
     private handlePrismaError(error: unknown): never {
