@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { join } from "node:path";
+import { AddressesModule } from "./addresses/addresses.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
@@ -25,6 +26,7 @@ import { WishlistModule } from "./wishlist/wishlist.module";
         }),
         // PrismaModule дает доступ к PrismaService во всех модулях приложения.
         PrismaModule,
+        AddressesModule,
         AuthModule,
         UsersModule,
         CartModule,

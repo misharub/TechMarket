@@ -318,6 +318,36 @@ async function main() {
   const productBySku = Object.fromEntries((await prisma.product.findMany()).map((product) => [product.sku, product]));
 
   if (demoUser) {
+    await prisma.address.deleteMany({
+      where: {
+        userId: demoUser.id,
+        label: { startsWith: "Seed" },
+      },
+    });
+
+    await prisma.address.createMany({
+      data: [
+        {
+          userId: demoUser.id,
+          label: "Seed home",
+          city: "Минск",
+          street: "ул. Ленина",
+          house: "10",
+          apartment: "15",
+          zipCode: "220030",
+          isDefault: true,
+        },
+        {
+          userId: demoUser.id,
+          label: "Seed pickup",
+          city: "Минск",
+          street: "пр-т Победителей",
+          house: "25",
+          zipCode: "220004",
+        },
+      ],
+    });
+
     await prisma.order.deleteMany({
       where: {
         userId: demoUser.id,

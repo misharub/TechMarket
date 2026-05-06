@@ -18,17 +18,24 @@ export class CheckoutOrderDto {
     @IsEmail()
     customerEmail: string;
 
-    @ApiProperty({ example: "Минск" })
+    @ApiPropertyOptional({ example: "address-id" })
+    @IsOptional()
+    @IsString()
+    addressId?: string;
+
+    @ApiPropertyOptional({ example: "Минск" })
+    @IsOptional()
     @IsString()
     @MinLength(2)
     @MaxLength(80)
-    city: string;
+    city?: string;
 
-    @ApiProperty({ example: "ул. Ленина, 10-15" })
+    @ApiPropertyOptional({ example: "ул. Ленина, 10-15" })
+    @IsOptional()
     @IsString()
     @MinLength(5)
     @MaxLength(200)
-    deliveryAddress: string;
+    deliveryAddress?: string;
 
     @ApiProperty({ example: "courier" })
     @IsString()

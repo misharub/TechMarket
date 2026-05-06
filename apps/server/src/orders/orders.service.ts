@@ -31,6 +31,8 @@ export class OrdersService {
             throw new BadRequestException("Cart is empty");
         }
 
+        const deliveryAddress = await this.resolveDeliveryAddress(userId, dto);
+
         for (const item of cartItems) {
             if (!item.product.isActive) {
                 throw new BadRequestException(`Product is not available: ${item.product.title}`);
@@ -51,8 +53,8 @@ export class OrdersService {
                     customerName: dto.customerName,
                     customerPhone: dto.customerPhone,
                     customerEmail: dto.customerEmail,
-                    city: dto.city,
-                    deliveryAddress: dto.deliveryAddress,
+                    city: deliveryAddress.city,
+                    deliveryAddress: deliveryAddress.deliveryAddress,
                     deliveryMethod: dto.deliveryMethod,
                     paymentMethod: dto.paymentMethod,
                     comment: dto.comment,
@@ -159,6 +161,51 @@ export class OrdersService {
 
     private calculateTotal(items: Array<{ quantity: number; product: { price: unknown } }>) {
         return Number(items.reduce((sum, item) => sum + Number(item.product.price) * item.quantity, 0).toFixed(2));
+    }
+
+    private async resolveDeliveryAddress(userId: string, dto: CheckoutOrderDto) {
+        if (dto.addressId) {
+            const address = await this.prisma.address.findFirst({
+                where: {
+                    id: dto.addressId,
+                    userId,
+                },
+            });
+
+            if (!address) {
+                throw new NotFoundException("Address not found");
+            }
+
+            return {
+                city: address.city,
+                deliveryAddress: this.formatAddress(address),
+            };
+        }
+
+        if (!dto.city || !dto.deliveryAddress) {
+            throw new BadRequestException("Either addressId or city and deliveryAddress must be provided");
+        }
+
+        return {
+            city: dto.city,
+            deliveryAddress: dto.deliveryAddress,
+        };
+    }
+
+    private formatAddress(address: {
+        street: string;
+        house: string;
+        apartment: string | null;
+        zipCode: string | null;
+    }) {
+        return [
+            address.street,
+            `дом ${address.house}`,
+            address.apartment ? `кв. ${address.apartment}` : null,
+            address.zipCode ? `индекс ${address.zipCode}` : null,
+        ]
+            .filter(Boolean)
+            .join(", ");
     }
 
     private orderInclude() {
