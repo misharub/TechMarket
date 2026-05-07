@@ -213,6 +213,51 @@ const promoCodes = [
   },
 ];
 
+const deliveryMethods = [
+  {
+    code: "courier",
+    name: "Courier delivery",
+    description: "Delivery to the customer address.",
+    price: 15,
+    sortOrder: 10,
+  },
+  {
+    code: "pickup",
+    name: "Store pickup",
+    description: "Pickup from a TechMarket store.",
+    price: 0,
+    sortOrder: 20,
+  },
+  {
+    code: "pickup_point",
+    name: "Pickup point",
+    description: "Delivery to a partner pickup point.",
+    price: 7,
+    sortOrder: 30,
+  },
+];
+
+const paymentMethods = [
+  {
+    code: "cash_on_delivery",
+    name: "Cash on delivery",
+    description: "Payment when receiving the order.",
+    sortOrder: 10,
+  },
+  {
+    code: "card_mock",
+    name: "Bank card mock",
+    description: "Demo card payment without a real payment provider.",
+    sortOrder: 20,
+  },
+  {
+    code: "online_mock",
+    name: "Online payment mock",
+    description: "Online payment stub for diploma demonstration.",
+    sortOrder: 30,
+  },
+];
+
 async function main() {
   for (const user of users) {
     const passwordHash = await bcrypt.hash(user.password, 12);
@@ -361,6 +406,33 @@ async function main() {
         startsAt: promoCode.startsAt,
         endsAt: promoCode.endsAt,
       },
+    });
+  }
+
+  for (const deliveryMethod of deliveryMethods) {
+    await prisma.deliveryMethod.upsert({
+      where: { code: deliveryMethod.code },
+      update: {
+        name: deliveryMethod.name,
+        description: deliveryMethod.description,
+        price: deliveryMethod.price,
+        sortOrder: deliveryMethod.sortOrder,
+        isActive: true,
+      },
+      create: deliveryMethod,
+    });
+  }
+
+  for (const paymentMethod of paymentMethods) {
+    await prisma.paymentMethod.upsert({
+      where: { code: paymentMethod.code },
+      update: {
+        name: paymentMethod.name,
+        description: paymentMethod.description,
+        sortOrder: paymentMethod.sortOrder,
+        isActive: true,
+      },
+      create: paymentMethod,
     });
   }
 

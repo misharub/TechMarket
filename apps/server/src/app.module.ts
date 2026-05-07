@@ -7,9 +7,11 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
 import { BrandsModule } from "./brands/brands.module";
+import { CatalogExchangeModule } from "./catalog-exchange/catalog-exchange.module";
 import { CartModule } from "./cart/cart.module";
 import { CategoriesModule } from "./categories/categories.module";
 import { CategorySpecsModule } from "./category-specs/category-specs.module";
+import { CheckoutOptionsModule } from "./checkout-options/checkout-options.module";
 import { NotificationsModule } from "./notifications/notifications.module";
 import { OrdersModule } from "./orders/orders.module";
 import { ProductCompareModule } from "./product-compare/product-compare.module";
@@ -32,9 +34,11 @@ import { WishlistModule } from "./wishlist/wishlist.module";
         PrismaModule,
         AddressesModule,
         AdminStatsModule,
+        CatalogExchangeModule,
         AuthModule,
         UsersModule,
         CartModule,
+        CheckoutOptionsModule,
         OrdersModule,
         NotificationsModule,
         CategoriesModule,

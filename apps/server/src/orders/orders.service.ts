@@ -1,5 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { NotificationType } from "@prisma/client";
+import { CheckoutOptionsService } from "../checkout-options/checkout-options.service";
 import { NotificationsService } from "../notifications/notifications.service";
 import { PromoCodesService } from "../promo-codes/promo-codes.service";
 import { PrismaService } from "../prisma/prisma.service";
@@ -12,6 +13,7 @@ export class OrdersService {
         private readonly prisma: PrismaService,
         private readonly promoCodesService: PromoCodesService,
         private readonly notificationsService: NotificationsService,
+        private readonly checkoutOptionsService: CheckoutOptionsService,
     ) {}
 
     async create(userId: string, dto: CheckoutOrderDto) {
@@ -52,6 +54,10 @@ export class OrdersService {
 
         const subtotal = this.calculateTotal(cartItems);
         const promo = await this.promoCodesService.validateForSubtotal(dto.promoCode, subtotal);
+        const deliveryMethod = await this.checkoutOptionsService.validateDeliveryMethod(dto.deliveryMethod, subtotal);
+        const paymentMethod = await this.checkoutOptionsService.validatePaymentMethod(dto.paymentMethod);
+        const deliveryPrice = Number(deliveryMethod.price);
+        const finalTotalPrice = Number((promo.totalPrice + deliveryPrice).toFixed(2));
 
         const order = await this.prisma.$transaction(async (tx) => {
             if (promo.promoCode) {
@@ -61,7 +67,7 @@ export class OrdersService {
             const createdOrder = await tx.order.create({
                 data: {
                     userId,
-                    totalPrice: promo.totalPrice,
+                    totalPrice: finalTotalPrice,
                     discountAmount: promo.discountAmount,
                     promoCodeId: promo.promoCode?.id,
                     promoCodeCode: promo.code,
@@ -70,8 +76,11 @@ export class OrdersService {
                     customerEmail: dto.customerEmail,
                     city: deliveryAddress.city,
                     deliveryAddress: deliveryAddress.deliveryAddress,
-                    deliveryMethod: dto.deliveryMethod,
-                    paymentMethod: dto.paymentMethod,
+                    deliveryMethod: deliveryMethod.code,
+                    deliveryMethodName: deliveryMethod.name,
+                    deliveryPrice,
+                    paymentMethod: paymentMethod.code,
+                    paymentMethodName: paymentMethod.name,
                     comment: dto.comment,
                 },
             });
