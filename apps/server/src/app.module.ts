@@ -10,6 +10,7 @@ import { BrandsModule } from "./brands/brands.module";
 import { CartModule } from "./cart/cart.module";
 import { CategoriesModule } from "./categories/categories.module";
 import { CategorySpecsModule } from "./category-specs/category-specs.module";
+import { NotificationsModule } from "./notifications/notifications.module";
 import { OrdersModule } from "./orders/orders.module";
 import { ProductCompareModule } from "./product-compare/product-compare.module";
 import { PromoCodesModule } from "./promo-codes/promo-codes.module";
@@ -35,6 +36,7 @@ import { WishlistModule } from "./wishlist/wishlist.module";
         UsersModule,
         CartModule,
         OrdersModule,
+        NotificationsModule,
         CategoriesModule,
         CategorySpecsModule,
         BrandsModule,

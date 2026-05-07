@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { DiscountType, OrderStatus, PrismaClient, Role, SpecValueType } from "@prisma/client";
+import { DiscountType, NotificationType, OrderStatus, PrismaClient, Role, SpecValueType } from "@prisma/client";
 import bcrypt from "bcrypt";
 
 const adapter = new PrismaPg({
@@ -473,6 +473,44 @@ async function main() {
         },
       });
     }
+
+    await prisma.notification.deleteMany({
+      where: {
+        userId: demoUser.id,
+        title: { startsWith: "Seed demo notification" },
+      },
+    });
+
+    await prisma.notification.createMany({
+      data: [
+        {
+          userId: demoUser.id,
+          type: NotificationType.SYSTEM,
+          title: "Seed demo notification: добро пожаловать",
+          message: "Добро пожаловать в TechMarket. Здесь будут появляться уведомления о заказах и статусах доставки.",
+          emailMockSent: true,
+          emailMockPayload: {
+            to: demoUser.email,
+            subject: "TechMarket: добро пожаловать",
+            body: "Это демонстрационная mock email-запись без реальной SMTP-отправки.",
+            mock: true,
+          },
+        },
+        {
+          userId: demoUser.id,
+          type: NotificationType.ORDER_STATUS_CHANGED,
+          title: "Seed demo notification: статус заказа изменен",
+          message: "Статус демонстрационного заказа изменен на PROCESSING.",
+          emailMockSent: true,
+          emailMockPayload: {
+            to: demoUser.email,
+            subject: "TechMarket: статус заказа изменен",
+            body: "Это пример уведомления о смене статуса заказа.",
+            mock: true,
+          },
+        },
+      ],
+    });
   }
 
   const reviewAuthors = [demoUser, demoAdmin].filter(Boolean);

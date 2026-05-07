@@ -1,4 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { NotificationType } from "@prisma/client";
+import { NotificationsService } from "../notifications/notifications.service";
 import { PromoCodesService } from "../promo-codes/promo-codes.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { CheckoutOrderDto } from "./dto/checkout-order.dto";
@@ -9,12 +11,13 @@ export class OrdersService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly promoCodesService: PromoCodesService,
+        private readonly notificationsService: NotificationsService,
     ) {}
 
     async create(userId: string, dto: CheckoutOrderDto) {
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
-            select: { id: true, isBlocked: true },
+            select: { id: true, email: true, name: true, isBlocked: true },
         });
 
         if (!user) {
@@ -106,7 +109,11 @@ export class OrdersService {
             return createdOrder;
         });
 
-        return this.findUserOrder(userId, order.id);
+        const createdOrder = await this.findUserOrder(userId, order.id);
+
+        await this.notifyOrderCreated(user, order.id);
+
+        return createdOrder;
     }
 
     findUserOrders(userId: string) {
@@ -153,11 +160,51 @@ export class OrdersService {
     async updateStatus(orderId: string, dto: UpdateOrderStatusDto) {
         await this.ensureOrderExists(orderId);
 
-        return this.prisma.order.update({
+        const order = await this.prisma.order.update({
             where: { id: orderId },
             data: { status: dto.status },
             include: this.adminOrderInclude(),
         });
+
+        await this.notifyOrderStatusChanged(order.userId, order.user.email, order.id, dto.status);
+
+        return order;
+    }
+
+    private async notifyOrderCreated(user: { id: string; email: string; name: string }, orderId: string) {
+        try {
+            await this.notificationsService.createUserNotification({
+                userId: user.id,
+                type: NotificationType.ORDER_CREATED,
+                title: `Заказ ${orderId} создан`,
+                message: `Ваш заказ ${orderId} успешно создан. Статус заказа: NEW.`,
+                email: {
+                    to: user.email,
+                    subject: `TechMarket: заказ ${orderId} создан`,
+                    body: `Здравствуйте, ${user.name}. Ваш заказ ${orderId} успешно создан и ожидает обработки.`,
+                },
+            });
+        } catch (error) {
+            console.error("Failed to create order notification", error);
+        }
+    }
+
+    private async notifyOrderStatusChanged(userId: string, userEmail: string, orderId: string, status: string) {
+        try {
+            await this.notificationsService.createUserNotification({
+                userId,
+                type: NotificationType.ORDER_STATUS_CHANGED,
+                title: `Статус заказа ${orderId} изменен`,
+                message: `Статус заказа ${orderId} изменен на ${status}.`,
+                email: {
+                    to: userEmail,
+                    subject: `TechMarket: новый статус заказа ${orderId}`,
+                    body: `Статус вашего заказа ${orderId} изменен на ${status}.`,
+                },
+            });
+        } catch (error) {
+            console.error("Failed to create order status notification", error);
+        }
     }
 
     private async ensureOrderExists(orderId: string) {

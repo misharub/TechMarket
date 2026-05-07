@@ -40,6 +40,13 @@ enum DiscountType {
   FIXED
 }
 
+enum NotificationType {
+  ORDER_CREATED
+  ORDER_STATUS_CHANGED
+  PROMO
+  SYSTEM
+}
+
 model User {
   id              String           @id @default(cuid())
   email           String           @unique
@@ -58,6 +65,7 @@ model User {
   addresses       Address[]
   reviews         Review[]
   orders          Order[]
+  notifications   Notification[]
 
   @@index([email])
   @@index([role])
@@ -336,4 +344,26 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
+}
+
+// Notification хранит сообщения для будущего значка уведомлений во frontend.
+// Mock email не отправляется наружу: payload сохраняется в БД и логируется на сервере для демонстрации.
+model Notification {
+  id               String           @id @default(cuid())
+  userId           String
+  type             NotificationType
+  title            String
+  message          String
+  isRead           Boolean          @default(false)
+  emailMockSent    Boolean          @default(false)
+  emailMockPayload Json?
+  createdAt        DateTime         @default(now())
+  readAt           DateTime?
+
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([isRead])
+  @@index([createdAt])
 }
