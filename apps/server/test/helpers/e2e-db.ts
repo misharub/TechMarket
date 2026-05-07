@@ -12,6 +12,17 @@ export function configureTestEnv() {
     process.env.JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET ?? envFromFile.JWT_ACCESS_SECRET ?? "test-access-secret";
     process.env.JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET ?? envFromFile.JWT_REFRESH_SECRET ?? "test-refresh-secret";
     process.env.CLIENT_URL = process.env.CLIENT_URL ?? envFromFile.CLIENT_URL ?? "http://localhost:5173";
+
+    // E2E-тесты должны быть воспроизводимыми: реальные OAuth-ключи из локального .env
+    // не должны менять ожидаемый результат тестов. Для специальных OAuth-тестов можно
+    // использовать отдельные переменные с суффиксом _TEST.
+    process.env.GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID_TEST ?? "";
+    process.env.GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET_TEST ?? "";
+    process.env.GOOGLE_CALLBACK_URL =
+        process.env.GOOGLE_CALLBACK_URL_TEST ?? "http://localhost:5000/api/auth/google/callback";
+    process.env.VK_CLIENT_ID = process.env.VK_CLIENT_ID_TEST ?? "";
+    process.env.VK_CLIENT_SECRET = process.env.VK_CLIENT_SECRET_TEST ?? "";
+    process.env.VK_CALLBACK_URL = process.env.VK_CALLBACK_URL_TEST ?? "http://localhost:5000/api/auth/vk/callback";
 }
 
 export async function ensureTestDatabaseExists() {

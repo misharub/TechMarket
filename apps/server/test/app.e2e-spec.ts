@@ -80,6 +80,7 @@ describe("TechMarket API e2e", () => {
             });
 
         await request(server).get("/api/auth/google").expect(503);
+        await request(server).get("/api/auth/google/callback?code=fake-code").expect(400);
         await request(server).get("/api/auth/vk").expect(503);
     });
 

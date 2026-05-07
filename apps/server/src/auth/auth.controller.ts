@@ -11,6 +11,8 @@ import { AuthService } from "./auth.service";
 
 const REFRESH_COOKIE = "refreshToken";
 const REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+const GOOGLE_OAUTH_STATE_COOKIE = "googleOAuthState";
+const GOOGLE_OAUTH_STATE_COOKIE_MAX_AGE = 10 * 60 * 1000;
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -70,12 +72,24 @@ export class AuthController {
     @Get("google")
     @ApiOperation({ summary: "Начать вход через Google" })
     async google(@Res() response: Response) {
-        response.redirect(await this.authService.getGoogleAuthUrl());
+        const state = this.authService.createOAuthState();
+        const authUrl = await this.authService.getGoogleAuthUrl(state);
+        this.setGoogleOAuthStateCookie(response, state);
+
+        response.redirect(authUrl);
     }
 
     @Get("google/callback")
     @ApiOperation({ summary: "Callback входа через Google" })
-    async googleCallback(@Query("code") code: string, @Res() response: Response) {
+    async googleCallback(
+        @Query("code") code: string,
+        @Query("state") state: string,
+        @Req() request: Request,
+        @Res() response: Response,
+    ) {
+        this.authService.validateOAuthState(request.cookies?.[GOOGLE_OAUTH_STATE_COOKIE], state);
+        this.clearGoogleOAuthStateCookie(response);
+
         const result = await this.authService.handleGoogleCallback(code);
         this.setRefreshCookie(response, result.refreshToken);
         response.redirect(this.oauthSuccessUrl());
@@ -111,6 +125,25 @@ export class AuthController {
             sameSite: "lax",
             secure: false,
             path: "/api/auth",
+        });
+    }
+
+    private setGoogleOAuthStateCookie(response: Response, state: string) {
+        response.cookie(GOOGLE_OAUTH_STATE_COOKIE, state, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: false,
+            maxAge: GOOGLE_OAUTH_STATE_COOKIE_MAX_AGE,
+            path: "/api/auth/google",
+        });
+    }
+
+    private clearGoogleOAuthStateCookie(response: Response) {
+        response.clearCookie(GOOGLE_OAUTH_STATE_COOKIE, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: false,
+            path: "/api/auth/google",
         });
     }
 

@@ -1771,3 +1771,63 @@ title,slug,sku,description,price,oldPrice,stock,categorySlug,brandSlug,images,sp
 В дипломе можно написать:
 
 > Для подготовки серверной части к практическому использованию были добавлены настраиваемые способы доставки и оплаты, базовые меры защиты API и административный CSV-обмен данными. Справочники доставки и оплаты позволяют управлять checkout без изменения кода, security middleware снижает риски типовых атак и перебора auth endpoints, а CSV export/import упрощает массовое администрирование каталога и заказов.
+## Итерация 16: Подготовка Google OAuth к реальному подключению
+
+На шестнадцатом этапе серверная часть Google OAuth подготовлена к реальному подключению через Google Cloud Console. Frontend в этой итерации не меняется.
+
+Что уже было в сервере:
+
+- `GET /api/auth/google`;
+- `GET /api/auth/google/callback`;
+- обмен authorization code на Google access token;
+- получение профиля пользователя через Google userinfo;
+- создание пользователя по email;
+- привязка `OAuthAccount`;
+- установка refresh cookie;
+- редирект на `CLIENT_URL/auth/oauth-success`.
+
+Что добавлено:
+
+- OAuth `state` параметр;
+- HTTP-only cookie `googleOAuthState`;
+- проверка `state` в callback;
+- очистка state cookie после callback;
+- проверка `email_verified` от Google;
+- `.env.example` с переменными для Google OAuth;
+- e2e-проверка ошибки callback без state.
+
+Переменные окружения:
+
+```env
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+GOOGLE_CALLBACK_URL="http://localhost:5000/api/auth/google/callback"
+CLIENT_URL="http://localhost:5173"
+```
+
+Как работает flow:
+
+```text
+1. Пользователь открывает /api/auth/google.
+2. Сервер генерирует случайный state.
+3. Сервер сохраняет state в HTTP-only cookie.
+4. Сервер перенаправляет пользователя на Google OAuth consent screen.
+5. Google возвращает пользователя на /api/auth/google/callback.
+6. Сервер сравнивает state из URL и state из cookie.
+7. Сервер меняет code на access token.
+8. Сервер получает профиль Google.
+9. Сервер проверяет, что email подтвержден.
+10. Сервер создает или связывает пользователя.
+11. Сервер ставит refresh cookie и отправляет пользователя на frontend success page.
+```
+
+Для Google Cloud Console нужно создать OAuth Client:
+
+```text
+Application type: Web application
+Authorized redirect URI: http://localhost:5000/api/auth/google/callback
+```
+
+Для диплома можно написать:
+
+> В системе реализована серверная интеграция с Google OAuth 2.0. Для защиты OAuth-flow используется параметр `state`, который сохраняется в HTTP-only cookie и проверяется при callback. После успешного входа сервер получает профиль Google, проверяет подтверждение email, создает или связывает пользователя с OAuth-аккаунтом и устанавливает refresh token в HTTP-only cookie. Такой подход позволяет подключить внешний сервис авторизации без хранения пароля пользователя в системе.

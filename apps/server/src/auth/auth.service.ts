@@ -8,7 +8,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { OAuthProvider, Prisma, Role, User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
-import { randomBytes } from "node:crypto";
+import { randomBytes, timingSafeEqual } from "node:crypto";
 import { sign } from "jsonwebtoken";
 import { PrismaService } from "../prisma/prisma.service";
 import { LoginDto } from "./dto/login.dto";
@@ -185,7 +185,17 @@ export class AuthService {
         return this.createAuthResult(user);
     }
 
-    async getGoogleAuthUrl() {
+    createOAuthState() {
+        return randomBytes(32).toString("hex");
+    }
+
+    validateOAuthState(cookieState: string | undefined, queryState: string | undefined) {
+        if (!cookieState || !queryState || !this.safeEquals(cookieState, queryState)) {
+            throw new BadRequestException("Invalid OAuth state");
+        }
+    }
+
+    async getGoogleAuthUrl(state: string) {
         const clientId = this.configService.get<string>("GOOGLE_CLIENT_ID");
         const callbackUrl = this.configService.get<string>("GOOGLE_CALLBACK_URL");
 
@@ -200,6 +210,7 @@ export class AuthService {
             scope: "openid email profile",
             access_type: "offline",
             prompt: "select_account",
+            state,
         });
 
         return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
@@ -225,6 +236,10 @@ export class AuthService {
     }
 
     async handleGoogleCallback(code: string) {
+        if (!code) {
+            throw new BadRequestException("Google authorization code is missing");
+        }
+
         const clientId = this.configService.getOrThrow<string>("GOOGLE_CLIENT_ID");
         const clientSecret = this.configService.getOrThrow<string>("GOOGLE_CLIENT_SECRET");
         const callbackUrl = this.configService.getOrThrow<string>("GOOGLE_CALLBACK_URL");
@@ -250,10 +265,19 @@ export class AuthService {
         const profileResponse = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
             headers: { Authorization: `Bearer ${tokenData.access_token}` },
         });
-        const profile = (await profileResponse.json()) as { sub?: string; email?: string; name?: string };
+        const profile = (await profileResponse.json()) as {
+            sub?: string;
+            email?: string;
+            email_verified?: boolean | string;
+            name?: string;
+        };
 
         if (!profileResponse.ok || !profile.sub || !profile.email) {
             throw new BadRequestException("Google account did not provide email");
+        }
+
+        if (profile.email_verified !== true && profile.email_verified !== "true") {
+            throw new BadRequestException("Google account email is not verified");
         }
 
         return this.loginWithOAuth({
@@ -365,5 +389,12 @@ export class AuthService {
         }
 
         throw error;
+    }
+
+    private safeEquals(left: string, right: string) {
+        const leftBuffer = Buffer.from(left);
+        const rightBuffer = Buffer.from(right);
+
+        return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer);
     }
 }
