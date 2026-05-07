@@ -212,6 +212,14 @@ describe("TechMarket API e2e", () => {
 
         expect(Number(orderResponse.body.discountAmount)).toBeGreaterThan(0);
         expect(orderResponse.body.promoCodeCode).toBe("WELCOME10");
+        expect(orderResponse.body.orderNumber).toMatch(/^TM-\d{4}-\d{6}$/);
+        expect(orderResponse.body.statusHistory).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    toStatus: OrderStatus.NEW,
+                }),
+            ]),
+        );
         expect(Number(orderResponse.body.deliveryPrice)).toBeGreaterThan(0);
         expect(orderResponse.body.deliveryMethodName).toEqual(expect.any(String));
         expect(orderResponse.body.paymentMethodName).toEqual(expect.any(String));
@@ -236,7 +244,7 @@ describe("TechMarket API e2e", () => {
                 expect(
                     body.items.some(
                         (notification: { type: string; message: string }) =>
-                            notification.type === "ORDER_CREATED" && notification.message.includes(orderResponse.body.id),
+                            notification.type === "ORDER_CREATED" && notification.message.includes(orderResponse.body.orderNumber),
                     ),
                 ).toBe(true);
             });
@@ -244,16 +252,26 @@ describe("TechMarket API e2e", () => {
         await request(server)
             .patch(`/api/admin/orders/${orderResponse.body.id}/status`)
             .set(authHeader(admin.accessToken))
-            .send({ status: OrderStatus.PROCESSING })
+            .send({ status: OrderStatus.PROCESSING, adminComment: "E2E admin status note" })
             .expect(200)
             .expect(({ body }) => {
                 expect(body.status).toBe(OrderStatus.PROCESSING);
+                expect(body.adminComment).toBe("E2E admin status note");
+                expect(body.statusHistory).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            fromStatus: OrderStatus.NEW,
+                            toStatus: OrderStatus.PROCESSING,
+                            adminComment: "E2E admin status note",
+                        }),
+                    ]),
+                );
             });
 
         const notificationsResponse = await request(server).get("/api/notifications").set(authHeader(user.accessToken)).expect(200);
         const createdNotification = notificationsResponse.body.items.find(
             (notification: { type: string; message: string }) =>
-                notification.type === "ORDER_STATUS_CHANGED" && notification.message.includes(orderResponse.body.id),
+                notification.type === "ORDER_STATUS_CHANGED" && notification.message.includes(orderResponse.body.orderNumber),
         );
         expect(createdNotification).toBeDefined();
 
@@ -278,6 +296,24 @@ describe("TechMarket API e2e", () => {
             .expect(({ body }) => {
                 expect(body.updated).toBeGreaterThanOrEqual(0);
             });
+
+        await request(server)
+            .patch(`/api/admin/orders/${orderResponse.body.id}/status`)
+            .set(authHeader(admin.accessToken))
+            .send({ status: OrderStatus.CANCELLED, adminComment: "E2E cancellation" })
+            .expect(200)
+            .expect(({ body }) => {
+                expect(body.status).toBe(OrderStatus.CANCELLED);
+            });
+
+        const productAfterCancel = await prisma.product.findUniqueOrThrow({ where: { id: product.id } });
+        expect(productAfterCancel.stock).toBe(stockBefore);
+
+        await request(server)
+            .patch(`/api/admin/orders/${orderResponse.body.id}/status`)
+            .set(authHeader(admin.accessToken))
+            .send({ status: OrderStatus.CONFIRMED })
+            .expect(400);
     });
 
     it("compares products only inside one category", async () => {

@@ -513,6 +513,7 @@ async function main() {
     ];
 
     for (const demoOrder of demoOrders) {
+      const orderIndex = demoOrders.indexOf(demoOrder) + 1;
       const totalPrice = demoOrder.items.reduce((sum, item) => {
         const product = productBySku[item.sku];
         return sum + Number(product.price) * item.quantity;
@@ -520,6 +521,7 @@ async function main() {
 
       await prisma.order.create({
         data: {
+          orderNumber: `TM-2026-${String(orderIndex).padStart(6, "0")}`,
           userId: demoUser.id,
           status: demoOrder.status,
           totalPrice,
@@ -531,6 +533,19 @@ async function main() {
           deliveryMethod: demoOrder.deliveryMethod,
           paymentMethod: demoOrder.paymentMethod,
           comment: demoOrder.comment,
+          statusHistory: {
+            create: [
+              {
+                toStatus: OrderStatus.NEW,
+                adminComment: "Seed: заказ создан для демонстрации",
+              },
+              {
+                fromStatus: OrderStatus.NEW,
+                toStatus: demoOrder.status,
+                adminComment: "Seed: демонстрационное изменение статуса",
+              },
+            ],
+          },
           items: {
             create: demoOrder.items.map((item) => {
               const product = productBySku[item.sku];

@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { NotificationType } from "@prisma/client";
+import { NotificationType, OrderStatus, Prisma } from "@prisma/client";
 import { CheckoutOptionsService } from "../checkout-options/checkout-options.service";
 import { NotificationsService } from "../notifications/notifications.service";
 import { PromoCodesService } from "../promo-codes/promo-codes.service";
@@ -64,8 +64,10 @@ export class OrdersService {
                 await this.promoCodesService.incrementUsage(promo.promoCode.id, tx);
             }
 
+            const orderNumber = await this.generateOrderNumber(tx);
             const createdOrder = await tx.order.create({
                 data: {
+                    orderNumber,
                     userId,
                     totalPrice: finalTotalPrice,
                     discountAmount: promo.discountAmount,
@@ -82,6 +84,12 @@ export class OrdersService {
                     paymentMethod: paymentMethod.code,
                     paymentMethodName: paymentMethod.name,
                     comment: dto.comment,
+                    statusHistory: {
+                        create: {
+                            toStatus: OrderStatus.NEW,
+                            adminComment: "Заказ создан пользователем",
+                        },
+                    },
                 },
             });
 
@@ -120,7 +128,7 @@ export class OrdersService {
 
         const createdOrder = await this.findUserOrder(userId, order.id);
 
-        await this.notifyOrderCreated(user, order.id);
+        await this.notifyOrderCreated(user, order.orderNumber ?? order.id);
 
         return createdOrder;
     }
@@ -167,30 +175,67 @@ export class OrdersService {
     }
 
     async updateStatus(orderId: string, dto: UpdateOrderStatusDto) {
-        await this.ensureOrderExists(orderId);
-
-        const order = await this.prisma.order.update({
+        const existingOrder = await this.prisma.order.findUnique({
             where: { id: orderId },
-            data: { status: dto.status },
-            include: this.adminOrderInclude(),
+            include: {
+                items: true,
+                user: { select: { email: true } },
+            },
         });
 
-        await this.notifyOrderStatusChanged(order.userId, order.user.email, order.id, dto.status);
+        if (!existingOrder) {
+            throw new NotFoundException("Order not found");
+        }
+
+        if (existingOrder.status === OrderStatus.CANCELLED && dto.status !== OrderStatus.CANCELLED) {
+            throw new BadRequestException("Cancelled order cannot be moved to another status");
+        }
+
+        const order = await this.prisma.$transaction(async (tx) => {
+            if (existingOrder.status !== OrderStatus.CANCELLED && dto.status === OrderStatus.CANCELLED) {
+                for (const item of existingOrder.items) {
+                    await tx.product.update({
+                        where: { id: item.productId },
+                        data: { stock: { increment: item.quantity } },
+                    });
+                }
+            }
+
+            await tx.orderStatusHistory.create({
+                data: {
+                    orderId,
+                    fromStatus: existingOrder.status,
+                    toStatus: dto.status,
+                    adminComment: dto.adminComment,
+                },
+            });
+
+            return tx.order.update({
+                where: { id: orderId },
+                data: {
+                    status: dto.status,
+                    adminComment: dto.adminComment,
+                },
+                include: this.adminOrderInclude(),
+            });
+        });
+
+        await this.notifyOrderStatusChanged(order.userId, order.user.email, order.orderNumber ?? order.id, dto.status);
 
         return order;
     }
 
-    private async notifyOrderCreated(user: { id: string; email: string; name: string }, orderId: string) {
+    private async notifyOrderCreated(user: { id: string; email: string; name: string }, orderNumber: string) {
         try {
             await this.notificationsService.createUserNotification({
                 userId: user.id,
                 type: NotificationType.ORDER_CREATED,
-                title: `Заказ ${orderId} создан`,
-                message: `Ваш заказ ${orderId} успешно создан. Статус заказа: NEW.`,
+                title: `Заказ ${orderNumber} создан`,
+                message: `Ваш заказ ${orderNumber} успешно создан. Статус заказа: NEW.`,
                 email: {
                     to: user.email,
-                    subject: `TechMarket: заказ ${orderId} создан`,
-                    body: `Здравствуйте, ${user.name}. Ваш заказ ${orderId} успешно создан и ожидает обработки.`,
+                    subject: `TechMarket: заказ ${orderNumber} создан`,
+                    body: `Здравствуйте, ${user.name}. Ваш заказ ${orderNumber} успешно создан и ожидает обработки.`,
                 },
             });
         } catch (error) {
@@ -198,32 +243,21 @@ export class OrdersService {
         }
     }
 
-    private async notifyOrderStatusChanged(userId: string, userEmail: string, orderId: string, status: string) {
+    private async notifyOrderStatusChanged(userId: string, userEmail: string, orderNumber: string, status: string) {
         try {
             await this.notificationsService.createUserNotification({
                 userId,
                 type: NotificationType.ORDER_STATUS_CHANGED,
-                title: `Статус заказа ${orderId} изменен`,
-                message: `Статус заказа ${orderId} изменен на ${status}.`,
+                title: `Статус заказа ${orderNumber} изменен`,
+                message: `Статус заказа ${orderNumber} изменен на ${status}.`,
                 email: {
                     to: userEmail,
-                    subject: `TechMarket: новый статус заказа ${orderId}`,
-                    body: `Статус вашего заказа ${orderId} изменен на ${status}.`,
+                    subject: `TechMarket: новый статус заказа ${orderNumber}`,
+                    body: `Статус вашего заказа ${orderNumber} изменен на ${status}.`,
                 },
             });
         } catch (error) {
             console.error("Failed to create order status notification", error);
-        }
-    }
-
-    private async ensureOrderExists(orderId: string) {
-        const order = await this.prisma.order.findUnique({
-            where: { id: orderId },
-            select: { id: true },
-        });
-
-        if (!order) {
-            throw new NotFoundException("Order not found");
         }
     }
 
@@ -276,9 +310,27 @@ export class OrdersService {
             .join(", ");
     }
 
+    private async generateOrderNumber(tx: Prisma.TransactionClient) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const yearStart = new Date(Date.UTC(year, 0, 1));
+        const nextYearStart = new Date(Date.UTC(year + 1, 0, 1));
+        const ordersThisYear = await tx.order.count({
+            where: {
+                createdAt: {
+                    gte: yearStart,
+                    lt: nextYearStart,
+                },
+            },
+        });
+
+        return `TM-${year}-${String(ordersThisYear + 1).padStart(6, "0")}`;
+    }
+
     private orderInclude() {
         return {
             promoCode: true,
+            statusHistory: { orderBy: { createdAt: "asc" as const } },
             items: {
                 include: {
                     product: {
@@ -293,6 +345,7 @@ export class OrdersService {
         return {
             user: true,
             promoCode: true,
+            statusHistory: { orderBy: { createdAt: "asc" as const } },
             items: {
                 include: {
                     product: {

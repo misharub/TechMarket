@@ -48,15 +48,15 @@ enum NotificationType {
 }
 
 model User {
-  id              String           @id @default(cuid())
-  email           String           @unique
-  passwordHash    String?
-  name            String
-  phone           String?
-  role            Role             @default(USER)
-  isBlocked       Boolean          @default(false)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String?
+  name         String
+  phone        String?
+  role         Role     @default(USER)
+  isBlocked    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   oauthAccounts   OAuthAccount[]
   refreshSessions RefreshSession[]
@@ -80,7 +80,7 @@ model OAuthAccount {
   email          String?
   createdAt      DateTime      @default(now())
 
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerUserId])
   @@index([userId])
@@ -96,7 +96,7 @@ model RefreshSession {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([expiresAt])
@@ -106,13 +106,13 @@ model RefreshSession {
 // Category хранит дерево каталога: основные категории и подкатегории.
 // Удаление мягкое: запись остается в базе, но скрывается через isActive=false.
 model Category {
-  id            String                 @id @default(cuid())
-  name          String
-  slug          String                 @unique
-  description   String?
-  image         String?
-  sortOrder     Int                    @default(0)
-  isActive      Boolean                @default(true)
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String?
+  image       String?
+  sortOrder   Int     @default(0)
+  isActive    Boolean @default(true)
 
   parentId      String?
   parent        Category?              @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
@@ -120,8 +120,8 @@ model Category {
   specTemplates CategorySpecTemplate[]
   products      Product[]
 
-  createdAt     DateTime               @default(now())
-  updatedAt     DateTime               @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([slug])
   @@index([parentId])
@@ -145,7 +145,7 @@ model CategorySpecTemplate {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
-  category     Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@unique([categoryId, key])
   @@index([categoryId])
@@ -155,16 +155,16 @@ model CategorySpecTemplate {
 
 // Brand вынесен в отдельную таблицу, чтобы фильтрация и администрирование брендов были надежнее.
 model Brand {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
-  slug        String    @unique
+  slug        String   @unique
   description String?
   logo        String?
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  products    Product[]
+  products Product[]
 
   @@index([slug])
   @@index([isActive])
@@ -172,29 +172,29 @@ model Brand {
 
 // Product хранит основную карточку товара. Гибкие характеристики лежат в specs в формате JSON.
 model Product {
-  id          String      @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
-  slug        String      @unique
-  sku         String      @unique
+  slug        String   @unique
+  sku         String   @unique
   description String
-  price       Decimal     @db.Decimal(10, 2)
-  oldPrice    Decimal?    @db.Decimal(10, 2)
-  stock       Int         @default(0)
-  images      String[]    @default([])
+  price       Decimal  @db.Decimal(10, 2)
+  oldPrice    Decimal? @db.Decimal(10, 2)
+  stock       Int      @default(0)
+  images      String[] @default([])
   specs       Json
-  isActive    Boolean     @default(true)
+  isActive    Boolean  @default(true)
 
-  categoryId  String
-  category    Category    @relation(fields: [categoryId], references: [id])
-  brandId     String
-  brand       Brand       @relation(fields: [brandId], references: [id])
-  cartItems   CartItem[]
+  categoryId    String
+  category      Category       @relation(fields: [categoryId], references: [id])
+  brandId       String
+  brand         Brand          @relation(fields: [brandId], references: [id])
+  cartItems     CartItem[]
   wishlistItems WishlistItem[]
-  reviews     Review[]
-  orderItems  OrderItem[]
+  reviews       Review[]
+  orderItems    OrderItem[]
 
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([categoryId])
   @@index([brandId])
@@ -213,8 +213,8 @@ model CartItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
   @@index([userId])
@@ -229,8 +229,8 @@ model WishlistItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
   @@index([userId])
@@ -239,19 +239,19 @@ model WishlistItem {
 
 // Address хранит сохраненные адреса доставки пользователя. Пользователь может управлять только своими адресами.
 model Address {
-  id          String   @id @default(cuid())
-  userId      String
-  label       String?
-  city        String
-  street      String
-  house       String
-  apartment   String?
-  zipCode     String?
-  isDefault   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  userId    String
+  label     String?
+  city      String
+  street    String
+  house     String
+  apartment String?
+  zipCode   String?
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([isDefault])
@@ -268,8 +268,8 @@ model Review {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
   @@index([userId])
@@ -295,7 +295,7 @@ model PromoCode {
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
-  orders        Order[]
+  orders Order[]
 
   @@index([code])
   @@index([isActive])
@@ -304,16 +304,16 @@ model PromoCode {
 }
 
 model DeliveryMethod {
-  id            String    @id @default(cuid())
-  code          String    @unique
+  id            String   @id @default(cuid())
+  code          String   @unique
   name          String
   description   String?
-  price         Decimal   @default(0) @db.Decimal(10, 2)
-  minOrderTotal Decimal?  @db.Decimal(10, 2)
-  isActive      Boolean   @default(true)
-  sortOrder     Int       @default(0)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  price         Decimal  @default(0) @db.Decimal(10, 2)
+  minOrderTotal Decimal? @db.Decimal(10, 2)
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([code])
   @@index([isActive])
@@ -321,14 +321,14 @@ model DeliveryMethod {
 }
 
 model PaymentMethod {
-  id          String    @id @default(cuid())
-  code        String    @unique
+  id          String   @id @default(cuid())
+  code        String   @unique
   name        String
   description String?
-  isActive    Boolean   @default(true)
-  sortOrder   Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([code])
   @@index([isActive])
@@ -336,34 +336,53 @@ model PaymentMethod {
 }
 
 model Order {
-  id              String      @id @default(cuid())
-  userId          String
-  status          OrderStatus @default(NEW)
-  totalPrice      Decimal     @db.Decimal(10, 2)
-  discountAmount  Decimal     @default(0) @db.Decimal(10, 2)
-  promoCodeId     String?
-  promoCodeCode   String?
-  customerName    String
-  customerPhone   String
-  customerEmail   String
-  city            String
-  deliveryAddress String
-  deliveryMethod  String
+  id                 String      @id @default(cuid())
+  orderNumber        String?     @unique
+  userId             String
+  status             OrderStatus @default(NEW)
+  totalPrice         Decimal     @db.Decimal(10, 2)
+  discountAmount     Decimal     @default(0) @db.Decimal(10, 2)
+  promoCodeId        String?
+  promoCodeCode      String?
+  customerName       String
+  customerPhone      String
+  customerEmail      String
+  city               String
+  deliveryAddress    String
+  deliveryMethod     String
   deliveryMethodName String?
-  deliveryPrice   Decimal     @default(0) @db.Decimal(10, 2)
-  paymentMethod   String
-  paymentMethodName String?
-  comment         String?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  deliveryPrice      Decimal     @default(0) @db.Decimal(10, 2)
+  paymentMethod      String
+  paymentMethodName  String?
+  comment            String?
+  adminComment       String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 
-  user            User        @relation(fields: [userId], references: [id], onDelete: Restrict)
-  promoCode       PromoCode?  @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
-  items           OrderItem[]
+  user          User                 @relation(fields: [userId], references: [id], onDelete: Restrict)
+  promoCode     PromoCode?           @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
+  items         OrderItem[]
+  statusHistory OrderStatusHistory[]
 
+  @@index([orderNumber])
   @@index([userId])
   @@index([promoCodeId])
   @@index([status])
+  @@index([createdAt])
+}
+
+model OrderStatusHistory {
+  id           String       @id @default(cuid())
+  orderId      String
+  fromStatus   OrderStatus?
+  toStatus     OrderStatus
+  adminComment String?
+  createdAt    DateTime     @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([toStatus])
   @@index([createdAt])
 }
 
@@ -374,8 +393,8 @@ model OrderItem {
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
 
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 
   @@index([orderId])
   @@index([productId])
@@ -395,7 +414,7 @@ model Notification {
   createdAt        DateTime         @default(now())
   readAt           DateTime?
 
-  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([type])
