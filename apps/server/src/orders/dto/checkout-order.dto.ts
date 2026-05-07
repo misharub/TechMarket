@@ -49,6 +49,12 @@ export class CheckoutOrderDto {
     @MaxLength(50)
     paymentMethod: string;
 
+    @ApiPropertyOptional({ example: "WELCOME10" })
+    @IsOptional()
+    @IsString()
+    @MaxLength(40)
+    promoCode?: string;
+
     @ApiPropertyOptional({ example: "Позвонить за час до доставки" })
     @IsOptional()
     @IsString()

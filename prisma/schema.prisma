@@ -35,6 +35,11 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+
 model User {
   id              String           @id @default(cuid())
   email           String           @unique
@@ -265,11 +270,39 @@ model Review {
   @@index([isActive])
 }
 
+// PromoCode хранит правила скидки. Заказ сохраняет код и сумму скидки, чтобы история не менялась после редактирования промокода.
+model PromoCode {
+  id            String       @id @default(cuid())
+  code          String       @unique
+  description   String?
+  discountType  DiscountType
+  value         Decimal      @db.Decimal(10, 2)
+  maxDiscount   Decimal?     @db.Decimal(10, 2)
+  minOrderTotal Decimal?     @db.Decimal(10, 2)
+  usageLimit    Int?
+  usedCount     Int          @default(0)
+  startsAt      DateTime?
+  endsAt        DateTime?
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  orders        Order[]
+
+  @@index([code])
+  @@index([isActive])
+  @@index([startsAt])
+  @@index([endsAt])
+}
+
 model Order {
   id              String      @id @default(cuid())
   userId          String
   status          OrderStatus @default(NEW)
   totalPrice      Decimal     @db.Decimal(10, 2)
+  discountAmount  Decimal     @default(0) @db.Decimal(10, 2)
+  promoCodeId     String?
+  promoCodeCode   String?
   customerName    String
   customerPhone   String
   customerEmail   String
@@ -282,9 +315,11 @@ model Order {
   updatedAt       DateTime    @updatedAt
 
   user            User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  promoCode       PromoCode?  @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
   items           OrderItem[]
 
   @@index([userId])
+  @@index([promoCodeId])
   @@index([status])
   @@index([createdAt])
 }

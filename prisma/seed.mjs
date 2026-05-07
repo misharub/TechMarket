@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { OrderStatus, PrismaClient, Role, SpecValueType } from "@prisma/client";
+import { DiscountType, OrderStatus, PrismaClient, Role, SpecValueType } from "@prisma/client";
 import bcrypt from "bcrypt";
 
 const adapter = new PrismaPg({
@@ -189,6 +189,30 @@ const products = [
   },
 ];
 
+const promoCodes = [
+  {
+    code: "WELCOME10",
+    description: "Seed demo promo: скидка 10% для демонстрации",
+    discountType: DiscountType.PERCENT,
+    value: 10,
+    maxDiscount: 300,
+    minOrderTotal: 100,
+    usageLimit: 100,
+    startsAt: new Date("2026-01-01T00:00:00.000Z"),
+    endsAt: new Date("2027-12-31T23:59:59.000Z"),
+  },
+  {
+    code: "TECH50",
+    description: "Seed demo promo: фиксированная скидка 50 BYN",
+    discountType: DiscountType.FIXED,
+    value: 50,
+    minOrderTotal: 500,
+    usageLimit: 200,
+    startsAt: new Date("2026-01-01T00:00:00.000Z"),
+    endsAt: new Date("2027-12-31T23:59:59.000Z"),
+  },
+];
+
 async function main() {
   for (const user of users) {
     const passwordHash = await bcrypt.hash(user.password, 12);
@@ -308,6 +332,34 @@ async function main() {
         specs: product.specs,
         categoryId: category.id,
         brandId: brand.id,
+      },
+    });
+  }
+
+  for (const promoCode of promoCodes) {
+    await prisma.promoCode.upsert({
+      where: { code: promoCode.code },
+      update: {
+        description: promoCode.description,
+        discountType: promoCode.discountType,
+        value: promoCode.value,
+        maxDiscount: promoCode.maxDiscount ?? null,
+        minOrderTotal: promoCode.minOrderTotal ?? null,
+        usageLimit: promoCode.usageLimit ?? null,
+        startsAt: promoCode.startsAt,
+        endsAt: promoCode.endsAt,
+        isActive: true,
+      },
+      create: {
+        code: promoCode.code,
+        description: promoCode.description,
+        discountType: promoCode.discountType,
+        value: promoCode.value,
+        maxDiscount: promoCode.maxDiscount ?? null,
+        minOrderTotal: promoCode.minOrderTotal ?? null,
+        usageLimit: promoCode.usageLimit ?? null,
+        startsAt: promoCode.startsAt,
+        endsAt: promoCode.endsAt,
       },
     });
   }

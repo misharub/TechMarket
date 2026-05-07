@@ -1,11 +1,15 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { PromoCodesService } from "../promo-codes/promo-codes.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { CheckoutOrderDto } from "./dto/checkout-order.dto";
 import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
 
 @Injectable()
 export class OrdersService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly promoCodesService: PromoCodesService,
+    ) {}
 
     async create(userId: string, dto: CheckoutOrderDto) {
         const user = await this.prisma.user.findUnique({
@@ -43,13 +47,21 @@ export class OrdersService {
             }
         }
 
-        const totalPrice = this.calculateTotal(cartItems);
+        const subtotal = this.calculateTotal(cartItems);
+        const promo = await this.promoCodesService.validateForSubtotal(dto.promoCode, subtotal);
 
         const order = await this.prisma.$transaction(async (tx) => {
+            if (promo.promoCode) {
+                await this.promoCodesService.incrementUsage(promo.promoCode.id, tx);
+            }
+
             const createdOrder = await tx.order.create({
                 data: {
                     userId,
-                    totalPrice,
+                    totalPrice: promo.totalPrice,
+                    discountAmount: promo.discountAmount,
+                    promoCodeId: promo.promoCode?.id,
+                    promoCodeCode: promo.code,
                     customerName: dto.customerName,
                     customerPhone: dto.customerPhone,
                     customerEmail: dto.customerEmail,
@@ -210,6 +222,7 @@ export class OrdersService {
 
     private orderInclude() {
         return {
+            promoCode: true,
             items: {
                 include: {
                     product: {
@@ -223,6 +236,7 @@ export class OrdersService {
     private adminOrderInclude() {
         return {
             user: true,
+            promoCode: true,
             items: {
                 include: {
                     product: {
