@@ -23,6 +23,9 @@ export function configureTestEnv() {
     process.env.VK_CLIENT_ID = process.env.VK_CLIENT_ID_TEST ?? "";
     process.env.VK_CLIENT_SECRET = process.env.VK_CLIENT_SECRET_TEST ?? "";
     process.env.VK_CALLBACK_URL = process.env.VK_CALLBACK_URL_TEST ?? "http://localhost:5000/api/auth/vk/callback";
+    process.env.AI_PROVIDER = process.env.AI_PROVIDER_TEST ?? "";
+    process.env.GEMINI_API_KEY = process.env.GEMINI_API_KEY_TEST ?? "";
+    process.env.GEMINI_MODEL = process.env.GEMINI_MODEL_TEST ?? "gemini-2.5-flash";
 }
 
 export async function ensureTestDatabaseExists() {

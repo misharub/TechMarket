@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { SpecValueType } from "@prisma/client";
 import type { CategorySpecTemplate, Product } from "@prisma/client";
+import { AiService } from "../ai/ai.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { CompareProductsDto } from "./dto/compare-products.dto";
 
@@ -22,7 +23,10 @@ type CompareRow = {
 export class ProductCompareService {
     private readonly smallerIsBetterKeys = new Set(["weight", "powerConsumption", "noiseLevel"]);
 
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly aiService: AiService,
+    ) {}
 
     // Сравнение stateless: сервер ничего не сохраняет, а каждый раз строит таблицу по переданным productIds.
     async compare(dto: CompareProductsDto) {
@@ -57,6 +61,19 @@ export class ProductCompareService {
         });
 
         const rows = templates.map((template) => this.buildRow(template, orderedProducts));
+        const fallbackSummary = this.buildDemoAiSummary(orderedProducts, rows);
+        const aiSummary = await this.aiService.generateProductComparisonSummary({
+            categoryName: orderedProducts[0].category.name,
+            products: orderedProducts.map((product) => ({
+                id: product.id,
+                title: product.title,
+                brand: product.brand.name,
+                price: Number(product.price),
+                stock: product.stock,
+            })),
+            rows,
+            fallbackSummary,
+        });
 
         return {
             category: {
@@ -65,7 +82,12 @@ export class ProductCompareService {
             },
             products: orderedProducts.map((product) => this.toProductSummary(product)),
             rows,
-            aiSummary: this.buildDemoAiSummary(orderedProducts, rows),
+            aiSummary: aiSummary.text,
+            aiSummaryMeta: {
+                provider: aiSummary.provider,
+                isFallback: aiSummary.isFallback,
+                fallbackReason: aiSummary.isFallback ? aiSummary.fallbackReason : undefined,
+            },
         };
     }
 
