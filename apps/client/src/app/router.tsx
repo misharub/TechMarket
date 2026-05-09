@@ -1,11 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
-import App from "../App";
+import { MainLayout } from "../components/layout/MainLayout";
+import { HomePage } from "../pages/home/HomePage";
 
 export const router = createBrowserRouter([
   {
-    // Главный маршрут приложения.
-    // Пока он показывает App, позже здесь появится MainLayout и вложенные страницы.
+    // MainLayout оборачивает публичные страницы общей шапкой и футером.
     path: "/",
-    element: <App />,
+    element: <MainLayout />,
+    children: [
+      {
+        // Главная страница пока работает на mock-данных; API подключим отдельным этапом.
+        index: true,
+        element: <HomePage />,
+      },
+    ],
   },
 ]);
