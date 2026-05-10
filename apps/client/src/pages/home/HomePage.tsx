@@ -1,4 +1,5 @@
+import "./HomePage.css";
+
 export function HomePage() {
-  // Главная страница временно пустая: сейчас сравниваем и дорабатываем только шапку.
-  return null;
+  return <div className="home_spacer" aria-hidden="true" />;
 }

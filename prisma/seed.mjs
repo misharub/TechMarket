@@ -25,16 +25,397 @@ const users = [
 ];
 
 const categories = [
-  ["Ноутбуки и компьютеры", "laptops-computers", "Ноутбуки, ПК, моноблоки и компьютерные системы"],
-  ["Комплектующие", "components", "Процессоры, видеокарты, память, SSD и другие компоненты"],
-  ["Периферия", "peripherals", "Клавиатуры, мыши, мониторы, гарнитуры и устройства ввода"],
-  ["Телефоны и smart-часы", "phones-smartwatch", "Смартфоны, умные часы и мобильные аксессуары"],
-  ["Бытовая техника", "home-appliances", "Техника для кухни, уборки и ухода за домом"],
-  ["ТВ и аудио", "tv-audio", "Телевизоры, колонки, саундбары и аудиосистемы"],
-  ["Gaming", "gaming", "Игровые устройства, консоли и аксессуары"],
-  ["Умный дом", "smart-home", "Датчики, камеры, лампы и устройства автоматизации"],
-  ["Фото и видео", "photo-video", "Камеры, объективы, видеотехника и аксессуары"],
-  ["Аксессуары", "accessories", "Кабели, зарядные устройства, чехлы и полезные дополнения"],
+  {
+    name: "Ноутбуки и компьютеры",
+    slug: "laptops-computers",
+    description: "Ноутбуки, ПК, моноблоки, планшеты и электронные книги",
+    children: [
+      {
+        name: "Ноутбуки",
+        slug: "notebooks",
+        description: "Ноутбуки для дома, учебы, бизнеса и игр",
+        children: [
+          ["Игровые ноутбуки", "gaming-notebooks"],
+          ["Ноутбуки для бизнеса", "business-notebooks"],
+          ["Ноутбуки для дома", "home-notebooks"],
+          ["Ноутбуки Apple MacBook", "apple-macbook"],
+          ["Ноутбуки с Windows 11", "windows-11-notebooks"],
+          ["Ноутбуки с GeForce RTX", "geforce-rtx-notebooks"],
+          ["Ноутбуки с AMD Ryzen", "amd-ryzen-notebooks"],
+          ["Ноутбуки с Intel Core", "intel-core-notebooks"],
+          ["Хромбуки", "chromebooks"],
+          ["Аксессуары для ноутбуков", "laptop-accessories"],
+        ],
+      },
+      {
+        name: "Компьютеры",
+        slug: "desktop-computers",
+        description: "Готовые компьютеры и компактные рабочие станции",
+        children: [
+          ["Игровые ПК", "gaming-pcs"],
+          ["Компьютеры для офиса", "office-pcs"],
+          ["Моноблоки", "all-in-one-pcs"],
+          ["Мини-ПК", "mini-pcs"],
+        ],
+      },
+      {
+        name: "Серверы и компоненты",
+        slug: "servers-components",
+        children: [
+          ["Серверы", "servers"],
+          ["Серверные диски", "server-drives"],
+          ["Серверная память", "server-memory"],
+          ["Сетевые карты", "network-cards"],
+          ["ИБП для серверов", "server-ups"],
+        ],
+      },
+      {
+        name: "Планшеты",
+        slug: "tablets",
+        children: [
+          ["Apple iPad", "apple-ipad"],
+          ["Планшеты Samsung", "samsung-tablets"],
+          ["Планшеты Lenovo", "lenovo-tablets"],
+          ["Планшеты Xiaomi", "xiaomi-tablets"],
+          ["Графические планшеты", "graphics-tablets"],
+          ["Аксессуары для планшетов", "tablet-computer-accessories"],
+        ],
+      },
+      {
+        name: "Электронные книги",
+        slug: "e-readers",
+        children: [
+          ["Электронные книги Kindle", "kindle-e-readers"],
+          ["Электронные книги PocketBook", "pocketbook-e-readers"],
+          ["Электронные книги с подсветкой", "backlit-e-readers"],
+          ["Чехлы для электронных книг", "e-reader-cases"],
+          ["Аксессуары для электронных книг", "e-reader-accessories"],
+        ],
+      },
+    ],
+  },
+  {
+    name: "Аксессуары",
+    slug: "accessories",
+    description: "Кабели, зарядные устройства, чехлы и полезные дополнения",
+    children: [
+      {
+        name: "Аксессуары для ноутбуков",
+        slug: "notebook-accessories",
+        children: [
+          ["Внешние диски", "external-drives"],
+          ["Сумки для ноутбуков", "laptop-bags"],
+          ["Рюкзаки для ноутбуков", "laptop-backpacks"],
+          ["Охлаждающие подставки", "laptop-cooling-stands"],
+          ["Док-станции", "docking-stations"],
+        ],
+      },
+      {
+        name: "Аксессуары для планшетов",
+        slug: "tablet-accessories",
+        children: [
+          ["Кабели USB", "usb-cables"],
+          ["Защитные стекла", "tablet-screen-protectors"],
+          ["Клавиатуры для планшетов", "tablet-keyboards"],
+          ["Чехлы для планшетов", "tablet-cases"],
+          ["Стилусы", "styluses"],
+        ],
+      },
+      {
+        name: "Аксессуары для телефонов и часов",
+        slug: "phone-watch-accessories",
+        children: [
+          ["Наушники", "accessory-phone-headphones"],
+          ["Power Bank", "accessory-powerbanks"],
+          ["Чехлы для телефонов", "accessory-phone-cases"],
+          ["Защита экрана", "accessory-phone-screen-protectors"],
+          ["Ремешки для часов", "accessory-watch-straps"],
+        ],
+      },
+      {
+        name: "Кабели и питание",
+        slug: "cables-power",
+        children: [
+          ["Кабели USB-C", "usb-c-cables"],
+          ["HDMI кабели", "accessory-hdmi-cables"],
+          ["Сетевые фильтры", "power-strips"],
+          ["Зарядные устройства", "chargers"],
+          ["Адаптеры и переходники", "adapters"],
+        ],
+      },
+      {
+        name: "Расходные материалы",
+        slug: "consumables",
+        children: [
+          ["Картриджи", "printer-cartridges"],
+          ["Тонеры", "printer-toners"],
+          ["Бумага для печати", "printer-paper"],
+          ["Чистящие средства", "cleaning-care"],
+        ],
+      },
+    ],
+  },
+  {
+    name: "Телефоны и умные часы",
+    slug: "phones-smartwatch",
+    description: "Смартфоны, умные часы и мобильные аксессуары",
+    children: [
+      {
+        name: "Телефоны и смартфоны",
+        slug: "smartphones",
+        children: [
+          ["Apple iPhone", "apple-iphone"],
+          ["Samsung Galaxy", "samsung-galaxy"],
+          ["Смартфоны Xiaomi", "xiaomi-smartphones"],
+          ["Смартфоны 5G", "5g-smartphones"],
+          ["Телефоны для пожилых", "senior-phones"],
+        ],
+      },
+      {
+        name: "Смарт-часы и браслеты",
+        slug: "smartwatches",
+        children: [
+          ["Спортивные часы", "sport-watches"],
+          ["Фитнес-браслеты", "fitness-bands"],
+          ["Ремешки для часов", "smartwatch-straps"],
+          ["Защита smartwatch", "smartwatch-protection"],
+          ["Аксессуары для часов", "watch-accessories"],
+        ],
+      },
+      {
+        name: "Аксессуары для телефонов и часов",
+        slug: "phone-accessories",
+        children: [
+          ["Наушники для телефона", "phone-headphones"],
+          ["Power Bank", "powerbanks"],
+          ["Чехлы для телефонов", "phone-cases"],
+          ["Защита экрана", "phone-screen-protectors"],
+          ["Держатели для телефона", "phone-holders"],
+        ],
+      },
+      ["Стационарные телефоны", "landline-phones"],
+    ],
+  },
+  {
+    name: "Бытовая техника",
+    slug: "home-appliances",
+    description: "Техника для кухни, уборки и ухода за домом",
+    children: [
+      {
+        name: "Техника для кухни",
+        slug: "kitchen-appliances",
+        children: [
+          ["Холодильники", "refrigerators"],
+          ["Посудомоечные машины", "dishwashers"],
+          ["Микроволновые печи", "microwaves"],
+          ["Блендеры", "blenders"],
+          ["Электрочайники", "electric-kettles"],
+          ["Аэрогрили и фритюрницы", "air-fryers"],
+        ],
+      },
+      {
+        name: "Техника для дома",
+        slug: "home-care-appliances",
+        children: [
+          ["Стиральные машины", "washing-machines"],
+          ["Сушильные машины", "dryers"],
+          ["Пылесосы", "vacuum-cleaners"],
+          ["Роботы-пылесосы", "robot-vacuums"],
+          ["Утюги", "irons"],
+        ],
+      },
+      {
+        name: "Уход и гигиена",
+        slug: "personal-care",
+        children: [
+          ["Фены", "hair-dryers"],
+          ["Электробритвы", "electric-shavers"],
+          ["Триммеры", "trimmers"],
+          ["Электрические зубные щетки", "electric-toothbrushes"],
+          ["Весы", "bathroom-scales"],
+        ],
+      },
+      {
+        name: "Кофе",
+        slug: "coffee-equipment",
+        children: [
+          ["Кофемашины", "coffee-machines"],
+          ["Капсульные кофеварки", "capsule-coffee-machines"],
+          ["Кофемолки", "coffee-grinders"],
+          ["Вспениватели молока", "milk-frothers"],
+        ],
+      },
+      {
+        name: "Аксессуары для бытовой техники",
+        slug: "appliance-accessories",
+        children: [
+          ["Фильтры для воды", "water-filters"],
+          ["Аксессуары для пылесосов", "vacuum-accessories"],
+          ["Средства ухода", "appliance-care"],
+          ["Запчасти и расходники", "appliance-consumables"],
+        ],
+      },
+    ],
+  },
+  {
+    name: "Телевизоры",
+    slug: "tv-audio",
+    description: "Телевизоры, Smart TV, саундбары и аксессуары",
+    children: [
+      {
+        name: "Телевизоры",
+        slug: "tvs",
+        children: [
+          ["Недорогие телевизоры", "budget-tvs"],
+          ["Телевизоры 4K Ultra HD", "4k-tvs"],
+          ["OLED телевизоры", "oled-tvs"],
+          ["QLED телевизоры", "qled-tvs"],
+          ["Телевизоры Smart TV", "smart-tv"],
+        ],
+      },
+      {
+        name: "Проекторы и экраны",
+        slug: "projectors-screens",
+        children: [
+          ["Проекторы", "projectors"],
+          ["Экраны для проекторов", "projector-screens"],
+          ["Крепления для проекторов", "projector-mounts"],
+          ["Аксессуары для проекторов", "projector-accessories"],
+        ],
+      },
+      {
+        name: "Аудио",
+        slug: "audio",
+        children: [
+          ["Саундбары", "soundbars"],
+          ["Колонки", "speakers"],
+          ["Микрофоны", "microphones"],
+          ["Домашние кинотеатры", "home-cinema"],
+        ],
+      },
+      {
+        name: "Аксессуары RTV",
+        slug: "rtv-accessories",
+        children: [
+          ["HDMI кабели", "hdmi-cables"],
+          ["Пульты для ТВ", "tv-remotes"],
+          ["Крепления для ТВ", "tv-mounts"],
+          ["Приставки Smart TV", "smart-tv-boxes"],
+        ],
+      },
+    ],
+  },
+  {
+    name: "Умный дом",
+    slug: "smart-home",
+    description: "Камеры, датчики, освещение и устройства автоматизации",
+    children: [
+      {
+        name: "Умный дом",
+        slug: "intelligent-home",
+        children: [
+          ["Камеры видеонаблюдения", "security-cameras"],
+          ["Умное освещение", "smart-lighting"],
+          ["Видеодомофоны", "video-doorbells"],
+          ["Голосовые ассистенты", "voice-assistants"],
+          ["Датчики", "sensors"],
+        ],
+      },
+      {
+        name: "Умный сад",
+        slug: "smart-garden",
+        children: [
+          ["Роботы-газонокосилки", "robot-lawn-mowers"],
+          ["Контроллеры полива", "watering-controllers"],
+          ["Приводы для ворот", "gate-openers"],
+          ["Уличные IP-камеры", "outdoor-ip-cameras"],
+          ["Умные садовые светильники", "smart-garden-lights"],
+        ],
+      },
+      {
+        name: "Smart RTV и AGD",
+        slug: "smart-rtv-agd",
+        children: [
+          ["Роботы-пылесосы", "smart-robot-vacuums"],
+          ["Приставки Smart TV", "smart-home-tv-boxes"],
+          ["Умные весы", "smart-scales"],
+          ["Умные устройства для питомцев", "smart-pet-gadgets"],
+        ],
+      },
+    ],
+  },
+  {
+    name: "Фото и Видео",
+    slug: "photo-video",
+    description: "Камеры, объективы, экшн-камеры и аксессуары",
+    children: [
+      {
+        name: "Фотоаппараты",
+        slug: "cameras",
+        children: [
+          ["Компактные камеры", "compact-cameras"],
+          ["Беззеркальные камеры", "mirrorless-cameras"],
+          ["Зеркальные камеры", "dslr-cameras"],
+          ["Моментальные камеры", "instant-cameras"],
+        ],
+      },
+      {
+        name: "Камеры",
+        slug: "video-cameras",
+        children: [
+          ["Видеокамеры", "camcorders"],
+          ["Экшн-камеры", "action-cameras"],
+          ["Автомобильные камеры", "dash-cams"],
+          ["Камеры 360 градусов", "360-cameras"],
+          ["Камеры видеонаблюдения", "photo-security-cameras"],
+        ],
+      },
+      {
+        name: "Дроны",
+        slug: "drones",
+        children: [
+          ["Дроны с камерой", "camera-drones"],
+          ["Дроны DJI", "dji-drones"],
+          ["Дроны с GPS", "gps-drones"],
+          ["Аксессуары для дронов", "drone-accessories"],
+        ],
+      },
+      {
+        name: "Аксессуары",
+        slug: "photo-accessories",
+        children: [
+          ["Объективы", "lenses"],
+          ["Карты памяти", "memory-cards"],
+          ["Штативы", "tripods"],
+          ["Сумки и чехлы", "camera-bags"],
+          ["Фильтры", "photo-filters"],
+          ["Аккумуляторы и зарядки", "camera-batteries-chargers"],
+        ],
+      },
+    ],
+  },
+];
+
+const legacyCategorySlugs = [
+  "components",
+  "peripherals",
+  "gaming",
+  "pc-hardware",
+  "office",
+  "rtv",
+  "computer-accessories",
+  "cables-adapters",
+  "bags-cases",
+  "stands-holders",
+  "gps-trackers",
+  "headphones",
+  "large-appliances",
+  "cleaning-appliances",
+  "climate",
+  "beauty-health",
+  "tv-accessories",
+  "smart-sockets",
+  "routers-network",
 ];
 
 const brands = [
@@ -258,6 +639,49 @@ const paymentMethods = [
   },
 ];
 
+function normalizeCategory(category) {
+  if (Array.isArray(category)) {
+    const [name, slug, description] = category;
+
+    return {
+      name,
+      slug,
+      description: description ?? `${name} в каталоге TechMarket`,
+      children: [],
+    };
+  }
+
+  return {
+    ...category,
+    children: category.children ?? [],
+  };
+}
+
+async function upsertCategoryTree(categoryNodes, parentId = null) {
+  for (const [index, categoryNode] of categoryNodes.entries()) {
+    const categoryData = normalizeCategory(categoryNode);
+    const category = await prisma.category.upsert({
+      where: { slug: categoryData.slug },
+      update: {
+        name: categoryData.name,
+        description: categoryData.description,
+        parentId,
+        sortOrder: index + 1,
+        isActive: true,
+      },
+      create: {
+        name: categoryData.name,
+        slug: categoryData.slug,
+        description: categoryData.description,
+        parentId,
+        sortOrder: index + 1,
+      },
+    });
+
+    await upsertCategoryTree(categoryData.children, category.id);
+  }
+}
+
 async function main() {
   for (const user of users) {
     const passwordHash = await bcrypt.hash(user.password, 12);
@@ -279,23 +703,15 @@ async function main() {
     });
   }
 
-  for (const [index, [name, slug, description]] of categories.entries()) {
-    await prisma.category.upsert({
-      where: { slug },
-      update: {
-        name,
-        description,
-        sortOrder: index + 1,
-        isActive: true,
-      },
-      create: {
-        name,
-        slug,
-        description,
-        sortOrder: index + 1,
-      },
-    });
-  }
+  await upsertCategoryTree(categories);
+
+  await prisma.category.updateMany({
+    where: { slug: { in: legacyCategorySlugs } },
+    data: {
+      parentId: null,
+      isActive: false,
+    },
+  });
 
   for (const [name, slug, description] of brands) {
     await prisma.brand.upsert({

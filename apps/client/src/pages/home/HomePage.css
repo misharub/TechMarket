@@ -1,0 +1,10 @@
+.home_spacer {
+  min-height: 420px;
+  background: #ffffff;
+}
+
+@media (max-width: 640px) {
+  .home_spacer {
+    min-height: 360px;
+  }
+}

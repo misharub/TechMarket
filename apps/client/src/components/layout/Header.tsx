@@ -8,7 +8,9 @@
   User,
 } from "lucide-react";
 import type { ReactNode } from "react";
+import { useState } from "react";
 import techMarketMark from "../../assets/techmarket-mark.svg";
+import { CatalogNavigation } from "./CatalogNavigation";
 import "./Header.css";
 
 type HeaderAction = {
@@ -84,10 +86,16 @@ function HeaderActions() {
   );
 }
 
-function MobileCatalogButton() {
+function MobileCatalogButton({ mobileOpen, onClick }: { mobileOpen: boolean; onClick: () => void }) {
   return (
     <div className="header_mobile-catalog">
-      <button className="header_mobile-catalog-button" type="button" aria-label="Открыть меню категорий">
+      <button
+        aria-expanded={mobileOpen}
+        className="header_mobile-catalog-button"
+        type="button"
+        aria-label="Открыть меню категорий"
+        onClick={onClick}
+      >
         <Menu className="header_mobile-catalog-icon" />
       </button>
     </div>
@@ -103,7 +111,7 @@ function SearchComponent() {
           name="q"
           type="search"
           enterKeyHint="search"
-          placeholder="Поиск по сайту"
+          placeholder="Поиск по каталогу"
           autoComplete="off"
           maxLength={100}
           aria-label="Поиск"
@@ -118,6 +126,8 @@ function SearchComponent() {
 }
 
 export function Header() {
+  const [mobileCatalogOpen, setMobileCatalogOpen] = useState(false);
+
   return (
     <header data-name="appHeader" className="header">
       <div className="header_bar">
@@ -127,10 +137,15 @@ export function Header() {
 
           <div className="header_mobile-break" />
 
-          <MobileCatalogButton />
+          <MobileCatalogButton
+            mobileOpen={mobileCatalogOpen}
+            onClick={() => setMobileCatalogOpen((isOpen) => !isOpen)}
+          />
           <SearchComponent />
         </div>
       </div>
+
+      <CatalogNavigation mobileOpen={mobileCatalogOpen} onMobileClose={() => setMobileCatalogOpen(false)} />
     </header>
   );
 }
