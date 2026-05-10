@@ -120,7 +120,7 @@
   justify-content: center;
   color: #020617;
   transition: color 0.2s;
-  margin-top: 12px;
+   
 }
 
 .header_mobile-catalog-button:hover {
@@ -223,6 +223,10 @@
   .header_action--small-hidden {
     display: none;
   }
+
+  .header_mobile-catalog-button{
+    margin-top: 12px;
+  }
 }
 
 @media (min-width: 640px) {
@@ -240,6 +244,8 @@
     padding-right: 8px;
     padding-left: 8px;
   }
+  
+  
 }
 
 @media (min-width: 1024px) {
@@ -301,8 +307,13 @@
   }
 }
 
-@media (max-width: 389.98px) {
+@media (max-width: 400px) {
   .header_logo-text {
     font-size: 20px;
   }
+
+  .header_mobile-catalog-button{
+    margin-top: 12px;
+  }
+
 }
