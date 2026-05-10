@@ -15,7 +15,7 @@ type HeaderAction = {
   label: string;
   href: string;
   icon: ReactNode;
-  hideOnTablet?: boolean;
+  hideOnSmall?: boolean;
 };
 
 const iconClassName = "header_action-svg";
@@ -25,13 +25,13 @@ const headerActions: HeaderAction[] = [
     label: "Контакты",
     href: "/help",
     icon: <Phone className={iconClassName} />,
-    hideOnTablet: true,
+    hideOnSmall: true,
   },
   {
     label: "Найти салон",
     href: "/stores",
     icon: <MapPin className={iconClassName} />,
-    hideOnTablet: true,
+    hideOnSmall: true,
   },
   {
     label: "Сравнение",
@@ -65,7 +65,7 @@ function HeaderActionButton({ action }: { action: HeaderAction }) {
   return (
     <a
       href={action.href}
-      className={`header_action${action.hideOnTablet ? " header_action--tablet-hidden" : ""}`}
+      className={`header_action${action.hideOnSmall ? " header_action--small-hidden" : ""}`}
       aria-label={action.label}
     >
       <span className="header_action-icon">{action.icon}</span>
