@@ -20,6 +20,11 @@ export class FindProductsDto {
     @IsString()
     categoryId?: string;
 
+    @ApiPropertyOptional({ example: "laptops-computers" })
+    @IsOptional()
+    @IsString()
+    categorySlug?: string;
+
     @ApiPropertyOptional({ example: "brand-id" })
     @IsOptional()
     @IsString()

@@ -14,7 +14,7 @@ export class ProductsService {
         const page = query.page ?? 1;
         const limit = query.limit ?? 12;
         const skip = (page - 1) * limit;
-        const where = this.buildWhere(query);
+        const where = await this.buildWhere(query);
 
         const [items, total] = await this.prisma.$transaction([
             this.prisma.product.findMany({
@@ -127,10 +127,16 @@ export class ProductsService {
         });
     }
 
-    private buildWhere(query: FindProductsDto): Prisma.ProductWhereInput {
+    private async buildWhere(query: FindProductsDto): Promise<Prisma.ProductWhereInput> {
+        const categoryIds = query.categoryId
+            ? [query.categoryId]
+            : query.categorySlug
+              ? await this.getCategoryAndDescendantIds(query.categorySlug, query.includeInactive)
+              : undefined;
+
         return {
             ...(query.includeInactive ? {} : { isActive: true }),
-            ...(query.categoryId ? { categoryId: query.categoryId } : {}),
+            ...(categoryIds ? { categoryId: { in: categoryIds } } : {}),
             ...(query.brandId ? { brandId: query.brandId } : {}),
             ...(query.inStock ? { stock: { gt: 0 } } : {}),
             ...(query.priceFrom !== undefined || query.priceTo !== undefined
@@ -152,6 +158,34 @@ export class ProductsService {
                   }
                 : {}),
         };
+    }
+
+    private async getCategoryAndDescendantIds(slug: string, includeInactive: boolean | undefined) {
+        const categories = await this.prisma.category.findMany({
+            where: includeInactive ? {} : { isActive: true },
+            select: { id: true, parentId: true, slug: true },
+        });
+        const root = categories.find((category) => category.slug === slug);
+
+        if (!root) {
+            return [];
+        }
+
+        const ids = new Set<string>([root.id]);
+        let changed = true;
+
+        while (changed) {
+            changed = false;
+
+            for (const category of categories) {
+                if (category.parentId && ids.has(category.parentId) && !ids.has(category.id)) {
+                    ids.add(category.id);
+                    changed = true;
+                }
+            }
+        }
+
+        return [...ids];
     }
 
     private buildOrderBy(sort: ProductSort | undefined): Prisma.ProductOrderByWithRelationInput[] {

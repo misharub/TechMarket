@@ -8,7 +8,7 @@
   User,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import techMarketMark from "../../assets/techmarket-mark.svg";
 import { CatalogNavigation } from "./CatalogNavigation";
 import "./Header.css";
@@ -25,7 +25,7 @@ const iconClassName = "header_action-svg";
 const headerActions: HeaderAction[] = [
   {
     label: "Контакты",
-    href: "/help",
+    href: "/contacts",
     icon: <Phone className={iconClassName} />,
     hideOnSmall: true,
   },
@@ -86,9 +86,17 @@ function HeaderActions() {
   );
 }
 
-function MobileCatalogButton({ mobileOpen, onClick }: { mobileOpen: boolean; onClick: () => void }) {
+function MobileCatalogButton({
+  mobileOpen,
+  onClick,
+  onMouseEnter,
+}: {
+  mobileOpen: boolean;
+  onClick: () => void;
+  onMouseEnter: () => void;
+}) {
   return (
-    <div className="header_mobile-catalog">
+    <div className="header_mobile-catalog" onMouseEnter={onMouseEnter}>
       <button
         aria-expanded={mobileOpen}
         className="header_mobile-catalog-button"
@@ -127,9 +135,53 @@ function SearchComponent() {
 
 export function Header() {
   const [mobileCatalogOpen, setMobileCatalogOpen] = useState(false);
+  const [compactCatalogMode, setCompactCatalogMode] = useState(false);
+  const [desktopCatalogMode, setDesktopCatalogMode] = useState(false);
+  const hoverCatalogMode = compactCatalogMode && desktopCatalogMode;
+
+  useEffect(() => {
+    const updateCompactMode = () => {
+      setCompactCatalogMode((isCompact) => {
+        if (isCompact) {
+          return window.scrollY > 36;
+        }
+
+        return window.scrollY > 132;
+      });
+    };
+
+    updateCompactMode();
+    window.addEventListener("scroll", updateCompactMode, { passive: true });
+
+    return () => window.removeEventListener("scroll", updateCompactMode);
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 1280px)");
+    const updateDesktopMode = () => setDesktopCatalogMode(mediaQuery.matches);
+
+    updateDesktopMode();
+    mediaQuery.addEventListener("change", updateDesktopMode);
+
+    return () => mediaQuery.removeEventListener("change", updateDesktopMode);
+  }, []);
+
+  useEffect(() => {
+    if (!compactCatalogMode) {
+      setMobileCatalogOpen(false);
+    }
+  }, [compactCatalogMode]);
 
   return (
-    <header data-name="appHeader" className="header">
+    <header
+      data-name="appHeader"
+      className={`header${compactCatalogMode ? " header--compact" : ""}`}
+      onMouseLeave={() => {
+        if (hoverCatalogMode) {
+          setMobileCatalogOpen(false);
+        }
+      }}
+    >
       <div className="header_bar">
         <div className="header_inner">
           <TechMarketLogo />
@@ -139,13 +191,29 @@ export function Header() {
 
           <MobileCatalogButton
             mobileOpen={mobileCatalogOpen}
-            onClick={() => setMobileCatalogOpen((isOpen) => !isOpen)}
+            onClick={() => {
+              if (hoverCatalogMode) {
+                setMobileCatalogOpen(true);
+                return;
+              }
+
+              setMobileCatalogOpen((isOpen) => !isOpen);
+            }}
+            onMouseEnter={() => {
+              if (hoverCatalogMode) {
+                setMobileCatalogOpen(true);
+              }
+            }}
           />
           <SearchComponent />
         </div>
       </div>
 
-      <CatalogNavigation mobileOpen={mobileCatalogOpen} onMobileClose={() => setMobileCatalogOpen(false)} />
+      <CatalogNavigation
+        compactMode={compactCatalogMode}
+        mobileOpen={mobileCatalogOpen}
+        onMobileClose={() => setMobileCatalogOpen(false)}
+      />
     </header>
   );
 }

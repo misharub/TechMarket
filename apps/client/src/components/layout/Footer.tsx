@@ -28,8 +28,7 @@ const companyLinks: FooterLink[] = [
 
 const customerLinks: FooterLink[] = [
   { label: "Как оформить заказ", href: "/help/order" },
-  { label: "Оплата", href: "/help/payment" },
-  { label: "Доставка", href: "/help/delivery" },
+  { label: "Оплата и Доставка", href: "/help/payment" },
   { label: "Гарантия и возврат", href: "/help/warranty" },
 ];
 

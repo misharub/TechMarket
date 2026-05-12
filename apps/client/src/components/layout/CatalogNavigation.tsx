@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getCategoryTree, type CategoryNode } from "../../lib/categories-api";
 import "./CatalogNavigation.css";
 
 type CatalogNavigationProps = {
+  compactMode: boolean;
   mobileOpen: boolean;
   onMobileClose: () => void;
 };
@@ -75,12 +76,16 @@ function MobileCatalog({
   mobileOpen: boolean;
   onMobileClose: () => void;
 }) {
-  if (!mobileOpen) {
-    return null;
-  }
+  const [openCategorySlug, setOpenCategorySlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!mobileOpen) {
+      setOpenCategorySlug(null);
+    }
+  }, [mobileOpen]);
 
   return (
-    <div className="catalog_mobile">
+    <div className={`catalog_mobile${mobileOpen ? " catalog_mobile--open" : ""}`} aria-hidden={!mobileOpen}>
       <div className="catalog_mobile-header">
         <span className="catalog_mobile-title">Каталог</span>
         <button className="catalog_mobile-close" type="button" aria-label="Закрыть каталог" onClick={onMobileClose}>
@@ -89,26 +94,37 @@ function MobileCatalog({
       </div>
 
       <div className="catalog_mobile-list">
-        {categories.map((category) => (
-          <details className="catalog_mobile-group" key={category.slug}>
-            <summary className="catalog_mobile-summary">
-              <span>{category.name}</span>
-              <ChevronRight className="catalog_mobile-summary-icon" />
-            </summary>
-            <div className="catalog_mobile-children">
-              <CategoryLink category={category} className="catalog_mobile-link catalog_mobile-link--root" />
-              {category.children.map((child) => (
-                <CategoryLink category={child} className="catalog_mobile-link" key={child.slug} />
-              ))}
-            </div>
-          </details>
-        ))}
+        {categories.map((category) => {
+          const isOpen = openCategorySlug === category.slug;
+
+          return (
+            <details className="catalog_mobile-group" key={category.slug} open={isOpen}>
+              <summary
+                className="catalog_mobile-summary"
+                aria-expanded={isOpen}
+                onClick={(event) => {
+                  event.preventDefault();
+                  setOpenCategorySlug((currentSlug) => (currentSlug === category.slug ? null : category.slug));
+                }}
+              >
+                <span>{category.name}</span>
+                <ChevronRight className="catalog_mobile-summary-icon" />
+              </summary>
+              <div className="catalog_mobile-children">
+                <CategoryLink category={category} className="catalog_mobile-link catalog_mobile-link--root" />
+                {category.children.map((child) => (
+                  <CategoryLink category={child} className="catalog_mobile-link" key={child.slug} />
+                ))}
+              </div>
+            </details>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-export function CatalogNavigation({ mobileOpen, onMobileClose }: CatalogNavigationProps) {
+export function CatalogNavigation({ compactMode, mobileOpen, onMobileClose }: CatalogNavigationProps) {
   const { data: categories = [], isError, isLoading } = useQuery({
     queryKey: ["categories", "tree"],
     queryFn: getCategoryTree,
@@ -142,7 +158,9 @@ export function CatalogNavigation({ mobileOpen, onMobileClose }: CatalogNavigati
 
   return (
     <nav
-      className={`catalog${menuOpen ? " catalog--open" : ""}`}
+      className={`catalog${menuOpen ? " catalog--open" : ""}${compactMode ? " catalog--compact" : ""}${
+        mobileOpen ? " catalog--mobile-open" : ""
+      }`}
       aria-label="Каталог товаров"
       onMouseLeave={() => {
         setActiveRootSlug(null);

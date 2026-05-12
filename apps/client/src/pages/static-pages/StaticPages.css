@@ -1,0 +1,29 @@
+.service-page {
+  min-height: 420px;
+  background: #f4f7fb;
+}
+
+.service-page_inner {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 56px 0 88px;
+}
+
+.service-page h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+@media (max-width: 640px) {
+  .service-page {
+    min-height: 320px;
+  }
+
+  .service-page_inner {
+    width: min(100% - 20px, 1180px);
+    padding: 36px 0 64px;
+  }
+}

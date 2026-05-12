@@ -1,14 +1,15 @@
 import { Outlet } from "react-router-dom";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
+import "./MainLayout.css";
 
 export function MainLayout() {
   return (
-    <div className="min-h-screen bg-white text-slate-950">
+    <div className="app-shell">
       <Header />
-      <main>
+      <div className="app-shell_main">
         <Outlet />
-      </main>
+      </div>
       <Footer />
     </div>
   );
