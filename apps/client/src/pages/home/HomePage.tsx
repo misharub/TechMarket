@@ -25,13 +25,13 @@ function takeItems(response: ProductListResponse | undefined, limit: number) {
 
 function ProductSkeletons() {
   return (
-    <div className="home_products-grid" aria-hidden="true">
+    <div className="home_products_grid" aria-hidden="true">
       {Array.from({ length: 4 }).map((_, index) => (
-        <div className="home_product-skeleton" key={index}>
-          <div className="home_skeleton-media" />
-          <div className="home_skeleton-line home_skeleton-line--wide" />
-          <div className="home_skeleton-line" />
-          <div className="home_skeleton-line home_skeleton-line--short" />
+        <div className="home_product_skeleton" key={index}>
+          <div className="home_skeleton_media" />
+          <div className="home_skeleton_line home_skeleton_line__wide" />
+          <div className="home_skeleton_line" />
+          <div className="home_skeleton_line home_skeleton_line__short" />
         </div>
       ))}
     </div>
@@ -40,9 +40,9 @@ function ProductSkeletons() {
 
 function CategorySkeletons() {
   return (
-    <div className="home_categories-grid" aria-hidden="true">
+    <div className="home_categories_grid" aria-hidden="true">
       {Array.from({ length: 8 }).map((_, index) => (
-        <div className="home_category-skeleton" key={index} />
+        <div className="home_category_skeleton" key={index} />
       ))}
     </div>
   );
@@ -61,25 +61,25 @@ function ProductSection({
   isLoading: boolean;
   isError: boolean;
 }) {
-  const headingId = `home-product-section-${title.toLowerCase().replace(/\s+/g, "-")}`;
+  const headingId = `home_product_section_${title.toLowerCase().replace(/\s+/g, "_")}`;
 
   return (
     <section className="home_section" aria-labelledby={headingId}>
-      <div className="home_section-heading">
+      <div className="home_section_heading">
         <div>
           <h2 id={headingId}>{title}</h2>
           <p>{subtitle}</p>
         </div>
-        <a className="home_section-link" href="/catalog">
+        <a className="home_section_link" href="/catalog">
           Все товары
-          <ArrowRight className="home_section-link-icon" />
+          <ArrowRight className="home_section_link_icon" />
         </a>
       </div>
 
       {isLoading ? <ProductSkeletons /> : null}
 
       {!isLoading && isError ? (
-        <div className="home_state home_state--error" role="status">
+        <div className="home_state home_state__error" role="status">
           Не удалось загрузить товары. Проверьте, что backend запущен.
         </div>
       ) : null}
@@ -91,7 +91,7 @@ function ProductSection({
       ) : null}
 
       {!isLoading && !isError && products.length > 0 ? (
-        <div className="home_products-grid">
+        <div className="home_products_grid">
           {products.map((product) => (
             <ProductCard product={product} key={product.id} />
           ))}
@@ -111,10 +111,10 @@ function QuickCategories({
   isError: boolean;
 }) {
   return (
-    <section className="home_categories" aria-labelledby="home-categories-heading">
-      <div className="home_section-heading">
+    <section className="home_categories" aria-labelledby="home_categories_heading">
+      <div className="home_section_heading">
         <div>
-          <h2 id="home-categories-heading">Популярные разделы</h2>
+          <h2 id="home_categories_heading">Популярные разделы</h2>
           <p>Быстрый переход к основным категориям каталога.</p>
         </div>
       </div>
@@ -122,18 +122,18 @@ function QuickCategories({
       {isLoading ? <CategorySkeletons /> : null}
 
       {!isLoading && isError ? (
-        <div className="home_state home_state--error" role="status">
+        <div className="home_state home_state__error" role="status">
           Категории временно недоступны.
         </div>
       ) : null}
 
       {!isLoading && !isError ? (
-        <div className="home_categories-grid">
+        <div className="home_categories_grid">
           {categories.slice(0, 8).map((category) => (
-            <a className="home_category-card" href={categoryHref(category)} key={category.id}>
-              <span className="home_category-name">{category.name}</span>
-              <span className="home_category-count">{category.children.length} подразделов</span>
-              <ArrowRight className="home_category-icon" />
+            <a className="home_category_card" href={categoryHref(category)} key={category.id}>
+              <span className="home_category_name">{category.name}</span>
+              <span className="home_category_count">{category.children.length} подразделов</span>
+              <ArrowRight className="home_category_icon" />
             </a>
           ))}
         </div>
@@ -144,9 +144,9 @@ function QuickCategories({
 
 function SmartRail({ categories, product }: { categories: CategoryNode[]; product: Product | undefined }) {
   return (
-    <div className="home_smart-rail" aria-label="Быстрые предложения">
-      <a className="home_smart-card home_smart-card--deal" href={product ? productHref(product) : "/catalog"}>
-        <span className="home_smart-icon">
+    <div className="home_smart_rail" aria-label="Быстрые предложения">
+      <a className="home_smart_card home_smart_card__deal" href={product ? productHref(product) : "/catalog"}>
+        <span className="home_smart_icon">
           <TrendingDown />
         </span>
         <span>
@@ -155,7 +155,7 @@ function SmartRail({ categories, product }: { categories: CategoryNode[]; produc
         </span>
       </a>
       {categories.slice(0, 3).map((category) => (
-        <a className="home_smart-card" href={categoryHref(category)} key={category.id}>
+        <a className="home_smart_card" href={categoryHref(category)} key={category.id}>
           <span>
             <strong>{category.name}</strong>
             <small>Открыть раздел</small>
@@ -170,27 +170,27 @@ function SmartRail({ categories, product }: { categories: CategoryNode[]; produc
 function HomeHero({ categories, featuredProduct }: { categories: CategoryNode[]; featuredProduct: Product | undefined }) {
   return (
     <section className="home_hero">
-      <div className="home_hero-main">
-        <span className="home_hero-kicker">
-          <Sparkles className="home_hero-kicker-icon" />
+      <div className="home_hero_main">
+        <span className="home_hero_kicker">
+          <Sparkles className="home_hero_kicker_icon" />
           Умная витрина TechMarket
         </span>
         <h1>Техника для работы, учебы и дома без лишнего шума</h1>
         <p>
           Главная собирает категории, новинки и скидки прямо из API. Видны наличие, цена, рейтинг и быстрый переход в каталог.
         </p>
-        <div className="home_hero-actions">
-          <a className="home_hero-primary" href="/catalog">
+        <div className="home_hero_actions">
+          <a className="home_hero_primary" href="/catalog">
             Перейти в каталог
-            <ArrowRight className="home_hero-action-icon" />
+            <ArrowRight className="home_hero_action_icon" />
           </a>
           {categories[0] ? (
-            <a className="home_hero-secondary" href={categoryHref(categories[0])}>
+            <a className="home_hero_secondary" href={categoryHref(categories[0])}>
               {categories[0].name}
             </a>
           ) : null}
         </div>
-        <div className="home_hero-metrics" aria-label="Показатели витрины">
+        <div className="home_hero_metrics" aria-label="Показатели витрины">
           <span>
             <strong>{categories.length || "API"}</strong>
             разделов
@@ -202,9 +202,9 @@ function HomeHero({ categories, featuredProduct }: { categories: CategoryNode[];
         </div>
       </div>
 
-      <aside className="home_hero-panel" aria-label="Акционное предложение">
-        <div className="home_hero-panel-top">
-          <BadgePercent className="home_hero-panel-icon" />
+      <aside className="home_hero_panel" aria-label="Акционное предложение">
+        <div className="home_hero_panel_top">
+          <BadgePercent className="home_hero_panel_icon" />
           <span>Price watch</span>
         </div>
         <strong>{featuredProduct ? featuredProduct.title : "Подборка товаров со старой ценой"}</strong>
@@ -225,19 +225,19 @@ function Benefits() {
   return (
     <section className="home_benefits" aria-label="Преимущества TechMarket">
       <div className="home_benefit">
-        <Truck className="home_benefit-icon" />
+        <Truck className="home_benefit_icon" />
         <span>Доставка по Минску</span>
       </div>
       <div className="home_benefit">
-        <PackageCheck className="home_benefit-icon" />
+        <PackageCheck className="home_benefit_icon" />
         <span>Самовывоз из магазина</span>
       </div>
       <div className="home_benefit">
-        <CreditCard className="home_benefit-icon" />
+        <CreditCard className="home_benefit_icon" />
         <span>Оплата картой или при получении</span>
       </div>
       <div className="home_benefit">
-        <CheckCircle2 className="home_benefit-icon" />
+        <CheckCircle2 className="home_benefit_icon" />
         <span>Официальная гарантия</span>
       </div>
     </section>

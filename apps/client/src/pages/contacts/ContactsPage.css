@@ -4,7 +4,7 @@
     padding-bottom: 20px;
 }
 
-.contact-card {
+.contact_card {
     border-radius: 25px;
     padding: 25px;
     width: auto;
@@ -13,13 +13,13 @@
     background: #eee;
 }
 
-.contact-card__header {
+.contact_card__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.contact-card__title {
+.contact_card__title {
     line-height: 1.5;
     width: 60%;
     font-size: 20px;
@@ -27,17 +27,17 @@
     color: #333;
 }
 
-.contact-card__links {
+.contact_card__links {
     text-align: center;
     margin-right: 20px;
 }
 
-.contact-card__link {
+.contact_card__link {
     color: #0f766e;
     text-decoration: none;
 }
 
-.contact-card__icon {
+.contact_card__icon {
     vertical-align: text-bottom;
     margin-right: 5px;
 }

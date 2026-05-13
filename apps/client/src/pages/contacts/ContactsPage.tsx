@@ -15,21 +15,21 @@ const PHONE = {
 
 export function ContactsPage() {
   return (
-    <section className="service-page" aria-labelledby="contacts-page-title">
-      <div className="service-page_inner">
+    <section className="service_page" aria-labelledby="contacts_page_title">
+      <div className="service_page_inner">
         <h1 id="contacts_page_title">Контакты</h1>
 
 
-        <div className="contact-card">
-          <div className="contact-card__header">
-            <div className="contact-card__title">Контакт-центр</div>
-            <div className="contact-card__links">
+        <div className="contact_card">
+          <div className="contact_card__header">
+            <div className="contact_card__title">Контакт-центр</div>
+            <div className="contact_card__links">
               {CONTACTS.map((contact, index) => (
                 <React.Fragment key={contact.label}>
                   <a
                     href={contact.href}
                     target={contact.target}
-                    className="contact-card__link"
+                    className="contact_card__link"
                   >
                     {contact.label}
                   </a>
@@ -37,7 +37,7 @@ export function ContactsPage() {
                 </React.Fragment>
               ))}
               <br />
-              <a href={PHONE.href} className="contact-card__link">
+              <a href={PHONE.href} className="contact_card__link">
                 <PhoneIcon />
                 {PHONE.number}
               </a>
@@ -45,17 +45,17 @@ export function ContactsPage() {
           </div>
         </div>
 
-        <div className="contact-card">
-          <div className="contact-card__header">
-            <div className="contact-card__title">Отдел по работе с юр. лицами</div>
-            <div className="contact-card__links">
+        <div className="contact_card">
+          <div className="contact_card__header">
+            <div className="contact_card__title">Отдел по работе с юр. лицами</div>
+            <div className="contact_card__links">
               <a href="/contacts" >beznal@Tech.by</a><br />
               {CONTACTS.map((contact, index) => (
                 <React.Fragment key={contact.label}>
                   <a
                     href={contact.href}
                     target={contact.target}
-                    className="contact-card__link"
+                    className="contact_card__link"
                   >
                     {contact.label}
                   </a>
@@ -63,7 +63,7 @@ export function ContactsPage() {
                 </React.Fragment>
               ))}
               <br />
-              <a href={PHONE.href} className="contact-card__link">
+              <a href={PHONE.href} className="contact_card__link">
                 <PhoneIcon />
                 {PHONE.number}
               </a>
@@ -72,17 +72,17 @@ export function ContactsPage() {
         </div>
 
 
-        <div className="contact-card">
-          <div className="contact-card__header">
-            <div className="contact-card__title">Контакты для арендодателей</div>
-            <div className="contact-card__links">
+        <div className="contact_card">
+          <div className="contact_card__header">
+            <div className="contact_card__title">Контакты для арендодателей</div>
+            <div className="contact_card__links">
               <a href="/contacts" >arenda@Tech.by</a><br />
               {CONTACTS.map((contact, index) => (
                 <React.Fragment key={contact.label}>
                   <a
                     href={contact.href}
                     target={contact.target}
-                    className="contact-card__link"
+                    className="contact_card__link"
                   >
                     {contact.label}
                   </a>
@@ -90,7 +90,7 @@ export function ContactsPage() {
                 </React.Fragment>
               ))}
               <br />
-              <a href={PHONE.href} className="contact-card__link">
+              <a href={PHONE.href} className="contact_card__link">
                 <PhoneIcon />
                 {PHONE.number}
               </a>
@@ -98,10 +98,10 @@ export function ContactsPage() {
           </div>
         </div>
 
-        <div className="contact-card">
-          <div className="contact-card__header">
-            <div className="contact-card__title">Контакты для производителей</div>
-            <div className="contact-card__links">
+        <div className="contact_card">
+          <div className="contact_card__header">
+            <div className="contact_card__title">Контакты для производителей</div>
+            <div className="contact_card__links">
               <a href="/contacts" >zakup@Tech.by</a><br />
             </div>
           </div>

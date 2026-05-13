@@ -4,19 +4,19 @@
     padding-bottom: 20px;
 }
 
-.about-content {
+.about_content {
     max-width: 800px;
     margin: 0 auto;
     line-height: 1.6;
     color: #333;
 }
 
-.about-content p {
+.about_content p {
     margin-bottom: 20px;
     font-size: 16px;
 }
 
-.about-content h2 {
+.about_content h2 {
     margin-top: 30px;
     margin-bottom: 15px;
     font-size: 24px;
@@ -25,16 +25,16 @@
     padding-bottom: 5px;
 }
 
-.about-content ul {
+.about_content ul {
     margin-bottom: 20px;
     padding-left: 20px;
 }
 
-.about-content li {
+.about_content li {
     margin-bottom: 8px;
     font-size: 16px;
 }
 
-.about-content strong {
+.about_content strong {
     color: #515fca;
 }

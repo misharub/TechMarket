@@ -2,11 +2,11 @@ import "../static-pages/StaticPages.css";
 import "./AboutPage.css"
 export function AboutPage() {
   return (
-    <section className="service-page" aria-labelledby="about-page-title">
-      <div className="service-page_inner">
+    <section className="service_page" aria-labelledby="about_page_title">
+      <div className="service_page_inner">
         <h1 id="about_page_title">О компании</h1>
 
-        <div className="about-content">
+        <div className="about_content">
           <p>
             <strong>TechMarket</strong> — это современная интернет-платформа для продажи компьютерной техники и электроники,
             разработанная в рамках дипломного проекта.

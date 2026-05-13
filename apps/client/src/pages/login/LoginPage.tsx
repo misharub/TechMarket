@@ -2,8 +2,8 @@ import "../static-pages/StaticPages.css";
 
 export function LoginPage() {
   return (
-    <section className="service-page" aria-labelledby="login-page-title">
-      <div className="service-page_inner">
+    <section className="service_page" aria-labelledby="login_page_title">
+      <div className="service_page_inner">
         <h1 id="login_page_title">Войти</h1>
       </div>
     </section>

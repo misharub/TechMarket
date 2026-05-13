@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getCategoryTree, type CategoryNode } from "../../lib/categories-api";
 import "./CatalogNavigation.css";
 
@@ -131,6 +131,7 @@ export function CatalogNavigation({ compactMode, mobileOpen, onMobileClose }: Ca
   });
   const [activeRootSlug, setActiveRootSlug] = useState<string | null>(null);
   const [activeChildSlug, setActiveChildSlug] = useState<string | null>(null);
+  const openDelayTimerRef = useRef<number | null>(null);
   const menuOpen = activeRootSlug !== null;
   const activeRoot = useMemo(
     () => categories.find((category) => category.slug === activeRootSlug),
@@ -143,6 +144,40 @@ export function CatalogNavigation({ compactMode, mobileOpen, onMobileClose }: Ca
 
     return activeRoot.children.find((category) => category.slug === activeChildSlug) ?? activeRoot.children[0];
   }, [activeChildSlug, activeRoot]);
+
+  const clearOpenDelayTimer = () => {
+    if (openDelayTimerRef.current !== null) {
+      window.clearTimeout(openDelayTimerRef.current);
+      openDelayTimerRef.current = null;
+    }
+  };
+
+  const openCategory = (category: CategoryNode) => {
+    setActiveRootSlug(category.slug);
+    setActiveChildSlug(category.children[0]?.slug ?? null);
+  };
+
+  const openCategoryWithDelay = (category: CategoryNode) => {
+    clearOpenDelayTimer();
+
+    if (activeRootSlug !== null) {
+      openCategory(category);
+      return;
+    }
+
+    openDelayTimerRef.current = window.setTimeout(() => {
+      openCategory(category);
+      openDelayTimerRef.current = null;
+    }, 180);
+  };
+
+  const closeCategory = () => {
+    clearOpenDelayTimer();
+    setActiveRootSlug(null);
+    setActiveChildSlug(null);
+  };
+
+  useEffect(() => clearOpenDelayTimer, []);
 
   if (isLoading) {
     return <div className="catalog catalog--loading" aria-label="Каталог загружается" />;
@@ -163,8 +198,7 @@ export function CatalogNavigation({ compactMode, mobileOpen, onMobileClose }: Ca
       }`}
       aria-label="Каталог товаров"
       onMouseLeave={() => {
-        setActiveRootSlug(null);
-        setActiveChildSlug(null);
+        closeCategory();
       }}
     >
       <div className="catalog_bar">
@@ -176,13 +210,13 @@ export function CatalogNavigation({ compactMode, mobileOpen, onMobileClose }: Ca
               href={categoryHref(category)}
               key={category.slug}
               onFocus={() => {
-                setActiveRootSlug(category.slug);
-                setActiveChildSlug(category.children[0]?.slug ?? null);
+                clearOpenDelayTimer();
+                openCategory(category);
               }}
               onMouseEnter={() => {
-                setActiveRootSlug(category.slug);
-                setActiveChildSlug(category.children[0]?.slug ?? null);
+                openCategoryWithDelay(category);
               }}
+              onMouseLeave={clearOpenDelayTimer}
             >
               {category.name}
             </a>
@@ -194,8 +228,7 @@ export function CatalogNavigation({ compactMode, mobileOpen, onMobileClose }: Ca
         className="catalog_backdrop"
         aria-hidden="true"
         onMouseEnter={() => {
-          setActiveRootSlug(null);
-          setActiveChildSlug(null);
+          closeCategory();
         }}
       />
 

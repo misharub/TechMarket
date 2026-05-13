@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRight,
   BatteryCharging,
@@ -240,7 +240,7 @@ function CategoryVisual({ category, size = "large" }: { category: CategoryNode; 
   const Icon = getCategoryIcon(category);
 
   return (
-    <span className={`catalog-page_category-visual catalog-page_category-visual--${size}`} aria-hidden="true">
+    <span className={`catalog_page_category_visual catalog_page_category_visual__${size}`} aria-hidden="true">
       <Icon />
     </span>
   );
@@ -248,13 +248,13 @@ function CategoryVisual({ category, size = "large" }: { category: CategoryNode; 
 
 function CatalogSkeletons() {
   return (
-    <div className="catalog-page_grid" aria-hidden="true">
+    <div className="catalog_page_grid" aria-hidden="true">
       {Array.from({ length: 8 }).map((_, index) => (
-        <div className="catalog-page_skeleton-card" key={index}>
-          <div className="catalog-page_skeleton-media" />
-          <div className="catalog-page_skeleton-line catalog-page_skeleton-line--wide" />
-          <div className="catalog-page_skeleton-line" />
-          <div className="catalog-page_skeleton-line catalog-page_skeleton-line--short" />
+        <div className="catalog_page_skeleton_card" key={index}>
+          <div className="catalog_page_skeleton_media" />
+          <div className="catalog_page_skeleton_line catalog_page_skeleton_line__wide" />
+          <div className="catalog_page_skeleton_line" />
+          <div className="catalog_page_skeleton_line catalog_page_skeleton_line__short" />
         </div>
       ))}
     </div>
@@ -263,7 +263,7 @@ function CatalogSkeletons() {
 
 function CategoryTile({ category, kind = "catalog" }: { category: CategoryNode; kind?: "catalog" | "subcategory" }) {
   return (
-    <a className={`catalog-page_category-card catalog-page_category-card--${kind}`} href={`/catalog/${category.slug}`}>
+    <a className={`catalog_page_category_card catalog_page_category_card__${kind}`} href={`/catalog/${category.slug}`}>
       <CategoryVisual category={category} size={kind === "catalog" ? "large" : "small"} />
       <span>{category.name}</span>
     </a>
@@ -272,7 +272,7 @@ function CategoryTile({ category, kind = "catalog" }: { category: CategoryNode; 
 
 function CategoryState({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "error" }) {
   return (
-    <div className={`catalog-page_state ${tone === "error" ? "catalog-page_state--error" : ""}`} role="status">
+    <div className={`catalog_page_state ${tone === "error" ? "catalog_page_state__error" : ""}`} role="status">
       {children}
     </div>
   );
@@ -375,30 +375,30 @@ export function CatalogPage() {
   const activeFiltersCount = [q, brandSlug, priceFrom, priceTo, inStock].filter(Boolean).length;
   const title = activeCategory?.name ?? "Каталог";
   return (
-    <main className="catalog-page">
-      <div className="catalog-page_inner">
-        <nav className="catalog-page_breadcrumbs" aria-label="Навигация">
+    <main className="catalog_page">
+      <div className="catalog_page_inner">
+        <nav className="catalog_page_breadcrumbs" aria-label="Навигация">
           <a href="/">Главная</a>
           <ChevronRight />
           <a href="/catalog">Каталог</a>
           {activePath.map((category) => (
-            <span className="catalog-page_breadcrumb-item" key={category.id}>
+            <span className="catalog_page_breadcrumb_item" key={category.id}>
               <ChevronRight />
               <a href={`/catalog/${category.slug}`}>{category.name}</a>
             </span>
           ))}
         </nav>
 
-        <section className="catalog-page_header">
+        <section className="catalog_page_header">
           <div>
-            <h1>{title}(<strong className="max-h-1">{productsQuery.isLoading ? "..." : total}</strong>)</h1>
+            <h1>{title}(<strong className="max_h_1">{productsQuery.isLoading ? "..." : total}</strong>)</h1>
           </div>
         </section>
 
         {categoriesQuery.isLoading ? (
-          <div className="catalog-page_catalog-grid" aria-hidden="true">
+          <div className="catalog_page_catalog_grid" aria-hidden="true">
             {Array.from({ length: 10 }).map((_, index) => (
-              <div className="catalog-page_category-card catalog-page_category-card--skeleton" key={index} />
+              <div className="catalog_page_category_card catalog_page_category_card__skeleton" key={index} />
             ))}
           </div>
         ) : null}
@@ -418,7 +418,7 @@ export function CatalogPage() {
         ) : null}
 
         {!categoriesQuery.isLoading && !categoriesQuery.isError && isCatalogRoot ? (
-          <section className="catalog-page_catalog-grid" aria-label="Основные разделы каталога">
+          <section className="catalog_page_catalog_grid" aria-label="Основные разделы каталога">
             {categories.map((category) => (
               <CategoryTile category={category} key={category.id} />
             ))}
@@ -426,15 +426,15 @@ export function CatalogPage() {
         ) : null}
 
         {!categoriesQuery.isLoading && !categoriesQuery.isError && isRootCategoryLanding && activeCategory ? (
-          <section className="catalog-page_category-layout">
-            <aside className="catalog-page_side-nav" aria-label="Разделы каталога">
+          <section className="catalog_page_category_layout">
+            <aside className="catalog_page_side_nav" aria-label="Разделы каталога">
               <h2>Категории</h2>
               {categories.map((category) => (
                 <a
                   className={
                     category.slug === rootCategory?.slug
-                      ? "catalog-page_side-link catalog-page_side-link--active"
-                      : "catalog-page_side-link"
+                      ? "catalog_page_side_link catalog_page_side_link__active"
+                      : "catalog_page_side_link"
                   }
                   href={`/catalog/${category.slug}`}
                   key={category.id}
@@ -444,8 +444,8 @@ export function CatalogPage() {
               ))}
             </aside>
 
-            <div className="catalog-page_subcategories">
-              <div className="catalog-page_subcategory-grid">
+            <div className="catalog_page_subcategories">
+              <div className="catalog_page_subcategory_grid">
                 {activeCategory.children.map((category) => (
                   <CategoryTile category={category} kind="subcategory" key={category.id} />
                 ))}
@@ -455,22 +455,22 @@ export function CatalogPage() {
         ) : null}
 
         {!categoriesQuery.isLoading && !categoriesQuery.isError && isProductListing ? (
-          <div className="catalog-page_layout">
-            <aside className="catalog-page_filters" aria-label="Фильтры каталога">
-              <div className="catalog-page_filters-title">
+          <div className="catalog_page_layout">
+            <aside className="catalog_page_filters" aria-label="Фильтры каталога">
+              <div className="catalog_page_filters_title">
                 <Filter />
                 <span>Фильтры</span>
                 {activeFiltersCount ? <b>{activeFiltersCount}</b> : null}
               </div>
 
-              <form className="catalog-page_search" onSubmit={handleSearch}>
+              <form className="catalog_page_search" onSubmit={handleSearch}>
                 <input name="q" type="search" placeholder="Поиск по товарам" defaultValue={q} />
                 <button type="submit" aria-label="Искать">
                   <Search />
                 </button>
               </form>
 
-              <div className="catalog-page_filter-block">
+              <div className="catalog_page_filter_block">
                 <h2>Бренд</h2>
                 <select value={brandSlug} onChange={(event) => updateParams({ brand: event.target.value })}>
                   <option value="">Все бренды</option>
@@ -482,18 +482,18 @@ export function CatalogPage() {
                 </select>
               </div>
 
-              <form className="catalog-page_filter-block" onSubmit={handlePriceSubmit}>
+              <form className="catalog_page_filter_block" onSubmit={handlePriceSubmit}>
                 <h2>Цена, BYN</h2>
-                <div className="catalog-page_price-row">
+                <div className="catalog_page_price_row">
                   <input name="priceFrom" type="number" min="0" placeholder="от" defaultValue={priceFrom ?? ""} />
                   <input name="priceTo" type="number" min="0" placeholder="до" defaultValue={priceTo ?? ""} />
                 </div>
-                <button className="catalog-page_apply" type="submit">
+                <button className="catalog_page_apply" type="submit">
                   Применить
                 </button>
               </form>
 
-              <label className="catalog-page_check">
+              <label className="catalog_page_check">
                 <input
                   type="checkbox"
                   checked={inStock}
@@ -502,19 +502,19 @@ export function CatalogPage() {
                 <span>Только в наличии</span>
               </label>
 
-              <button className="catalog-page_reset" type="button" onClick={resetFilters}>
+              <button className="catalog_page_reset" type="button" onClick={resetFilters}>
                 <RotateCcw />
                 Сбросить фильтры
               </button>
             </aside>
 
-            <section className="catalog-page_results" aria-labelledby="catalog-results-heading">
-              <div className="catalog-page_toolbar">
+            <section className="catalog_page_results" aria-labelledby="catalog_results_heading">
+              <div className="catalog_page_toolbar">
                 <div>
-                  <h2 id="catalog-results-heading">{activeCategory?.name}</h2>
+                  <h2 id="catalog_results_heading">{activeCategory?.name}</h2>
                   <p>{productsQuery.isError ? "Каталог временно недоступен" : null}</p>
                 </div>
-                <label className="catalog-page_sort">
+                <label className="catalog_page_sort">
                   <SlidersHorizontal />
                   <select value={sort} onChange={(event) => updateParams({ sort: event.target.value })}>
                     {Object.entries(sortLabels).map(([value, label]) => (
@@ -544,13 +544,13 @@ export function CatalogPage() {
 
               {!productsQuery.isLoading && !productsQuery.isFetching && !productsQuery.isError && products.length > 0 ? (
                 <>
-                  <div className="catalog-page_grid">
+                  <div className="catalog_page_grid">
                     {products.map((product) => (
                       <ProductCard product={product} key={product.id} />
                     ))}
                   </div>
 
-                  <div className="catalog-page_pagination" aria-label="Пагинация">
+                  <div className="catalog_page_pagination" aria-label="Пагинация">
                     <button type="button" disabled={page <= 1} onClick={() => updateParams({ page: page - 1 }, false)}>
                       <ChevronLeft />
                       Назад

@@ -23,11 +23,11 @@ export function OrderHelpPage() {
   }, [hash]);
 
   return (
-    <section className="service-page" aria-labelledby="order-help-page-title">
-      <div className="service-page_inner">
+    <section className="service_page" aria-labelledby="order_help_page_title">
+      <div className="service_page_inner">
         <h1 id="order_help_page_title">Покупателям</h1>
 
-        <nav className="help-navigation">
+        <nav className="help_navigation">
         <ul>
           <li><a href="#how_to_order">Как оформить заказ</a></li>
           <li><a href="#payment_and_delivery">Оплата и Доставка</a></li>
@@ -36,10 +36,10 @@ export function OrderHelpPage() {
       </nav>
 
       {/* Раздел: Как оформить заказ */}
-      <section id="how_to_order" className="help-section">
+      <section id="how_to_order" className="help_section">
         <h2>Как оформить заказ</h2>
         
-        <div className="help-content">
+        <div className="help_content">
           <h3>Пошаговая инструкция:</h3>
           <ol>
             <li>Выберите интересующий вас товар в каталоге</li>
@@ -52,7 +52,7 @@ export function OrderHelpPage() {
             <li>Подтвердите заказ</li>
           </ol>
           
-          <div className="help-note">
+          <div className="help_note">
             <p>После оформления заказа на ваш email придёт письмо с подтверждением. 
             Наш менеджер свяжется с вами в течение 30 минут для уточнения деталей.</p>
           </div>
@@ -60,10 +60,10 @@ export function OrderHelpPage() {
       </section>
 
       {/* Раздел: Оплата и Доставка */}
-      <section id="payment_and_delivery" className="help-section">
+      <section id="payment_and_delivery" className="help_section">
         <h2>Оплата и Доставка</h2>
         
-        <div className="help-content">
+        <div className="help_content">
           <h3>Способы оплаты:</h3>
           <ul>
             <li><strong>Наличными</strong> — при получении товара курьеру</li>
@@ -73,7 +73,7 @@ export function OrderHelpPage() {
           </ul>
 
           <h3>Способы доставки:</h3>
-          <table className="delivery-table">
+          <table className="delivery_table">
             <thead>
               <tr>
                 <th>Способ доставки</th>
@@ -108,10 +108,10 @@ export function OrderHelpPage() {
       </section>
 
       {/* Раздел: Гарантия и возврат */}
-      <section id="warranty_and_return" className="help-section">
+      <section id="warranty_and_return" className="help_section">
         <h2>Гарантия и возврат</h2>
         
-        <div className="help-content">
+        <div className="help_content">
           <h3>Гарантийные обязательства:</h3>
           <ul>
             <li>Гарантия на все товары — 12 месяцев с даты покупки</li>
@@ -136,7 +136,7 @@ export function OrderHelpPage() {
             <li>Товары, изготовленные на заказ</li>
           </ul>
 
-          <div className="help-contact">
+          <div className="help_contact">
             <p>Для оформления возврата свяжитесь с нами:</p>
             <p>📞 Телефон: 8 (800) 123-45-67</p>
             <p>📧 Email: support@shop.ru</p>
