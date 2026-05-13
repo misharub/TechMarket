@@ -6,7 +6,7 @@
 .service-page_inner {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 56px 0 88px;
+  padding: 20px 0 30px;
 }
 
 .service-page h1 {
@@ -24,6 +24,8 @@
 
   .service-page_inner {
     width: min(100% - 20px, 1180px);
-    padding: 36px 0 64px;
+    padding: 10px 0 16px;
   }
 }
+
+
