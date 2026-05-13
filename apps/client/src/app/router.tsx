@@ -7,8 +7,6 @@ import { CatalogPage } from "../pages/catalog/CatalogPage";
 import { ComparePage } from "../pages/compare/ComparePage";
 import { ContactsPage } from "../pages/contacts/ContactsPage";
 import { OrderHelpPage } from "../pages/help/OrderHelpPage";
-import { PaymentHelpPage } from "../pages/help/PaymentHelpPage";
-import { WarrantyHelpPage } from "../pages/help/WarrantyHelpPage";
 import { HomePage } from "../pages/home/HomePage";
 import { LoginPage } from "../pages/login/LoginPage";
 import { StoresPage } from "../pages/stores/StoresPage";
@@ -59,17 +57,17 @@ export const router = createBrowserRouter([
         element: <CareersPage />,
       },
       {
-        path: "help/order",
+        path: "help",
         element: <OrderHelpPage />,
       },
-      {
-        path: "help/payment",
-        element: <PaymentHelpPage />,
-      },
-      {
-        path: "help/warranty",
-        element: <WarrantyHelpPage />,
-      },
+      // {
+      //   path: "help/payment",
+      //   element: <PaymentHelpPage />,
+      // },
+      // {
+      //   path: "help/warranty",
+      //   element: <WarrantyHelpPage />,
+      // },
     ],
   },
 ]);

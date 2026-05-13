@@ -1,0 +1,5 @@
+[   44129ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=c15b02ac:14336
+[   44331ms] [ERROR] Access to fetch at 'http://localhost:5000/api/categories/tree' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://127.0.0.1:5173/help#payment_and_delivery:0
+[   44331ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:5000/api/categories/tree:0
+[   45358ms] [ERROR] Access to fetch at 'http://localhost:5000/api/categories/tree' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://127.0.0.1:5173/help#payment_and_delivery:0
+[   45358ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:5000/api/categories/tree:0

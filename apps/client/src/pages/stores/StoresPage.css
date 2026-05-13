@@ -1,0 +1,49 @@
+.stores-content {
+  margin-top: 24px;
+  color: #334155;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.stores-content p {
+  margin: 0 0 18px;
+}
+
+.stores-card {
+  margin-top: 18px;
+  padding: 24px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+}
+
+.stores-card h2 {
+  margin: 0 0 12px;
+  color: #0f172a;
+  font-size: 24px;
+  line-height: 1.25;
+}
+
+.stores-card ul {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.stores-card li {
+  margin-bottom: 8px;
+}
+
+@media (max-width: 640px) {
+  .stores-content {
+    margin-top: 18px;
+    font-size: 16px;
+  }
+
+  .stores-card {
+    padding: 18px;
+  }
+
+  .stores-card h2 {
+    font-size: 21px;
+  }
+}

@@ -26,10 +26,16 @@ const companyLinks: FooterLink[] = [
   { label: "Вакансии", href: "/careers" },
 ];
 
+// const customerLinks: FooterLink[] = [
+//   { label: "Как оформить заказ", href: "/help" },
+//   { label: "Оплата и Доставка", href: "/help" },
+//   { label: "Гарантия и возврат", href: "/help" },
+// ];
+
 const customerLinks: FooterLink[] = [
-  { label: "Как оформить заказ", href: "/help/order" },
-  { label: "Оплата и Доставка", href: "/help/payment" },
-  { label: "Гарантия и возврат", href: "/help/warranty" },
+  { label: "Как оформить заказ", href: "/help#how_to_order" },
+  { label: "Оплата и Доставка", href: "/help#payment_and_delivery" },
+  { label: "Гарантия и возврат", href: "/help#warranty_and_return" },
 ];
 
 const footerColumns: FooterColumn[] = [
