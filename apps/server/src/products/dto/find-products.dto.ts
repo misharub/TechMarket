@@ -25,6 +25,11 @@ export class FindProductsDto {
     @IsString()
     categorySlug?: string;
 
+    @ApiPropertyOptional({ example: "gaming-notebooks" })
+    @IsOptional()
+    @IsString()
+    collectionSlug?: string;
+
     @ApiPropertyOptional({ example: "brand-id" })
     @IsOptional()
     @IsString()
@@ -55,6 +60,12 @@ export class FindProductsDto {
     @IsBoolean()
     @Transform(({ value }) => value === "true" || value === true)
     includeInactive?: boolean;
+
+    @ApiPropertyOptional({ example: true })
+    @IsOptional()
+    @IsBoolean()
+    @Transform(({ value }) => value === "true" || value === true)
+    isActive?: boolean;
 
     @ApiPropertyOptional({ example: 1 })
     @IsOptional()

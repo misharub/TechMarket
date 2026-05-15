@@ -4,6 +4,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreateBrandDto } from "./dto/create-brand.dto";
 import { FindBrandsDto } from "./dto/find-brands.dto";
 import { UpdateBrandDto } from "./dto/update-brand.dto";
+import { BulkCatalogAction, BulkCatalogActionDto } from "../common/dto/bulk-catalog-action.dto";
 
 @Injectable()
 export class BrandsService {
@@ -59,6 +60,15 @@ export class BrandsService {
         return this.prisma.brand.update({
             where: { id },
             data: { isActive: false },
+        });
+    }
+
+    bulkUpdate(dto: BulkCatalogActionDto) {
+        return this.prisma.brand.updateMany({
+            where: { id: { in: dto.ids } },
+            data: {
+                isActive: dto.action === BulkCatalogAction.ACTIVATE,
+            },
         });
     }
 

@@ -34,19 +34,8 @@ const categories = [
         name: "Ноутбуки",
         slug: "notebooks",
         description: "Ноутбуки для дома, учебы, бизнеса и игр",
-        children: [
-          ["Игровые ноутбуки", "gaming-notebooks"],
-          ["Ноутбуки для бизнеса", "business-notebooks"],
-          ["Ноутбуки для дома", "home-notebooks"],
-          ["Ноутбуки Apple MacBook", "apple-macbook"],
-          ["Ноутбуки с Windows 11", "windows-11-notebooks"],
-          ["Ноутбуки с GeForce RTX", "geforce-rtx-notebooks"],
-          ["Ноутбуки с AMD Ryzen", "amd-ryzen-notebooks"],
-          ["Ноутбуки с Intel Core", "intel-core-notebooks"],
-          ["Хромбуки", "chromebooks"],
-          ["Аксессуары для ноутбуков", "laptop-accessories"],
-        ],
       },
+      ["Аксессуары для ноутбуков", "laptop-accessories"],
       {
         name: "Компьютеры",
         slug: "desktop-computers",
@@ -418,6 +407,25 @@ const legacyCategorySlugs = [
   "routers-network",
 ];
 
+function collectCategorySlugs(items) {
+  return items.flatMap((category) => [
+    category.slug,
+    ...collectCategorySlugs(
+      (category.children ?? []).map((child) =>
+        Array.isArray(child) ? { slug: child[1], children: [] } : child,
+      ),
+    ),
+  ]);
+}
+
+function collectDescendantSlugs(category) {
+  return (category.children ?? []).flatMap((child) => {
+    const normalizedChild = Array.isArray(child) ? { slug: child[1], children: [] } : child;
+
+    return [normalizedChild.slug, ...collectDescendantSlugs(normalizedChild)];
+  });
+}
+
 const brands = [
   ["Apple", "apple", "Производитель компьютеров, смартфонов и персональной электроники"],
   ["Lenovo", "lenovo", "Производитель ноутбуков, ПК и компьютерной техники"],
@@ -427,349 +435,75 @@ const brands = [
   ["Bosch", "bosch", "Производитель бытовой техники для дома и кухни"],
   ["Sony", "sony", "Производитель аудио, видео, фото и gaming-устройств"],
   ["Xiaomi", "xiaomi", "Производитель смартфонов, умных устройств и аксессуаров"],
+  ["ASUS", "asus", "Производитель ноутбуков, компьютеров и комплектующих"],
 ];
 
-const specTemplates = {
-  "laptops-computers": [
-    ["screenSize", "Диагональ экрана", SpecValueType.NUMBER, "дюйм", true, true, 10],
-    ["processor", "Процессор", SpecValueType.STRING, null, true, true, 20],
-    ["ram", "Оперативная память", SpecValueType.NUMBER, "GB", true, true, 30],
-    ["ssd", "Объем SSD", SpecValueType.NUMBER, "GB", true, true, 40],
-    ["os", "Операционная система", SpecValueType.STRING, null, false, true, 50],
+const categorySpecTemplates = {
+  notebooks: [
+    ["purpose", "Назначение", SpecValueType.SELECT, null, true, true, 10, ["gaming", "business", "home"]],
+    ["os", "Операционная система", SpecValueType.SELECT, null, true, true, 20, ["Windows 11", "macOS", "ChromeOS", "Linux"]],
+    ["processorFamily", "Семейство процессора", SpecValueType.SELECT, null, true, true, 30, ["Intel Core", "AMD Ryzen", "Apple Silicon"]],
+    ["gpuSeries", "Серия видеокарты", SpecValueType.SELECT, null, false, true, 40, ["GeForce RTX", "Integrated", "Radeon"]],
+    ["screenSize", "Диагональ экрана", SpecValueType.NUMBER, "дюйм", true, true, 50, []],
+    ["processor", "Процессор", SpecValueType.STRING, null, true, true, 60, []],
+    ["ram", "Оперативная память", SpecValueType.NUMBER, "GB", true, true, 70, []],
+    ["ssd", "Объем SSD", SpecValueType.NUMBER, "GB", true, true, 80, []],
   ],
-  "phones-smartwatch": [
-    ["screenSize", "Диагональ экрана", SpecValueType.NUMBER, "дюйм", true, true, 10],
-    ["memory", "Встроенная память", SpecValueType.NUMBER, "GB", true, true, 20],
-    ["camera", "Основная камера", SpecValueType.NUMBER, "MP", false, true, 30],
-    ["nfc", "NFC", SpecValueType.BOOLEAN, null, false, true, 40],
-  ],
-  "home-appliances": [
-    ["deviceType", "Тип устройства", SpecValueType.STRING, null, true, true, 10],
-    ["energyClass", "Класс энергопотребления", SpecValueType.STRING, null, false, true, 20],
-    ["capacity", "Вместимость", SpecValueType.NUMBER, "л", false, true, 30],
-    ["color", "Цвет", SpecValueType.STRING, null, false, true, 40],
-  ],
-  "tv-audio": [
-    ["screenSize", "Диагональ экрана", SpecValueType.NUMBER, "дюйм", true, true, 10],
-    ["resolution", "Разрешение", SpecValueType.STRING, null, true, true, 20],
-    ["smartTv", "Smart TV", SpecValueType.BOOLEAN, null, false, true, 30],
-    ["power", "Мощность звука", SpecValueType.NUMBER, "Вт", false, true, 40],
+};
+
+const categoryCollections = {
+  notebooks: [
+    ["Игровые ноутбуки", "gaming-notebooks", { specs: { purpose: "gaming" } }, 10],
+    ["Ноутбуки для бизнеса", "business-notebooks", { specs: { purpose: "business" } }, 20],
+    ["Ноутбуки для дома", "home-notebooks", { specs: { purpose: "home" } }, 30],
+    ["Ноутбуки Apple MacBook", "apple-macbook", { brandSlug: "apple" }, 40],
+    ["Ноутбуки с Windows 11", "windows-11-notebooks", { specs: { os: "Windows 11" } }, 50],
+    ["Ноутбуки с GeForce RTX", "geforce-rtx-notebooks", { specs: { gpuSeries: "GeForce RTX" } }, 60],
+    ["Ноутбуки с AMD Ryzen", "amd-ryzen-notebooks", { specs: { processorFamily: "AMD Ryzen" } }, 70],
+    ["Ноутбуки с Intel Core", "intel-core-notebooks", { specs: { processorFamily: "Intel Core" } }, 80],
+    ["Хромбуки", "chromebooks", { specs: { os: "ChromeOS" } }, 90],
   ],
 };
 
 const products = [
   {
-    title: "Lenovo IdeaPad 5 16",
-    slug: "lenovo-ideapad-5-16",
-    sku: "NB-LEN-0001",
-    description: "Ноутбук для учебы, работы и мультимедиа с большим экраном и быстрым SSD.",
-    price: 2599.99,
-    oldPrice: 2899.99,
-    categorySlug: "home-notebooks",
+    title: "Lenovo Legion 5 16IRX9",
+    slug: "lenovo-legion-5-16irx9",
+    sku: "NB-LEN-LEGION-5-16IRX9",
+    description: "Игровой ноутбук Lenovo Legion 5 с экраном 16 дюймов и видеокартой GeForce RTX.",
+    price: 5499.99,
+    categorySlug: "notebooks",
     brandSlug: "lenovo",
-    stock: 12,
-    images: ["/uploads/products/lenovo-ideapad-5-16.jpg"],
-    specs: { screenSize: 16, processor: "Intel Core i5", ram: 16, ssd: 512, os: "Windows 11" },
+    stock: 5,
+    images: [],
+    specs: { purpose: "gaming", os: "Windows 11", processorFamily: "Intel Core", gpuSeries: "GeForce RTX", screenSize: 16, processor: "Intel Core i7-14650HX", ram: 16, ssd: 1024 },
+    additionalSpecs: [{ label: "Частота экрана", value: "165 Гц" }],
   },
   {
     title: "Apple MacBook Air 13 M3",
     slug: "apple-macbook-air-13-m3",
-    sku: "NB-APL-0001",
-    description: "Легкий ноутбук Apple для учебы, работы и мобильного использования.",
+    sku: "NB-APL-MBA-13-M3",
+    description: "Легкий ноутбук Apple MacBook Air 13 на чипе M3 для повседневной работы.",
     price: 4399.99,
-    categorySlug: "apple-macbook",
+    categorySlug: "notebooks",
     brandSlug: "apple",
     stock: 7,
-    images: ["/uploads/products/apple-macbook-air-13-m3.jpg"],
-    specs: { screenSize: 13.6, processor: "Apple M3", ram: 16, ssd: 512, os: "macOS" },
+    images: [],
+    specs: { purpose: "home", os: "macOS", processorFamily: "Apple Silicon", screenSize: 13.6, processor: "Apple M3", ram: 16, ssd: 512 },
+    additionalSpecs: [],
   },
   {
-    title: "HP Pavilion 15",
-    slug: "hp-pavilion-15",
-    sku: "NB-HP-0001",
-    description: "Универсальный ноутбук HP для дома, офиса и повседневной работы.",
-    price: 2199.99,
-    categorySlug: "home-notebooks",
-    brandSlug: "hp",
-    stock: 15,
-    images: ["/uploads/products/hp-pavilion-15.jpg"],
-    specs: { screenSize: 15.6, processor: "AMD Ryzen 5", ram: 16, ssd: 512, os: "Windows 11" },
-  },
-  {
-    title: "Samsung Galaxy S25",
-    slug: "samsung-galaxy-s25",
-    sku: "PH-SAM-0001",
-    description: "Смартфон Samsung с ярким экраном, производительным процессором и NFC.",
-    price: 3299.99,
-    oldPrice: 3499.99,
-    categorySlug: "samsung-galaxy",
-    brandSlug: "samsung",
-    stock: 18,
-    images: ["/uploads/products/samsung-galaxy-s25.jpg"],
-    specs: { screenSize: 6.2, memory: 256, camera: 50, nfc: true },
-  },
-  {
-    title: "Xiaomi Redmi Note 14",
-    slug: "xiaomi-redmi-note-14",
-    sku: "PH-XIA-0001",
-    description: "Смартфон Xiaomi с хорошей автономностью и большим объемом памяти.",
-    price: 1099.99,
-    categorySlug: "xiaomi-smartphones",
-    brandSlug: "xiaomi",
-    stock: 24,
-    images: ["/uploads/products/xiaomi-redmi-note-14.jpg"],
-    specs: { screenSize: 6.67, memory: 128, camera: 108, nfc: true },
-  },
-  {
-    title: "Bosch Serie 4 Refrigerator",
-    slug: "bosch-serie-4-refrigerator",
-    sku: "HA-BOS-0001",
-    description: "Холодильник Bosch с вместительной камерой и экономичным энергопотреблением.",
-    price: 2799.99,
-    categorySlug: "refrigerators",
-    brandSlug: "bosch",
-    stock: 6,
-    images: ["/uploads/products/bosch-serie-4-refrigerator.jpg"],
-    specs: { deviceType: "Холодильник", energyClass: "A++", capacity: 324, color: "White" },
-  },
-  {
-    title: "LG Washing Machine F2",
-    slug: "lg-washing-machine-f2",
-    sku: "HA-LG-0001",
-    description: "Стиральная машина LG с оптимальным набором программ для семьи.",
-    price: 1899.99,
-    categorySlug: "washing-machines",
-    brandSlug: "lg",
-    stock: 9,
-    images: ["/uploads/products/lg-washing-machine-f2.jpg"],
-    specs: { deviceType: "Стиральная машина", energyClass: "A+++", capacity: 8, color: "White" },
-  },
-  {
-    title: "Samsung QLED 55 Smart TV",
-    slug: "samsung-qled-55-smart-tv",
-    sku: "TV-SAM-0001",
-    description: "Телевизор Samsung QLED с поддержкой Smart TV и высоким разрешением.",
-    price: 2999.99,
-    categorySlug: "qled-tvs",
-    brandSlug: "samsung",
-    stock: 11,
-    images: ["/uploads/products/samsung-qled-55-smart-tv.jpg"],
-    specs: { screenSize: 55, resolution: "4K UHD", smartTv: true, power: 40 },
-  },
-  {
-    title: "Sony Bravia 65 OLED",
-    slug: "sony-bravia-65-oled",
-    sku: "TV-SON-0001",
-    description: "OLED-телевизор Sony с глубоким черным цветом и качественным звуком.",
-    price: 5899.99,
-    categorySlug: "oled-tvs",
-    brandSlug: "sony",
+    title: "ASUS ExpertBook B5 B5404",
+    slug: "asus-expertbook-b5-b5404",
+    sku: "NB-ASUS-B5-B5404",
+    description: "Бизнес-ноутбук ASUS ExpertBook B5 для офисной работы и командировок.",
+    price: 3899.99,
+    categorySlug: "notebooks",
+    brandSlug: "asus",
     stock: 4,
-    images: ["/uploads/products/sony-bravia-65-oled.jpg"],
-    specs: { screenSize: 65, resolution: "4K UHD", smartTv: true, power: 60 },
-  },
-  {
-    title: "Lenovo Legion 5 Pro 16",
-    slug: "lenovo-legion-5-pro-16",
-    sku: "NB-LEN-0002",
-    description: "Игровой ноутбук Lenovo с мощной графикой, экраном 16 дюймов и быстрым SSD.",
-    price: 4999.99,
-    oldPrice: 5499.99,
-    categorySlug: "gaming-notebooks",
-    brandSlug: "lenovo",
-    stock: 5,
-    images: ["/uploads/products/lenovo-legion-5-pro-16.jpg"],
-    specs: { screenSize: 16, processor: "AMD Ryzen 7", ram: 32, ssd: 1024, os: "Windows 11" },
-  },
-  {
-    title: "HP Envy x360 14",
-    slug: "hp-envy-x360-14",
-    sku: "NB-HP-0002",
-    description: "Трансформируемый ноутбук HP для учебы, презентаций и мобильной работы.",
-    price: 3199.99,
-    oldPrice: 3499.99,
-    categorySlug: "business-notebooks",
-    brandSlug: "hp",
-    stock: 8,
-    images: ["/uploads/products/hp-envy-x360-14.jpg"],
-    specs: { screenSize: 14, processor: "Intel Core Ultra 5", ram: 16, ssd: 512, os: "Windows 11" },
-  },
-  {
-    title: "Apple MacBook Pro 14 M4",
-    slug: "apple-macbook-pro-14-m4",
-    sku: "NB-APL-0002",
-    description: "Профессиональный ноутбук Apple для разработки, дизайна и монтажа.",
-    price: 7499.99,
-    categorySlug: "apple-macbook",
-    brandSlug: "apple",
-    stock: 4,
-    images: ["/uploads/products/apple-macbook-pro-14-m4.jpg"],
-    specs: { screenSize: 14.2, processor: "Apple M4", ram: 24, ssd: 1024, os: "macOS" },
-  },
-  {
-    title: "Apple iPhone 16",
-    slug: "apple-iphone-16",
-    sku: "PH-APL-0001",
-    description: "Смартфон Apple с ярким OLED-экраном, быстрой камерой и большим запасом памяти.",
-    price: 3999.99,
-    oldPrice: 4299.99,
-    categorySlug: "apple-iphone",
-    brandSlug: "apple",
-    stock: 14,
-    images: ["/uploads/products/apple-iphone-16.jpg"],
-    specs: { screenSize: 6.1, memory: 256, camera: 48, nfc: true },
-  },
-  {
-    title: "Samsung Galaxy A56",
-    slug: "samsung-galaxy-a56",
-    sku: "PH-SAM-0002",
-    description: "Сбалансированный смартфон Samsung с большим AMOLED-экраном и NFC.",
-    price: 1599.99,
-    oldPrice: 1799.99,
-    categorySlug: "samsung-galaxy",
-    brandSlug: "samsung",
-    stock: 21,
-    images: ["/uploads/products/samsung-galaxy-a56.jpg"],
-    specs: { screenSize: 6.7, memory: 256, camera: 50, nfc: true },
-  },
-  {
-    title: "Xiaomi Watch S4",
-    slug: "xiaomi-watch-s4",
-    sku: "PH-XIA-0002",
-    description: "Смарт-часы Xiaomi с ярким дисплеем, спортивными режимами и долгой автономностью.",
-    price: 599.99,
-    categorySlug: "smartwatches",
-    brandSlug: "xiaomi",
-    stock: 19,
-    images: ["/uploads/products/xiaomi-watch-s4.jpg"],
-    specs: { screenSize: 1.43, memory: 32, camera: 0, nfc: true },
-  },
-  {
-    title: "Bosch Serie 6 Dishwasher",
-    slug: "bosch-serie-6-dishwasher",
-    sku: "HA-BOS-0002",
-    description: "Встраиваемая посудомоечная машина Bosch с тихой работой и экономичным расходом воды.",
-    price: 2499.99,
-    oldPrice: 2799.99,
-    categorySlug: "dishwashers",
-    brandSlug: "bosch",
-    stock: 7,
-    images: ["/uploads/products/bosch-serie-6-dishwasher.jpg"],
-    specs: { deviceType: "Посудомоечная машина", energyClass: "A++", capacity: 13, color: "White" },
-  },
-  {
-    title: "LG CordZero A9",
-    slug: "lg-cordzero-a9",
-    sku: "HA-LG-0002",
-    description: "Беспроводной пылесос LG для ежедневной уборки квартиры и дома.",
-    price: 1499.99,
-    oldPrice: 1699.99,
-    categorySlug: "vacuum-cleaners",
-    brandSlug: "lg",
-    stock: 10,
-    images: ["/uploads/products/lg-cordzero-a9.jpg"],
-    specs: { deviceType: "Пылесос", energyClass: "A", capacity: 1, color: "Silver" },
-  },
-  {
-    title: "Xiaomi Robot Vacuum X20",
-    slug: "xiaomi-robot-vacuum-x20",
-    sku: "HA-XIA-0001",
-    description: "Робот-пылесос Xiaomi с влажной уборкой, картой помещения и базовой станцией.",
-    price: 1899.99,
-    oldPrice: 2199.99,
-    categorySlug: "robot-vacuums",
-    brandSlug: "xiaomi",
-    stock: 13,
-    images: ["/uploads/products/xiaomi-robot-vacuum-x20.jpg"],
-    specs: { deviceType: "Робот-пылесос", energyClass: "A", capacity: 4, color: "White" },
-  },
-  {
-    title: "Samsung Neo QLED 65",
-    slug: "samsung-neo-qled-65",
-    sku: "TV-SAM-0002",
-    description: "Большой телевизор Samsung Neo QLED с высокой яркостью и Smart TV.",
-    price: 6899.99,
-    oldPrice: 7399.99,
-    categorySlug: "qled-tvs",
-    brandSlug: "samsung",
-    stock: 6,
-    images: ["/uploads/products/samsung-neo-qled-65.jpg"],
-    specs: { screenSize: 65, resolution: "4K UHD", smartTv: true, power: 60 },
-  },
-  {
-    title: "LG OLED C4 55",
-    slug: "lg-oled-c4-55",
-    sku: "TV-LG-0001",
-    description: "OLED-телевизор LG с глубоким черным цветом, игровым режимом и Smart TV.",
-    price: 5299.99,
-    oldPrice: 5799.99,
-    categorySlug: "oled-tvs",
-    brandSlug: "lg",
-    stock: 5,
-    images: ["/uploads/products/lg-oled-c4-55.jpg"],
-    specs: { screenSize: 55, resolution: "4K UHD", smartTv: true, power: 40 },
-  },
-  {
-    title: "Sony HT-S400 Soundbar",
-    slug: "sony-ht-s400-soundbar",
-    sku: "TV-SON-0002",
-    description: "Саундбар Sony с беспроводным сабвуфером для телевизора и домашнего кино.",
-    price: 1099.99,
-    categorySlug: "soundbars",
-    brandSlug: "sony",
-    stock: 16,
-    images: ["/uploads/products/sony-ht-s400-soundbar.jpg"],
-    specs: { screenSize: 0, resolution: "Audio", smartTv: false, power: 330 },
-  },
-  {
-    title: "Xiaomi Smart Camera C500 Pro",
-    slug: "xiaomi-smart-camera-c500-pro",
-    sku: "SH-XIA-0001",
-    description: "Умная камера Xiaomi для квартиры с высоким разрешением и ночным режимом.",
-    price: 349.99,
-    oldPrice: 429.99,
-    categorySlug: "security-cameras",
-    brandSlug: "xiaomi",
-    stock: 27,
-    images: ["/uploads/products/xiaomi-smart-camera-c500-pro.jpg"],
-    specs: {},
-  },
-  {
-    title: "Samsung SmartThings Station",
-    slug: "samsung-smartthings-station",
-    sku: "SH-SAM-0001",
-    description: "Хаб Samsung для управления устройствами умного дома и сценариями автоматизации.",
-    price: 499.99,
-    categorySlug: "intelligent-home",
-    brandSlug: "samsung",
-    stock: 9,
-    images: ["/uploads/products/samsung-smartthings-station.jpg"],
-    specs: {},
-  },
-  {
-    title: "Apple AirPods Pro 2",
-    slug: "apple-airpods-pro-2",
-    sku: "AC-APL-0001",
-    description: "Беспроводные наушники Apple с активным шумоподавлением и кейсом MagSafe.",
-    price: 899.99,
-    oldPrice: 999.99,
-    categorySlug: "accessory-phone-headphones",
-    brandSlug: "apple",
-    stock: 23,
-    images: ["/uploads/products/apple-airpods-pro-2.jpg"],
-    specs: {},
-  },
-  {
-    title: "Samsung 25W USB-C Charger",
-    slug: "samsung-25w-usb-c-charger",
-    sku: "AC-SAM-0001",
-    description: "Компактное зарядное устройство Samsung USB-C для смартфонов и планшетов.",
-    price: 79.99,
-    categorySlug: "chargers",
-    brandSlug: "samsung",
-    stock: 42,
-    images: ["/uploads/products/samsung-25w-usb-c-charger.jpg"],
-    specs: {},
+    images: [],
+    specs: { purpose: "business", os: "Windows 11", processorFamily: "Intel Core", gpuSeries: "Integrated", screenSize: 14, processor: "Intel Core Ultra 7 155U", ram: 16, ssd: 512 },
+    additionalSpecs: [{ label: "Вес", value: "1.29 кг" }],
   },
 ];
 
@@ -908,12 +642,24 @@ async function main() {
 
   await upsertCategoryTree(categories);
 
-  await prisma.category.updateMany({
-    where: { slug: { in: legacyCategorySlugs } },
-    data: {
-      parentId: null,
-      isActive: false,
-    },
+  const menuCategorySlugs = collectCategorySlugs(categories);
+
+  const staleProducts = await prisma.product.findMany({
+    where: { sku: { notIn: products.map((product) => product.sku) } },
+    select: { id: true },
+  });
+  const staleProductIds = staleProducts.map((product) => product.id);
+
+  if (staleProductIds.length) {
+    await prisma.orderItem.deleteMany({ where: { productId: { in: staleProductIds } } });
+    await prisma.review.deleteMany({ where: { productId: { in: staleProductIds } } });
+    await prisma.cartItem.deleteMany({ where: { productId: { in: staleProductIds } } });
+    await prisma.wishlistItem.deleteMany({ where: { productId: { in: staleProductIds } } });
+    await prisma.product.deleteMany({ where: { id: { in: staleProductIds } } });
+  }
+
+  await prisma.category.deleteMany({
+    where: { slug: { notIn: menuCategorySlugs } },
   });
 
   for (const [name, slug, description] of brands) {
@@ -937,19 +683,25 @@ async function main() {
   );
   const brandBySlug = Object.fromEntries((await prisma.brand.findMany()).map((brand) => [brand.slug, brand]));
 
-  for (const [categorySlug, templates] of Object.entries(specTemplates)) {
+  await prisma.categorySpecTemplate.deleteMany({
+    where: { category: { parentId: null } },
+  });
+
+  for (const [categorySlug, templates] of Object.entries(categorySpecTemplates)) {
     const category = categoryBySlug[categorySlug];
 
-    for (const [key, label, type, unit, isRequired, isComparable, sortOrder] of templates) {
+    for (const [key, label, type, unit, isRequired, isComparable, sortOrder, options] of templates) {
       await prisma.categorySpecTemplate.upsert({
         where: { categoryId_key: { categoryId: category.id, key } },
         update: {
           label,
           type,
           unit,
+          options,
           isRequired,
           isComparable,
           sortOrder,
+          isLocked: true,
         },
         create: {
           categoryId: category.id,
@@ -957,10 +709,24 @@ async function main() {
           label,
           type,
           unit,
+          options,
           isRequired,
           isComparable,
           sortOrder,
+          isLocked: true,
         },
+      });
+    }
+  }
+
+  for (const [categorySlug, collections] of Object.entries(categoryCollections)) {
+    const category = categoryBySlug[categorySlug];
+
+    for (const [name, slug, conditions, sortOrder] of collections) {
+      await prisma.categoryCollection.upsert({
+        where: { slug },
+        update: { name, conditions, sortOrder, categoryId: category.id, isActive: true },
+        create: { name, slug, conditions, sortOrder, categoryId: category.id },
       });
     }
   }
@@ -980,6 +746,7 @@ async function main() {
         stock: product.stock,
         images: product.images,
         specs: product.specs,
+        additionalSpecs: product.additionalSpecs ?? [],
         isActive: true,
         categoryId: category.id,
         brandId: brand.id,
@@ -994,6 +761,7 @@ async function main() {
         stock: product.stock,
         images: product.images,
         specs: product.specs,
+        additionalSpecs: product.additionalSpecs ?? [],
         categoryId: category.id,
         brandId: brand.id,
       },
@@ -1105,8 +873,8 @@ async function main() {
       {
         status: OrderStatus.CONFIRMED,
         items: [
-          { sku: "NB-LEN-0001", quantity: 1 },
-          { sku: "PH-XIA-0001", quantity: 1 },
+          { sku: "NB-LEN-LEGION-5-16IRX9", quantity: 1 },
+          { sku: "NB-APL-MBA-13-M3", quantity: 1 },
         ],
         customerName: "TechMarket User",
         customerPhone: "+375291112233",
@@ -1119,7 +887,7 @@ async function main() {
       },
       {
         status: OrderStatus.PROCESSING,
-        items: [{ sku: "TV-SAM-0001", quantity: 1 }],
+        items: [{ sku: "NB-ASUS-B5-B5404", quantity: 1 }],
         customerName: "TechMarket User",
         customerPhone: "+375291112233",
         customerEmail: "user@techmarket.local",
@@ -1232,10 +1000,9 @@ async function main() {
     }
 
     const demoReviews = [
-      { user: demoUser, sku: "NB-LEN-0001", rating: 5, comment: "Seed demo review: хороший ноутбук для учебы и работы." },
-      { user: demoAdmin, sku: "NB-LEN-0001", rating: 4, comment: "Seed demo review: сбалансированная модель с нормальным запасом мощности." },
-      { user: demoUser, sku: "PH-XIA-0001", rating: 5, comment: "Seed demo review: отличное соотношение цены и возможностей." },
-      { user: demoAdmin, sku: "TV-SAM-0001", rating: 4, comment: "Seed demo review: яркая картинка и удобный Smart TV." },
+      { user: demoUser, sku: "NB-LEN-LEGION-5-16IRX9", rating: 5, comment: "Seed demo review: мощный игровой ноутбук." },
+      { user: demoAdmin, sku: "NB-APL-MBA-13-M3", rating: 5, comment: "Seed demo review: легкий ноутбук для повседневной работы." },
+      { user: demoUser, sku: "NB-ASUS-B5-B5404", rating: 4, comment: "Seed demo review: удобная бизнес-модель." },
     ];
 
     for (const review of demoReviews) {

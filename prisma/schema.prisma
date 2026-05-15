@@ -118,6 +118,7 @@ model Category {
   parent        Category?              @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
   children      Category[]             @relation("CategoryTree")
   specTemplates CategorySpecTemplate[]
+  collections   CategoryCollection[]
   products      Product[]
 
   createdAt DateTime @default(now())
@@ -138,8 +139,10 @@ model CategorySpecTemplate {
   label        String
   type         SpecValueType
   unit         String?
+  options      Json          @default("[]")
   isRequired   Boolean       @default(false)
   isComparable Boolean       @default(true)
+  isLocked     Boolean       @default(false)
   sortOrder    Int           @default(0)
   helpText     String?
   createdAt    DateTime      @default(now())
@@ -151,6 +154,25 @@ model CategorySpecTemplate {
   @@index([categoryId])
   @@index([key])
   @@index([sortOrder])
+}
+
+model CategoryCollection {
+  id         String   @id @default(cuid())
+  categoryId String
+  name       String
+  slug       String   @unique
+  conditions Json
+  sortOrder  Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+  @@index([slug])
+  @@index([sortOrder])
+  @@index([isActive])
 }
 
 // Brand вынесен в отдельную таблицу, чтобы фильтрация и администрирование брендов были надежнее.
@@ -182,6 +204,7 @@ model Product {
   stock       Int      @default(0)
   images      String[] @default([])
   specs       Json
+  additionalSpecs Json @default("[]")
   isActive    Boolean  @default(true)
 
   categoryId    String

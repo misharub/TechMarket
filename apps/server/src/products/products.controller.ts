@@ -4,6 +4,7 @@ import { Role } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
+import { BulkCatalogActionDto } from "../common/dto/bulk-catalog-action.dto";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { FindProductsDto } from "./dto/find-products.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
@@ -39,6 +40,15 @@ export class ProductsController {
     @ApiOperation({ summary: "Создать товар, только ADMIN" })
     create(@Body() dto: CreateProductDto) {
         return this.productsService.create(dto);
+    }
+
+    @Patch("bulk")
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Массово обновить товары, только ADMIN" })
+    bulkUpdate(@Body() dto: BulkCatalogActionDto) {
+        return this.productsService.bulkUpdate(dto);
     }
 
     @Patch(":id")

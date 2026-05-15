@@ -14,6 +14,10 @@ function categoryHref(category: CategoryNode) {
   return `/catalog/${category.slug}`;
 }
 
+function collectionHref(category: CategoryNode, collectionSlug: string) {
+  return `/catalog/${category.slug}?collection=${collectionSlug}`;
+}
+
 function CategoryLink({ category, className }: { category: CategoryNode; className: string }) {
   return (
     <a className={className} href={categoryHref(category)}>
@@ -57,9 +61,19 @@ function DesktopMegaMenu({
           </div>
 
           <div className="catalog_grid">
-            {menuItems.map((category) => (
-              <CategoryLink category={category} className="catalog_grid-link" key={category.slug} />
-            ))}
+            {activeChild?.collections.length
+              ? activeChild.collections.map((collection) => (
+                  <a
+                    className="catalog_grid-link"
+                    href={collectionHref(activeChild, collection.slug)}
+                    key={collection.slug}
+                  >
+                    {collection.name}
+                  </a>
+                ))
+              : menuItems.map((category) => (
+                  <CategoryLink category={category} className="catalog_grid-link" key={category.slug} />
+                ))}
           </div>
         </div>
       </div>
@@ -113,7 +127,18 @@ function MobileCatalog({
               <div className="catalog_mobile-children">
                 <CategoryLink category={category} className="catalog_mobile-link catalog_mobile-link--root" />
                 {category.children.map((child) => (
-                  <CategoryLink category={child} className="catalog_mobile-link" key={child.slug} />
+                  <div className="catalog_mobile-nested" key={child.slug}>
+                    <CategoryLink category={child} className="catalog_mobile-link" />
+                    {child.collections.map((collection) => (
+                      <a
+                        className="catalog_mobile-link catalog_mobile-link--collection"
+                        href={collectionHref(child, collection.slug)}
+                        key={collection.slug}
+                      >
+                        {collection.name}
+                      </a>
+                    ))}
+                  </div>
                 ))}
               </div>
             </details>

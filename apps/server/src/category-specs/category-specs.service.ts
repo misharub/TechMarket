@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateCategorySpecDto } from "./dto/create-category-spec.dto";
@@ -10,7 +10,7 @@ export class CategorySpecsService {
 
     // Список шаблонов нужен frontend, чтобы построить форму характеристик для выбранной категории.
     async findAll(categoryId: string) {
-        await this.ensureCategoryExists(categoryId);
+        await this.ensureCategoryIsSection(categoryId);
 
         return this.prisma.categorySpecTemplate.findMany({
             where: { categoryId },
@@ -19,7 +19,7 @@ export class CategorySpecsService {
     }
 
     async create(categoryId: string, dto: CreateCategorySpecDto) {
-        await this.ensureCategoryExists(categoryId);
+        await this.ensureCategoryIsSection(categoryId);
 
         try {
             return await this.prisma.categorySpecTemplate.create({
@@ -34,7 +34,8 @@ export class CategorySpecsService {
     }
 
     async update(categoryId: string, specId: string, dto: UpdateCategorySpecDto) {
-        await this.ensureSpecBelongsToCategory(categoryId, specId);
+        await this.ensureCategoryIsSection(categoryId);
+        await this.ensureSpecCanChange(categoryId, specId);
 
         try {
             return await this.prisma.categorySpecTemplate.update({
@@ -47,7 +48,8 @@ export class CategorySpecsService {
     }
 
     async remove(categoryId: string, specId: string) {
-        await this.ensureSpecBelongsToCategory(categoryId, specId);
+        await this.ensureCategoryIsSection(categoryId);
+        await this.ensureSpecCanChange(categoryId, specId);
 
         // Пока товаров нет, шаблон можно удалить физически. Позже это можно заменить мягким удалением.
         return this.prisma.categorySpecTemplate.delete({
@@ -55,25 +57,33 @@ export class CategorySpecsService {
         });
     }
 
-    private async ensureCategoryExists(categoryId: string) {
+    private async ensureCategoryIsSection(categoryId: string) {
         const category = await this.prisma.category.findUnique({
             where: { id: categoryId },
-            select: { id: true },
+            select: { id: true, parentId: true },
         });
 
         if (!category) {
             throw new NotFoundException("Category not found");
         }
+
+        if (!category.parentId) {
+            throw new BadRequestException("Category specs are available only for sections");
+        }
     }
 
-    private async ensureSpecBelongsToCategory(categoryId: string, specId: string) {
+    private async ensureSpecCanChange(categoryId: string, specId: string) {
         const spec = await this.prisma.categorySpecTemplate.findFirst({
             where: { id: specId, categoryId },
-            select: { id: true },
+            select: { id: true, isLocked: true },
         });
 
         if (!spec) {
             throw new NotFoundException("Category spec template not found");
+        }
+
+        if (spec.isLocked) {
+            throw new BadRequestException("Locked category specs cannot be changed");
         }
     }
 

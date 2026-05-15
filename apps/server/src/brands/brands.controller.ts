@@ -4,6 +4,7 @@ import { Role } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
+import { BulkCatalogActionDto } from "../common/dto/bulk-catalog-action.dto";
 import { BrandsService } from "./brands.service";
 import { CreateBrandDto } from "./dto/create-brand.dto";
 import { FindBrandsDto } from "./dto/find-brands.dto";
@@ -33,6 +34,15 @@ export class BrandsController {
     @ApiOperation({ summary: "Создать бренд, только ADMIN" })
     create(@Body() dto: CreateBrandDto) {
         return this.brandsService.create(dto);
+    }
+
+    @Patch("bulk")
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Массово обновить бренды, только ADMIN" })
+    bulkUpdate(@Body() dto: BulkCatalogActionDto) {
+        return this.brandsService.bulkUpdate(dto);
     }
 
     @Patch(":id")

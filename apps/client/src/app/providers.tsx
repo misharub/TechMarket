@@ -1,5 +1,6 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
+import { AuthBootstrap } from "../components/auth/AuthBootstrap";
 import { queryClient } from "../lib/query-client";
 
 type AppProvidersProps = {
@@ -8,9 +9,8 @@ type AppProvidersProps = {
 
 export function AppProviders({ children }: AppProvidersProps) {
   return (
-    // QueryClientProvider подключает TanStack Query ко всему React-приложению.
-    // Благодаря этому любые страницы и компоненты смогут использовать useQuery/useMutation.
     <QueryClientProvider client={queryClient}>
+      <AuthBootstrap />
       {children}
     </QueryClientProvider>
   );

@@ -1,0 +1,294 @@
+.admin_shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  background: #f5f7fb;
+}
+
+.admin_sidebar {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  padding: 20px;
+  color: #e2e8f0;
+  background: #0f172a;
+}
+
+.admin_brand {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.admin_nav {
+  display: grid;
+  gap: 6px;
+}
+
+.admin_nav_link {
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #cbd5e1;
+}
+
+.admin_nav_link.active,
+.admin_nav_link:hover {
+  color: #ffffff;
+  background: #1e293b;
+}
+
+.admin_main {
+  display: grid;
+  align-content: start;
+  gap: 20px;
+  padding: 20px;
+}
+
+.admin_header,
+.admin_toolbar,
+.admin_form_actions,
+.admin_inline_actions,
+.admin_pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.admin_header {
+  justify-content: space-between;
+}
+
+.admin_title {
+  margin: 0;
+  font-size: 28px;
+}
+
+.admin_card,
+.admin_panel {
+  border: 1px solid #dbe3ef;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.admin_panel_title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  font-weight: 600;
+}
+
+.admin_panel {
+  padding: 16px;
+}
+
+.admin_stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin_stat {
+  padding: 18px;
+}
+
+.admin_stat_value {
+  display: block;
+  margin-top: 8px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.admin_table_wrap {
+  overflow-x: auto;
+}
+
+.admin_table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin_table th,
+.admin_table td {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.admin_table th {
+  white-space: nowrap;
+  color: #475569;
+  font-weight: 500;
+}
+
+.admin_table img {
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.admin_input,
+.admin_select,
+.admin_textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 9px 11px;
+  background: #ffffff;
+}
+
+.admin_toolbar .admin_input,
+.admin_toolbar .admin_select {
+  width: auto;
+  min-width: 180px;
+}
+
+.admin_textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.admin_button,
+.admin_button_muted,
+.admin_button_danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.admin_button {
+  color: #ffffff;
+  background: #0f766e;
+}
+
+.admin_button_muted {
+  color: #0f172a;
+  background: #e2e8f0;
+}
+
+.admin_button_danger {
+  color: #ffffff;
+  background: #dc2626;
+}
+
+.admin_badge {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 12px;
+  background: #e2e8f0;
+}
+
+.admin_badge_active {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.admin_badge_inactive {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.admin_form {
+  display: grid;
+  gap: 16px;
+}
+
+.admin_form_grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin_field {
+  display: grid;
+  gap: 6px;
+}
+
+.admin_field_full {
+  grid-column: 1 / -1;
+}
+
+.admin_checkbox {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.admin_error {
+  margin: 0;
+  color: #b91c1c;
+}
+
+.admin_empty {
+  padding: 18px;
+  color: #64748b;
+}
+
+.admin_image_list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin_image_item {
+  display: grid;
+  gap: 6px;
+}
+
+.admin_specs_grid {
+  display: grid;
+  gap: 12px;
+}
+
+.admin_guard {
+  padding: 24px;
+}
+
+.admin_icon_actions {
+  display: flex;
+  gap: 6px;
+}
+
+.admin_icon_button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  color: #0f172a;
+  background: #e2e8f0;
+}
+
+.admin_icon_button:hover {
+  background: #cbd5e1;
+}
+
+.admin_icon_button_danger {
+  color: #ffffff;
+  background: #dc2626;
+}
+
+.admin_icon_button_danger:hover {
+  background: #b91c1c;
+}
+
+@media (max-width: 900px) {
+  .admin_shell {
+    grid-template-columns: 1fr;
+  }
+
+  .admin_stats,
+  .admin_form_grid {
+    grid-template-columns: 1fr;
+  }
+}

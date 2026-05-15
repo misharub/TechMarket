@@ -102,6 +102,20 @@ export class AdminStatsService {
         };
     }
 
+    async getCatalogStats() {
+        const [categoriesCount, productsCount, brandsCount] = await this.prisma.$transaction([
+            this.prisma.category.count(),
+            this.prisma.product.count(),
+            this.prisma.brand.count(),
+        ]);
+
+        return {
+            categoriesCount,
+            productsCount,
+            brandsCount,
+        };
+    }
+
     private async getTopProducts() {
         const items = await this.prisma.orderItem.findMany({
             where: {

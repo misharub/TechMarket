@@ -283,6 +283,15 @@
   line-height: 1.35;
 }
 
+.catalog_mobile-nested {
+  display: grid;
+}
+
+.catalog_mobile-link--collection {
+  padding-left: 28px;
+  color: #475569;
+}
+
 .catalog_mobile-link--root {
   color: #0f766e;
   font-weight: 600;

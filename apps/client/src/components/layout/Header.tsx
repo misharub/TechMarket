@@ -1,28 +1,32 @@
-﻿import {
+import {
+  LogOut,
   MapPin,
   Menu,
   Phone,
   Scale,
   Search,
+  Shield,
   ShoppingBasket,
   User,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import techMarketMark from "../../assets/techmarket-mark.svg";
+import { useAuthStore } from "../../lib/auth-store";
 import { CatalogNavigation } from "./CatalogNavigation";
 import "./Header.css";
 
 type HeaderAction = {
   label: string;
-  href: string;
+  href?: string;
   icon: ReactNode;
   hideOnSmall?: boolean;
+  onClick?: () => void;
 };
 
 const iconClassName = "header_action-svg";
 
-const headerActions: HeaderAction[] = [
+const baseHeaderActions: HeaderAction[] = [
   {
     label: "Контакты",
     href: "/contacts",
@@ -45,11 +49,6 @@ const headerActions: HeaderAction[] = [
     href: "/cart",
     icon: <ShoppingBasket className={iconClassName} />,
   },
-  {
-    label: "Войти",
-    href: "/login",
-    icon: <User className={iconClassName} />,
-  },
 ];
 
 function TechMarketLogo() {
@@ -64,12 +63,19 @@ function TechMarketLogo() {
 }
 
 function HeaderActionButton({ action }: { action: HeaderAction }) {
+  const className = `header_action${action.hideOnSmall ? " header_action--small-hidden" : ""}`;
+
+  if (action.onClick) {
+    return (
+      <button type="button" className={className} aria-label={action.label} onClick={action.onClick}>
+        <span className="header_action-icon">{action.icon}</span>
+        <span className="header_action-label">{action.label}</span>
+      </button>
+    );
+  }
+
   return (
-    <a
-      href={action.href}
-      className={`header_action${action.hideOnSmall ? " header_action--small-hidden" : ""}`}
-      aria-label={action.label}
-    >
+    <a href={action.href} className={className} aria-label={action.label}>
       <span className="header_action-icon">{action.icon}</span>
       <span className="header_action-label">{action.label}</span>
     </a>
@@ -77,9 +83,35 @@ function HeaderActionButton({ action }: { action: HeaderAction }) {
 }
 
 function HeaderActions() {
+  const user = useAuthStore((state) => state.user);
+  const signOut = useAuthStore((state) => state.signOut);
+  const actions = [
+    ...baseHeaderActions,
+    ...(user?.role === "ADMIN"
+      ? [
+          {
+            label: "Админ-панель",
+            href: "/admin",
+            icon: <Shield className={iconClassName} />,
+          },
+        ]
+      : []),
+    user
+      ? {
+          label: "Выйти",
+          icon: <LogOut className={iconClassName} />,
+          onClick: () => void signOut(),
+        }
+      : {
+          label: "Войти",
+          href: "/login",
+          icon: <User className={iconClassName} />,
+        },
+  ];
+
   return (
     <div className="header_actions" data-name="headerActions">
-      {headerActions.map((action) => (
+      {actions.map((action) => (
         <HeaderActionButton key={action.label} action={action} />
       ))}
     </div>

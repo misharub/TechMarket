@@ -1,6 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { SpecValueType } from "@prisma/client";
-import { IsBoolean, IsEnum, IsInt, IsOptional, IsString, Matches, MaxLength, Min, MinLength } from "class-validator";
+import {
+    IsArray,
+    IsBoolean,
+    IsEnum,
+    IsInt,
+    IsOptional,
+    IsString,
+    Matches,
+    MaxLength,
+    Min,
+    MinLength,
+} from "class-validator";
 
 // DTO нужен, чтобы ValidationPipe проверил данные характеристики до попадания в service.
 export class CreateCategorySpecDto {
@@ -42,6 +53,12 @@ export class CreateCategorySpecDto {
     @IsOptional()
     @IsBoolean()
     isComparable?: boolean;
+
+    @ApiPropertyOptional({ example: ["Windows 11", "macOS"] })
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    options?: string[];
 
     @ApiPropertyOptional({ example: 10 })
     @IsOptional()

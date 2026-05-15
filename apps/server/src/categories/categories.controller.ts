@@ -4,6 +4,7 @@ import { Role } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
+import { BulkCatalogActionDto } from "../common/dto/bulk-catalog-action.dto";
 import { CategoriesService } from "./categories.service";
 import { CreateCategoryDto } from "./dto/create-category.dto";
 import { FindCategoriesDto } from "./dto/find-categories.dto";
@@ -41,6 +42,15 @@ export class CategoriesController {
     @ApiOperation({ summary: "Создать категорию, только ADMIN" })
     create(@Body() dto: CreateCategoryDto) {
         return this.categoriesService.create(dto);
+    }
+
+    @Patch("bulk")
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Массово обновить категории, только ADMIN" })
+    bulkUpdate(@Body() dto: BulkCatalogActionDto) {
+        return this.categoriesService.bulkUpdate(dto);
     }
 
     @Patch(":id")

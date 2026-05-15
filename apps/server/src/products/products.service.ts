@@ -4,6 +4,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { FindProductsDto, ProductSort } from "./dto/find-products.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
+import { BulkCatalogAction, BulkCatalogActionDto } from "../common/dto/bulk-catalog-action.dto";
 
 @Injectable()
 export class ProductsService {
@@ -67,12 +68,14 @@ export class ProductsService {
         await this.ensureCategoryExists(dto.categoryId);
         await this.ensureBrandExists(dto.brandId);
         await this.validateSpecs(dto.categoryId, dto.specs);
+        await this.validateAdditionalSpecs(dto.additionalSpecs ?? []);
 
         try {
             return await this.prisma.product.create({
                 data: {
                     ...dto,
                     specs: dto.specs as Prisma.InputJsonValue,
+                    additionalSpecs: (dto.additionalSpecs ?? []) as unknown as Prisma.InputJsonValue,
                 },
                 include: { category: true, brand: true },
             });
@@ -102,14 +105,20 @@ export class ProductsService {
         const categoryId = dto.categoryId ?? currentProduct.categoryId;
         const specs = dto.specs ?? this.toRecord(currentProduct.specs);
         await this.validateSpecs(categoryId, specs);
+        await this.validateAdditionalSpecs(dto.additionalSpecs ?? []);
+        const { additionalSpecs, ...restDto } = dto;
+        const updateData: Prisma.ProductUncheckedUpdateInput = {
+            ...restDto,
+            specs: specs as Prisma.InputJsonValue,
+            ...(additionalSpecs
+                ? { additionalSpecs: additionalSpecs as unknown as Prisma.InputJsonValue }
+                : {}),
+        };
 
         try {
             return await this.prisma.product.update({
                 where: { id },
-                data: {
-                    ...dto,
-                    specs: specs as Prisma.InputJsonValue,
-                },
+                data: updateData,
                 include: { category: true, brand: true },
             });
         } catch (error) {
@@ -127,18 +136,35 @@ export class ProductsService {
         });
     }
 
+    bulkUpdate(dto: BulkCatalogActionDto) {
+        return this.prisma.product.updateMany({
+            where: { id: { in: dto.ids } },
+            data: {
+                isActive: dto.action === BulkCatalogAction.ACTIVATE,
+            },
+        });
+    }
+
     private async buildWhere(query: FindProductsDto): Promise<Prisma.ProductWhereInput> {
+        const collection = query.collectionSlug
+            ? await this.prisma.categoryCollection.findUnique({
+                  where: { slug: query.collectionSlug },
+              })
+            : null;
         const categoryIds = query.categoryId
             ? [query.categoryId]
-            : query.categorySlug
-              ? await this.getCategoryAndDescendantIds(query.categorySlug, query.includeInactive)
-              : undefined;
+            : collection
+              ? [collection.categoryId]
+              : query.categorySlug
+                ? await this.getCategoryAndDescendantIds(query.categorySlug, query.includeInactive)
+                : undefined;
+        const collectionFilters = collection?.isActive ? this.buildCollectionFilters(collection.conditions) : [];
 
         return {
-            ...(query.includeInactive ? {} : { isActive: true }),
+            ...(query.isActive !== undefined ? { isActive: query.isActive } : query.includeInactive ? {} : { isActive: true }),
             ...(categoryIds ? { categoryId: { in: categoryIds } } : {}),
             ...(query.brandId ? { brandId: query.brandId } : {}),
-            ...(query.inStock ? { stock: { gt: 0 } } : {}),
+            ...(query.inStock === undefined ? {} : query.inStock ? { stock: { gt: 0 } } : { stock: { lte: 0 } }),
             ...(query.priceFrom !== undefined || query.priceTo !== undefined
                 ? {
                       price: {
@@ -157,7 +183,30 @@ export class ProductsService {
                       ],
                   }
                 : {}),
+            ...(collectionFilters.length ? { AND: collectionFilters } : {}),
         };
+    }
+
+    private buildCollectionFilters(conditions: Prisma.JsonValue): Prisma.ProductWhereInput[] {
+        if (!conditions || typeof conditions !== "object" || Array.isArray(conditions)) {
+            return [];
+        }
+
+        const typedConditions = conditions as {
+            brandSlug?: unknown;
+            specs?: Record<string, unknown>;
+        };
+        const filters: Prisma.ProductWhereInput[] = [];
+
+        if (typeof typedConditions.brandSlug === "string") {
+            filters.push({ brand: { slug: typedConditions.brandSlug } });
+        }
+
+        for (const [key, value] of Object.entries(typedConditions.specs ?? {})) {
+            filters.push({ specs: { path: [key], equals: value as Prisma.InputJsonValue } });
+        }
+
+        return filters;
     }
 
     private async getCategoryAndDescendantIds(slug: string, includeInactive: boolean | undefined) {
@@ -246,6 +295,18 @@ export class ProductsService {
 
         if (type === SpecValueType.BOOLEAN && typeof value !== "boolean") {
             throw new BadRequestException(`Spec ${key} must be a boolean`);
+        }
+    }
+
+    async validateAdditionalSpecs(items: Array<{ label?: unknown; value?: unknown }>) {
+        for (const item of items) {
+            if (typeof item.label !== "string" || item.label.trim() === "") {
+                throw new BadRequestException("Additional spec label is required");
+            }
+
+            if (typeof item.value !== "string" || item.value.trim() === "") {
+                throw new BadRequestException("Additional spec value is required");
+            }
         }
     }
 

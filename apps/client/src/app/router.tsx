@@ -1,6 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
+import { RequireAdmin } from "../components/auth/RequireAdmin";
 import { MainLayout } from "../components/layout/MainLayout";
 import { AboutPage } from "../pages/about/AboutPage";
+import { AdminBrandFormPage } from "../pages/admin/AdminBrandFormPage";
+import { AdminBrandsPage } from "../pages/admin/AdminBrandsPage";
+import { AdminCategoriesPage } from "../pages/admin/AdminCategoriesPage";
+import { AdminCategoryFormPage } from "../pages/admin/AdminCategoryFormPage";
+import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage";
+import { AdminLayout } from "../pages/admin/AdminLayout";
+import { AdminProductFormPage } from "../pages/admin/AdminProductFormPage";
+import { AdminProductsPage } from "../pages/admin/AdminProductsPage";
 import { CareersPage } from "../pages/careers/CareersPage";
 import { CartPage } from "../pages/cart/CartPage";
 import { CatalogPage } from "../pages/catalog/CatalogPage";
@@ -12,6 +21,56 @@ import { LoginPage } from "../pages/login/LoginPage";
 import { StoresPage } from "../pages/stores/StoresPage";
 
 export const router = createBrowserRouter([
+  {
+    path: "/admin",
+    element: (
+      <RequireAdmin>
+        <AdminLayout />
+      </RequireAdmin>
+    ),
+    children: [
+      {
+        index: true,
+        element: <AdminDashboardPage />,
+      },
+      {
+        path: "categories",
+        element: <AdminCategoriesPage />,
+      },
+      {
+        path: "categories/new",
+        element: <AdminCategoryFormPage />,
+      },
+      {
+        path: "categories/:id/edit",
+        element: <AdminCategoryFormPage />,
+      },
+      {
+        path: "products",
+        element: <AdminProductsPage />,
+      },
+      {
+        path: "products/new",
+        element: <AdminProductFormPage />,
+      },
+      {
+        path: "products/:id/edit",
+        element: <AdminProductFormPage />,
+      },
+      {
+        path: "brands",
+        element: <AdminBrandsPage />,
+      },
+      {
+        path: "brands/new",
+        element: <AdminBrandFormPage />,
+      },
+      {
+        path: "brands/:id/edit",
+        element: <AdminBrandFormPage />,
+      },
+    ],
+  },
   {
     path: "/",
     element: <MainLayout />,
@@ -60,14 +119,6 @@ export const router = createBrowserRouter([
         path: "help",
         element: <OrderHelpPage />,
       },
-      // {
-      //   path: "help/payment",
-      //   element: <PaymentHelpPage />,
-      // },
-      // {
-      //   path: "help/warranty",
-      //   element: <WarrantyHelpPage />,
-      // },
     ],
   },
 ]);

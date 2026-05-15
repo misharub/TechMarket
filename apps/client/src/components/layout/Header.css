@@ -71,8 +71,10 @@
   justify-content: center;
   gap: 4px;
   padding: 0 6px;
+  border: 0;
   text-align: center;
   color: #020617;
+  background: transparent;
   border-radius: 16px;
   transition:
     color 0.2s,

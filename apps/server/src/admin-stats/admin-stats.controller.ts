@@ -19,4 +19,10 @@ export class AdminStatsController {
     getDashboard() {
         return this.adminStatsService.getDashboard();
     }
+
+    @Get("catalog")
+    @ApiOperation({ summary: "Получить краткую сводку каталога для админ-панели" })
+    getCatalogStats() {
+        return this.adminStatsService.getCatalogStats();
+    }
 }

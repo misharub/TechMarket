@@ -270,6 +270,24 @@ function CategoryTile({ category, kind = "catalog" }: { category: CategoryNode; 
   );
 }
 
+function CollectionTile({
+  category,
+  collection,
+}: {
+  category: CategoryNode;
+  collection: CategoryNode["collections"][number];
+}) {
+  return (
+    <a
+      className="catalog_page_category_card catalog_page_category_card__subcategory"
+      href={`/catalog/${category.slug}?collection=${collection.slug}`}
+    >
+      <CategoryVisual category={category} size="small" />
+      <span>{collection.name}</span>
+    </a>
+  );
+}
+
 function CategoryState({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "error" }) {
   return (
     <div className={`catalog_page_state ${tone === "error" ? "catalog_page_state__error" : ""}`} role="status">
@@ -285,6 +303,7 @@ export function CatalogPage() {
 
   const q = searchParams.get("q") ?? "";
   const brandSlug = searchParams.get("brand") ?? "";
+  const collectionSlug = searchParams.get("collection") ?? "";
   const priceFrom = getNumberParam(searchParams, "priceFrom");
   const priceTo = getNumberParam(searchParams, "priceTo");
   const inStock = searchParams.get("inStock") === "true";
@@ -299,6 +318,7 @@ export function CatalogPage() {
   const categories = categoriesQuery.data ?? [];
   const activePath = useMemo(() => findCategoryPath(categories, categorySlug), [categories, categorySlug]);
   const activeCategory = activePath[activePath.length - 1];
+  const activeCollection = activeCategory?.collections.find((collection) => collection.slug === collectionSlug);
   const rootCategory = activePath[0];
   const isCatalogRoot = !categorySlug;
   const isKnownCategory = !categorySlug || Boolean(activeCategory);
@@ -316,11 +336,12 @@ export function CatalogPage() {
   const brandId = brandSlug ? selectedBrand?.id ?? "__missing_brand__" : undefined;
 
   const productsQuery = useQuery({
-    queryKey: ["products", "catalog", categorySlug, q, brandId, priceFrom, priceTo, inStock, sort, page],
+    queryKey: ["products", "catalog", categorySlug, collectionSlug, q, brandId, priceFrom, priceTo, inStock, sort, page],
     queryFn: () =>
       getProducts({
         search: q || undefined,
         categorySlug,
+        collectionSlug: collectionSlug || undefined,
         brandId,
         priceFrom,
         priceTo,
@@ -373,7 +394,7 @@ export function CatalogPage() {
   const pages = productsQuery.data?.pages ?? 1;
   const products = productsQuery.data?.items ?? [];
   const activeFiltersCount = [q, brandSlug, priceFrom, priceTo, inStock].filter(Boolean).length;
-  const title = activeCategory?.name ?? "Каталог";
+  const title = activeCollection?.name ?? activeCategory?.name ?? "Каталог";
   return (
     <main className="catalog_page">
       <div className="catalog_page_inner">
@@ -454,6 +475,24 @@ export function CatalogPage() {
           </section>
         ) : null}
 
+        {!categoriesQuery.isLoading &&
+        !categoriesQuery.isError &&
+        isProductListing &&
+        activeCategory?.collections.length &&
+        !activeCollection ? (
+          <section className="catalog_page_subcategories">
+            <div className="catalog_page_section_title">
+              <h2>Подборки</h2>
+              <span>{activeCategory.collections.length}</span>
+            </div>
+            <div className="catalog_page_subcategory_grid">
+              {activeCategory.collections.map((collection) => (
+                <CollectionTile category={activeCategory} collection={collection} key={collection.id} />
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         {!categoriesQuery.isLoading && !categoriesQuery.isError && isProductListing ? (
           <div className="catalog_page_layout">
             <aside className="catalog_page_filters" aria-label="Фильтры каталога">
@@ -511,7 +550,7 @@ export function CatalogPage() {
             <section className="catalog_page_results" aria-labelledby="catalog_results_heading">
               <div className="catalog_page_toolbar">
                 <div>
-                  <h2 id="catalog_results_heading">{activeCategory?.name}</h2>
+                  <h2 id="catalog_results_heading">{title}</h2>
                   <p>{productsQuery.isError ? "Каталог временно недоступен" : null}</p>
                 </div>
                 <label className="catalog_page_sort">

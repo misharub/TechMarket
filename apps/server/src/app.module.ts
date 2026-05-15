@@ -11,6 +11,7 @@ import { CatalogExchangeModule } from "./catalog-exchange/catalog-exchange.modul
 import { CartModule } from "./cart/cart.module";
 import { CategoriesModule } from "./categories/categories.module";
 import { CategorySpecsModule } from "./category-specs/category-specs.module";
+import { CategoryCollectionsModule } from "./category-collections/category-collections.module";
 import { CheckoutOptionsModule } from "./checkout-options/checkout-options.module";
 import { NotificationsModule } from "./notifications/notifications.module";
 import { OrdersModule } from "./orders/orders.module";
@@ -42,6 +43,7 @@ import { WishlistModule } from "./wishlist/wishlist.module";
         OrdersModule,
         NotificationsModule,
         CategoriesModule,
+        CategoryCollectionsModule,
         CategorySpecsModule,
         BrandsModule,
         PromoCodesModule,

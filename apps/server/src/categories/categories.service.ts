@@ -1,12 +1,13 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
+import { BulkCatalogAction, BulkCatalogActionDto } from "../common/dto/bulk-catalog-action.dto";
 import { CreateCategoryDto } from "./dto/create-category.dto";
 import { FindCategoriesDto } from "./dto/find-categories.dto";
 import { UpdateCategoryDto } from "./dto/update-category.dto";
 
 type CategoryWithChildren = Prisma.CategoryGetPayload<{
-    include: { children: true };
+    include: { children: true; collections: true };
 }>;
 
 @Injectable()
@@ -79,10 +80,25 @@ export class CategoriesService {
         });
     }
 
+    bulkUpdate(dto: BulkCatalogActionDto) {
+        return this.prisma.category.updateMany({
+            where: { id: { in: dto.ids } },
+            data: {
+                isActive: dto.action === BulkCatalogAction.ACTIVATE,
+            },
+        });
+    }
+
     async findTree(query: FindCategoriesDto) {
         const categories = await this.prisma.category.findMany({
             where: this.buildWhere({ includeInactive: query.includeInactive }),
-            include: { children: true },
+            include: {
+                children: true,
+                collections: {
+                    where: query.includeInactive ? {} : { isActive: true },
+                    orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+                },
+            },
             orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
         });
 

@@ -11,7 +11,10 @@ import {
     MaxLength,
     Min,
     MinLength,
+    ValidateNested,
 } from "class-validator";
+import { Type } from "class-transformer";
+import { AdditionalProductSpecDto } from "./additional-product-spec.dto";
 
 // Product DTO описывает карточку товара. specs проверяются глубже уже в service по шаблону категории.
 export class CreateProductDto {
@@ -72,4 +75,11 @@ export class CreateProductDto {
     @ApiProperty({ example: { screenSize: 16, processor: "Intel Core i5", ram: 16, ssd: 512 } })
     @IsObject()
     specs: Record<string, unknown>;
+
+    @ApiPropertyOptional({ type: [AdditionalProductSpecDto] })
+    @IsOptional()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => AdditionalProductSpecDto)
+    additionalSpecs?: AdditionalProductSpecDto[];
 }
