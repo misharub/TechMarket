@@ -1,4 +1,5 @@
 node_modules
+.worktrees/
 .idea/
 apps/*/.git.backup/
 dist
