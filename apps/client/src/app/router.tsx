@@ -18,6 +18,7 @@ import { ContactsPage } from "../pages/contacts/ContactsPage";
 import { OrderHelpPage } from "../pages/help/OrderHelpPage";
 import { HomePage } from "../pages/home/HomePage";
 import { LoginPage } from "../pages/login/LoginPage";
+import { ProductPage } from "../pages/product/ProductPage";
 import { StoresPage } from "../pages/stores/StoresPage";
 
 export const router = createBrowserRouter([
@@ -106,6 +107,10 @@ export const router = createBrowserRouter([
       {
         path: "login",
         element: <LoginPage />,
+      },
+      {
+        path: "product/:slug",
+        element: <ProductPage />,
       },
       {
         path: "about",

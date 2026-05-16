@@ -134,6 +134,10 @@ export function getProduct(id: string) {
   return apiGet<Product>(`/products/${id}`);
 }
 
+export function getProductBySlug(slug: string) {
+  return apiGet<Product>(`/products/by-slug/${slug}`);
+}
+
 export function createProduct(payload: ProductPayload) {
   return apiPost<Product, ProductPayload>("/products", payload);
 }
