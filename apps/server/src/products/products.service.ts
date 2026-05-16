@@ -252,12 +252,20 @@ export class ProductsService {
     }
 
     private async validateSpecs(categoryId: string, specs: Record<string, unknown>) {
-        const templates = await this.prisma.categorySpecTemplate.findMany({
+        const template = await this.prisma.specificationTemplate.findUnique({
             where: { categoryId },
-            orderBy: { sortOrder: "asc" },
+            include: {
+                groups: {
+                    include: {
+                        specifications: {
+                            include: { options: true },
+                        },
+                    },
+                },
+            },
         });
-
-        const templatesByKey = new Map(templates.map((template) => [template.key, template]));
+        const specifications = template?.groups.flatMap((group) => group.specifications) ?? [];
+        const templatesByKey = new Map(specifications.map((specification) => [specification.key, specification]));
 
         for (const key of Object.keys(specs)) {
             if (!templatesByKey.has(key)) {
@@ -265,7 +273,7 @@ export class ProductsService {
             }
         }
 
-        for (const template of templates) {
+        for (const template of specifications) {
             const value = specs[template.key];
 
             if (template.isRequired && (value === undefined || value === null || value === "")) {
@@ -276,17 +284,21 @@ export class ProductsService {
                 continue;
             }
 
-            this.validateSpecType(template.key, template.type, value);
+            this.validateSpecType(template.key, template.type, value, template.options.map((option) => option.value));
         }
     }
 
-    private validateSpecType(key: string, type: SpecValueType, value: unknown) {
+    private validateSpecType(key: string, type: SpecValueType, value: unknown, options: string[]) {
         if (type === SpecValueType.STRING && typeof value !== "string") {
             throw new BadRequestException(`Spec ${key} must be a string`);
         }
 
         if (type === SpecValueType.SELECT && typeof value !== "string") {
             throw new BadRequestException(`Spec ${key} must be a string`);
+        }
+
+        if (type === SpecValueType.SELECT && !options.includes(String(value))) {
+            throw new BadRequestException(`Spec ${key} must use one of the configured options`);
         }
 
         if (type === SpecValueType.NUMBER && (typeof value !== "number" || !Number.isFinite(value))) {

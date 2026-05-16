@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { getCategorySpecs } from "../../lib/category-specs-api";
 import { getProductBySlug, resolveUploadUrl } from "../../lib/products-api";
+import { getSpecificationTemplateByCategory } from "../../lib/specification-templates-api";
 import "./ProductPage.css";
 
 export function ProductPage() {
@@ -13,38 +13,46 @@ export function ProductPage() {
     enabled: Boolean(slug),
   });
   const product = productQuery.data;
-  const specsQuery = useQuery({
-    queryKey: ["product", "category_specs", product?.categoryId],
-    queryFn: () => getCategorySpecs(product!.categoryId),
+  const templateQuery = useQuery({
+    queryKey: ["product", "specification_template", product?.categoryId],
+    queryFn: () => getSpecificationTemplateByCategory(product!.categoryId),
     enabled: Boolean(product?.categoryId),
   });
-  const visibleSpecs = useMemo(() => {
+  const groupedSpecs = useMemo(() => {
     if (!product) {
       return [];
     }
 
-    return (specsQuery.data ?? [])
-      .map((spec) => {
-        const rawValue = product.specs[spec.key];
+    return (templateQuery.data?.groups ?? [])
+      .map((group) => ({
+        id: group.id,
+        name: group.name,
+        sortOrder: group.sortOrder,
+        items: group.specifications
+          .map((spec) => {
+            const rawValue = product.specs[spec.key];
 
-        if (rawValue === undefined || rawValue === null || rawValue === "") {
-          return null;
-        }
+            if (rawValue === undefined || rawValue === null || rawValue === "") {
+              return null;
+            }
 
-        return {
-          label: spec.label,
-          value:
-            typeof rawValue === "boolean"
-              ? rawValue
-                ? "Да"
-                : "Нет"
-              : `${rawValue}${spec.unit ? ` ${spec.unit}` : ""}`,
-          sortOrder: spec.sortOrder,
-        };
-      })
-      .filter((spec): spec is { label: string; value: string; sortOrder: number } => spec !== null)
-      .sort((left, right) => left.sortOrder - right.sortOrder || left.label.localeCompare(right.label));
-  }, [product, specsQuery.data]);
+            return {
+              label: spec.name,
+              value:
+                typeof rawValue === "boolean"
+                  ? rawValue
+                    ? "Да"
+                    : "Нет"
+                  : `${rawValue}${spec.unit ? ` ${spec.unit}` : ""}`,
+              sortOrder: spec.sortOrder,
+            };
+          })
+          .filter((spec): spec is { label: string; value: string; sortOrder: number } => spec !== null)
+          .sort((left, right) => left.sortOrder - right.sortOrder || left.label.localeCompare(right.label)),
+      }))
+      .filter((group) => group.items.length > 0)
+      .sort((left, right) => left.sortOrder - right.sortOrder || left.name.localeCompare(right.name));
+  }, [product, templateQuery.data]);
 
   if (productQuery.isLoading) {
     return <main className="product_page"><p>Загрузка товара...</p></main>;
@@ -73,10 +81,11 @@ export function ProductPage() {
 
         <section className="product_page_specs">
           <h2>Характеристики</h2>
-          {visibleSpecs.length ? (
-            <div className="product_page_specs_group">
+          {groupedSpecs.map((group) => (
+            <div className="product_page_specs_group" key={group.id}>
+              <h3>{group.name}</h3>
               <dl>
-                {visibleSpecs.map((item) => (
+                {group.items.map((item) => (
                   <div key={item.label}>
                     <dt>{item.label}</dt>
                     <dd>{item.value}</dd>
@@ -84,7 +93,7 @@ export function ProductPage() {
                 ))}
               </dl>
             </div>
-          ) : null}
+          ))}
           {product.additionalSpecs.length ? (
             <div className="product_page_specs_group">
               <h3>Дополнительно</h3>

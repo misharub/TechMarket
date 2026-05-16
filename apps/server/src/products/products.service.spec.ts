@@ -20,7 +20,7 @@ describe("ProductsService additionalSpecs", () => {
         const service = new ProductsService({
             category: { findUnique: jest.fn().mockResolvedValue({ id: "category_1" }) },
             brand: { findUnique: jest.fn().mockResolvedValue({ id: "brand_1" }) },
-            categorySpecTemplate: { findMany: jest.fn().mockResolvedValue([]) },
+            specificationTemplate: { findUnique: jest.fn().mockResolvedValue(null) },
             product: { create },
         } as never);
 
@@ -51,5 +51,33 @@ describe("ProductsService additionalSpecs", () => {
         await expect(
             service.validateAdditionalSpecs([{ label: "", value: "Зарядка" }]),
         ).rejects.toThrow("Additional spec label is required");
+    });
+});
+
+describe("ProductsService template specs", () => {
+    it("rejects select values outside configured options", async () => {
+        const service = new ProductsService({
+            specificationTemplate: {
+                findUnique: jest.fn().mockResolvedValue({
+                    groups: [
+                        {
+                            specifications: [
+                                {
+                                    key: "matrixType",
+                                    name: "Тип матрицы",
+                                    type: "SELECT",
+                                    isRequired: true,
+                                    options: [{ value: "IPS" }, { value: "OLED" }],
+                                },
+                            ],
+                        },
+                    ],
+                }),
+            },
+        } as never);
+
+        await expect(service["validateSpecs"]("category_1", { matrixType: "TN" })).rejects.toThrow(
+            "Spec matrixType must use one of the configured options",
+        );
     });
 });

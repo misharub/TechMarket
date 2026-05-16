@@ -58,6 +58,10 @@ export function apiPost<TResponse, TBody = unknown>(path: string, body?: TBody) 
   return apiRequest<TResponse>(path, { method: "POST", body });
 }
 
+export function apiPut<TResponse, TBody = unknown>(path: string, body: TBody) {
+  return apiRequest<TResponse>(path, { method: "PUT", body });
+}
+
 export function apiPatch<TResponse, TBody = unknown>(path: string, body: TBody) {
   return apiRequest<TResponse>(path, { method: "PATCH", body });
 }

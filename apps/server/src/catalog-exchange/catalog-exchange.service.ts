@@ -213,9 +213,19 @@ export class CatalogExchangeService {
     }
 
     private async validateSpecs(categoryId: string, specs: Record<string, unknown>) {
-        const templates = await this.prisma.categorySpecTemplate.findMany({
+        const template = await this.prisma.specificationTemplate.findUnique({
             where: { categoryId },
+            include: {
+                groups: {
+                    include: {
+                        specifications: {
+                            include: { options: true },
+                        },
+                    },
+                },
+            },
         });
+        const templates = template?.groups.flatMap((group) => group.specifications) ?? [];
         const templatesByKey = new Map(templates.map((template) => [template.key, template]));
 
         for (const key of Object.keys(specs)) {
@@ -248,6 +258,13 @@ export class CatalogExchangeService {
                 typeof value !== "string"
             ) {
                 throw new Error(`Spec ${template.key} must be a string`);
+            }
+
+            if (
+                template.type === SpecValueType.SELECT &&
+                !template.options.some((option) => option.value === value)
+            ) {
+                throw new Error(`Spec ${template.key} must use one of the configured options`);
             }
         }
     }

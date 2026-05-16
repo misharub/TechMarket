@@ -10,7 +10,6 @@ import { BrandsModule } from "./brands/brands.module";
 import { CatalogExchangeModule } from "./catalog-exchange/catalog-exchange.module";
 import { CartModule } from "./cart/cart.module";
 import { CategoriesModule } from "./categories/categories.module";
-import { CategorySpecsModule } from "./category-specs/category-specs.module";
 import { CategoryCollectionsModule } from "./category-collections/category-collections.module";
 import { CheckoutOptionsModule } from "./checkout-options/checkout-options.module";
 import { NotificationsModule } from "./notifications/notifications.module";
@@ -20,6 +19,7 @@ import { PromoCodesModule } from "./promo-codes/promo-codes.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { ProductsModule } from "./products/products.module";
 import { ReviewsModule } from "./reviews/reviews.module";
+import { SpecificationTemplatesModule } from "./specification-templates/specification-templates.module";
 import { UploadsModule } from "./uploads/uploads.module";
 import { UsersModule } from "./users/users.module";
 import { WishlistModule } from "./wishlist/wishlist.module";
@@ -44,11 +44,11 @@ import { WishlistModule } from "./wishlist/wishlist.module";
         NotificationsModule,
         CategoriesModule,
         CategoryCollectionsModule,
-        CategorySpecsModule,
         BrandsModule,
         PromoCodesModule,
         ProductsModule,
         ReviewsModule,
+        SpecificationTemplatesModule,
         UploadsModule,
         WishlistModule,
         ProductCompareModule,

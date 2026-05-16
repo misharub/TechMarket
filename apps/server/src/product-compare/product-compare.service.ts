@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { SpecValueType } from "@prisma/client";
-import type { CategorySpecTemplate, Product } from "@prisma/client";
+import type { Product, Specification } from "@prisma/client";
 import { AiService } from "../ai/ai.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { CompareProductsDto } from "./dto/compare-products.dto";
@@ -52,13 +52,19 @@ export class ProductCompareService {
             throw new BadRequestException("Products must belong to the same category");
         }
 
-        const templates = await this.prisma.categorySpecTemplate.findMany({
-            where: {
-                categoryId,
-                isComparable: true,
+        const template = await this.prisma.specificationTemplate.findUnique({
+            where: { categoryId },
+            include: {
+                groups: {
+                    include: {
+                        specifications: true,
+                    },
+                },
             },
-            orderBy: [{ sortOrder: "asc" }, { label: "asc" }],
         });
+        const templates = (template?.groups ?? [])
+            .flatMap((group) => group.specifications)
+            .sort((left, right) => left.sortOrder - right.sortOrder || left.name.localeCompare(right.name));
 
         const rows = templates.map((template) => this.buildRow(template, orderedProducts));
         const fallbackSummary = this.buildDemoAiSummary(orderedProducts, rows);
@@ -105,14 +111,14 @@ export class ProductCompareService {
         });
     }
 
-    private buildRow(template: CategorySpecTemplate, products: ProductWithRelations[]): CompareRow {
+    private buildRow(template: Specification, products: ProductWithRelations[]): CompareRow {
         const values = Object.fromEntries(
             products.map((product) => [product.id, this.toSpecsRecord(product.specs)[template.key] ?? null]),
         );
 
         return {
             key: template.key,
-            label: template.label,
+            label: template.name,
             unit: template.unit,
             type: template.type,
             values,
@@ -120,7 +126,7 @@ export class ProductCompareService {
         };
     }
 
-    private findBestProductIds(template: CategorySpecTemplate, values: Record<string, unknown>) {
+    private findBestProductIds(template: Specification, values: Record<string, unknown>) {
         if (template.type === SpecValueType.BOOLEAN) {
             const trueIds = Object.entries(values)
                 .filter(([, value]) => value === true)

@@ -11,26 +11,6 @@ import {
   type CategoryCollectionPayload,
 } from "../../lib/category-collections-api";
 import { createCategory, getCategories, getCategory, updateCategory, type CategoryPayload } from "../../lib/categories-api";
-import {
-  createCategorySpec,
-  deleteCategorySpec,
-  getCategorySpecs,
-  updateCategorySpec,
-  type CategorySpecPayload,
-  type CategorySpecTemplate,
-  type CategorySpecType,
-} from "../../lib/category-specs-api";
-
-const emptySpec: CategorySpecPayload = {
-  key: "",
-  label: "",
-  type: "STRING",
-  unit: "",
-  isRequired: false,
-  isComparable: true,
-  sortOrder: 0,
-  helpText: "",
-};
 
 const emptyCollection = {
   name: "",
@@ -59,19 +39,12 @@ export function AdminCategoryFormPage() {
   });
   const [error, setError] = useState("");
   const [imageBusy, setImageBusy] = useState(false);
-  const [specDraft, setSpecDraft] = useState<CategorySpecPayload>(emptySpec);
-  const [editingSpecId, setEditingSpecId] = useState<string | null>(null);
   const [collectionDraft, setCollectionDraft] = useState<CollectionDraft>(emptyCollection);
   const [editingCollectionId, setEditingCollectionId] = useState<string | null>(null);
 
   const categoryQuery = useQuery({ queryKey: ["admin", "category", id], queryFn: () => getCategory(id!), enabled: isEdit });
   const categoriesQuery = useQuery({ queryKey: ["admin", "categories"], queryFn: () => getCategories(true) });
   const isSection = Boolean(form.parentId);
-  const specsQuery = useQuery({
-    queryKey: ["admin", "category_specs", id],
-    queryFn: () => getCategorySpecs(id!),
-    enabled: isEdit && isSection,
-  });
   const collectionsQuery = useQuery({
     queryKey: ["admin", "category_collections", id],
     queryFn: () => getCategoryCollections(id!, true),
@@ -88,25 +61,6 @@ export function AdminCategoryFormPage() {
       await queryClient.invalidateQueries({ queryKey: ["admin", "catalog_stats"] });
       if (!id) navigate(`/admin/categories/${category.id}/edit`, { replace: true });
     },
-  });
-  const createSpecMutation = useMutation({
-    mutationFn: (payload: CategorySpecPayload) => createCategorySpec(id!, payload),
-    onSuccess: async () => {
-      setSpecDraft(emptySpec);
-      await queryClient.invalidateQueries({ queryKey: ["admin", "category_specs", id] });
-    },
-  });
-  const updateSpecMutation = useMutation({
-    mutationFn: ({ specId, payload }: { specId: string; payload: CategorySpecPayload }) => updateCategorySpec(id!, specId, payload),
-    onSuccess: async () => {
-      setEditingSpecId(null);
-      setSpecDraft(emptySpec);
-      await queryClient.invalidateQueries({ queryKey: ["admin", "category_specs", id] });
-    },
-  });
-  const deleteSpecMutation = useMutation({
-    mutationFn: (specId: string) => deleteCategorySpec(id!, specId),
-    onSuccess: async () => queryClient.invalidateQueries({ queryKey: ["admin", "category_specs", id] }),
   });
   const createCollectionMutation = useMutation({
     mutationFn: (payload: CategoryCollectionPayload) => createCategoryCollection(id!, payload),
@@ -166,16 +120,6 @@ export function AdminCategoryFormPage() {
     }
   }
 
-  async function handleSpecSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!id) return;
-    if (editingSpecId) {
-      await updateSpecMutation.mutateAsync({ specId: editingSpecId, payload: specDraft });
-      return;
-    }
-    await createSpecMutation.mutateAsync(specDraft);
-  }
-
   async function handleCollectionSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!id) return;
@@ -193,22 +137,6 @@ export function AdminCategoryFormPage() {
       return;
     }
     await createCollectionMutation.mutateAsync(payload);
-  }
-
-  function startEditSpec(spec: CategorySpecTemplate) {
-    if (spec.isLocked) return;
-    setEditingSpecId(spec.id);
-    setSpecDraft({
-      key: spec.key,
-      label: spec.label,
-      type: spec.type,
-      unit: spec.unit ?? "",
-      options: spec.options,
-      isRequired: spec.isRequired,
-      isComparable: spec.isComparable,
-      sortOrder: spec.sortOrder,
-      helpText: spec.helpText ?? "",
-    });
   }
 
   function startEditCollection(collection: { id: string; name: string; slug: string; sortOrder: number; conditions: Record<string, unknown> }) {
@@ -247,28 +175,6 @@ export function AdminCategoryFormPage() {
       {id && isSection ? (
         <>
           <section className="admin_panel admin_form">
-            <h2>Шаблон характеристик</h2>
-            <form className="admin_form" onSubmit={handleSpecSubmit}>
-              <div className="admin_form_grid">
-                <label className="admin_field"><span>Ключ</span><input className="admin_input" required value={specDraft.key} onChange={(event) => setSpecDraft((current) => ({ ...current, key: event.target.value }))} /></label>
-                <label className="admin_field"><span>Название</span><input className="admin_input" required value={specDraft.label} onChange={(event) => setSpecDraft((current) => ({ ...current, label: event.target.value }))} /></label>
-                <label className="admin_field"><span>Тип</span><select className="admin_select" value={specDraft.type} onChange={(event) => setSpecDraft((current) => ({ ...current, type: event.target.value as CategorySpecType }))}><option value="STRING">Строка</option><option value="NUMBER">Число</option><option value="BOOLEAN">Да/нет</option><option value="SELECT">Выбор</option></select></label>
-                <label className="admin_field"><span>Единица</span><input className="admin_input" value={specDraft.unit ?? ""} onChange={(event) => setSpecDraft((current) => ({ ...current, unit: event.target.value }))} /></label>
-                <label className="admin_field"><span>Порядок</span><input className="admin_input" type="number" min={0} value={specDraft.sortOrder ?? 0} onChange={(event) => setSpecDraft((current) => ({ ...current, sortOrder: Number(event.target.value) }))} /></label>
-                <label className="admin_field admin_field_full"><span>Подсказка</span><input className="admin_input" value={specDraft.helpText ?? ""} onChange={(event) => setSpecDraft((current) => ({ ...current, helpText: event.target.value }))} /></label>
-              </div>
-              <div className="admin_inline_actions">
-                <label className="admin_checkbox"><input type="checkbox" checked={Boolean(specDraft.isRequired)} onChange={(event) => setSpecDraft((current) => ({ ...current, isRequired: event.target.checked }))} />Обязательная</label>
-                <label className="admin_checkbox"><input type="checkbox" checked={Boolean(specDraft.isComparable)} onChange={(event) => setSpecDraft((current) => ({ ...current, isComparable: event.target.checked }))} />Для сравнения</label>
-              </div>
-              <div className="admin_form_actions"><button className="admin_button" type="submit">{editingSpecId ? "Сохранить характеристику" : "Добавить характеристику"}</button>{editingSpecId ? <button className="admin_button_muted" type="button" onClick={() => { setEditingSpecId(null); setSpecDraft(emptySpec); }}>Отмена</button> : null}</div>
-            </form>
-            <div className="admin_table_wrap">
-              <table className="admin_table"><thead><tr><th>Ключ</th><th>Название</th><th>Тип</th><th>Порядок</th><th>Действие</th></tr></thead><tbody>{(specsQuery.data ?? []).map((spec) => <tr key={spec.id}><td>{spec.key}</td><td>{spec.label}</td><td>{spec.type}</td><td>{spec.sortOrder}</td><td>{spec.isLocked ? <span className="admin_badge">Базовая</span> : <div className="admin_inline_actions"><button className="admin_button_muted" type="button" onClick={() => startEditSpec(spec)}>Редактировать</button><button className="admin_button_danger" type="button" onClick={() => deleteSpecMutation.mutate(spec.id)}>Удалить</button></div>}</td></tr>)}</tbody></table>
-            </div>
-          </section>
-
-          <section className="admin_panel admin_form">
             <h2>Подборки</h2>
             <form className="admin_form" onSubmit={handleCollectionSubmit}>
               <div className="admin_form_grid">
@@ -284,7 +190,7 @@ export function AdminCategoryFormPage() {
           </section>
         </>
       ) : id ? (
-        <section className="admin_panel"><p className="admin_empty">Шаблон характеристик и подборки доступны только у разделов категорий.</p></section>
+        <section className="admin_panel"><p className="admin_empty">Подборки доступны только у разделов категорий.</p></section>
       ) : null}
     </>
   );

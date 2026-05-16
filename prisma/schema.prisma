@@ -117,7 +117,7 @@ model Category {
   parentId      String?
   parent        Category?              @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
   children      Category[]             @relation("CategoryTree")
-  specTemplates CategorySpecTemplate[]
+  specificationTemplate SpecificationTemplate?
   collections   CategoryCollection[]
   products      Product[]
 
@@ -130,29 +130,65 @@ model Category {
   @@index([sortOrder])
 }
 
-// CategorySpecTemplate описывает поле характеристики для товаров конкретной категории.
-// key хранится на английском для кода и API, а label показывается пользователю в интерфейсе.
-model CategorySpecTemplate {
-  id           String        @id @default(cuid())
-  categoryId   String
-  key          String
-  label        String
-  type         SpecValueType
-  unit         String?
-  options      Json          @default("[]")
-  isRequired   Boolean       @default(false)
-  isComparable Boolean       @default(true)
-  isLocked     Boolean       @default(false)
-  sortOrder    Int           @default(0)
-  helpText     String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+model SpecificationTemplate {
+  id         String   @id @default(cuid())
+  name       String
+  categoryId String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category Category             @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  groups   SpecificationGroup[]
 
-  @@unique([categoryId, key])
   @@index([categoryId])
+}
+
+model SpecificationGroup {
+  id         String   @id @default(cuid())
+  templateId String
+  name       String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  template       SpecificationTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  specifications Specification[]
+
+  @@index([templateId])
+  @@index([sortOrder])
+}
+
+model Specification {
+  id         String        @id @default(cuid())
+  groupId    String
+  key        String
+  name       String
+  type       SpecValueType
+  unit       String?
+  isRequired Boolean       @default(false)
+  sortOrder  Int           @default(0)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  group   SpecificationGroup   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  options SpecificationOption[]
+
+  @@index([groupId])
   @@index([key])
+  @@index([sortOrder])
+}
+
+model SpecificationOption {
+  id              String   @id @default(cuid())
+  specificationId String
+  value           String
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  specification Specification @relation(fields: [specificationId], references: [id], onDelete: Cascade)
+
+  @@index([specificationId])
   @@index([sortOrder])
 }
 

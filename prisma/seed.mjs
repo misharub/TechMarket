@@ -438,7 +438,7 @@ const brands = [
   ["ASUS", "asus", "Производитель ноутбуков, компьютеров и комплектующих"],
 ];
 
-const categorySpecTemplates = {
+const specificationTemplateSeeds = {
   notebooks: [
     ["purpose", "Назначение", SpecValueType.SELECT, null, true, true, 10, ["gaming", "business", "home"]],
     ["os", "Операционная система", SpecValueType.SELECT, null, true, true, 20, ["Windows 11", "macOS", "ChromeOS", "Linux"]],
@@ -683,37 +683,50 @@ async function main() {
   );
   const brandBySlug = Object.fromEntries((await prisma.brand.findMany()).map((brand) => [brand.slug, brand]));
 
-  await prisma.categorySpecTemplate.deleteMany({
-    where: { category: { parentId: null } },
-  });
-
-  for (const [categorySlug, templates] of Object.entries(categorySpecTemplates)) {
+  for (const [categorySlug, templates] of Object.entries(specificationTemplateSeeds)) {
     const category = categoryBySlug[categorySlug];
 
-    for (const [key, label, type, unit, isRequired, isComparable, sortOrder, options] of templates) {
-      await prisma.categorySpecTemplate.upsert({
-        where: { categoryId_key: { categoryId: category.id, key } },
-        update: {
-          label,
-          type,
-          unit,
-          options,
-          isRequired,
-          isComparable,
-          sortOrder,
-          isLocked: true,
-        },
-        create: {
-          categoryId: category.id,
-          key,
-          label,
-          type,
-          unit,
-          options,
-          isRequired,
-          isComparable,
-          sortOrder,
-          isLocked: true,
+    await prisma.specificationTemplate.upsert({
+      where: { categoryId: category.id },
+      update: {
+        name: `Характеристики: ${category.name}`,
+      },
+      create: {
+        name: `Характеристики: ${category.name}`,
+        categoryId: category.id,
+      },
+    });
+
+    const template = await prisma.specificationTemplate.findUnique({
+      where: { categoryId: category.id },
+    });
+
+    if (template) {
+      await prisma.specificationGroup.deleteMany({
+        where: { templateId: template.id },
+      });
+
+      await prisma.specificationGroup.create({
+        data: {
+          templateId: template.id,
+          name: "Основные характеристики",
+          sortOrder: 1,
+          specifications: {
+            create: templates.map(([key, label, type, unit, isRequired, _isComparable, sortOrder, options]) => ({
+              key,
+              name: label,
+              type,
+              unit,
+              isRequired,
+              sortOrder,
+              options: {
+                create: options.map((value, index) => ({
+                  value,
+                  sortOrder: index + 1,
+                })),
+              },
+            })),
+          },
         },
       });
     }

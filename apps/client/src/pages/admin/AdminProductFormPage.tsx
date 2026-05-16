@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { uploadImage } from "../../lib/admin-api";
 import { getBrands } from "../../lib/brands-api";
 import { getCategories } from "../../lib/categories-api";
-import { getCategorySpecs } from "../../lib/category-specs-api";
+import { getSpecificationTemplateByCategory } from "../../lib/specification-templates-api";
 import {
   createProduct,
   getProduct,
@@ -60,9 +60,9 @@ export function AdminProductFormPage() {
     () => (parentCategoryId ? getChildCategories(categories, parentCategoryId) : []),
     [categories, parentCategoryId],
   );
-  const specsQuery = useQuery({
-    queryKey: ["admin", "category_specs", form.categoryId],
-    queryFn: () => getCategorySpecs(form.categoryId),
+  const templateQuery = useQuery({
+    queryKey: ["admin", "specification_template_by_category", form.categoryId],
+    queryFn: () => getSpecificationTemplateByCategory(form.categoryId),
     enabled: Boolean(form.categoryId),
   });
   const saveMutation = useMutation({
@@ -103,7 +103,8 @@ export function AdminProductFormPage() {
     }
   }, [productQuery.data]);
 
-  const visibleSpecs = useMemo(() => specsQuery.data ?? [], [specsQuery.data]);
+  const groupedSpecs = useMemo(() => templateQuery.data?.groups ?? [], [templateQuery.data]);
+  const visibleSpecs = useMemo(() => groupedSpecs.flatMap((group) => group.specifications), [groupedSpecs]);
 
   useEffect(() => {
     if (!visibleSpecs.length) {
@@ -360,45 +361,55 @@ export function AdminProductFormPage() {
 
         {visibleSpecs.length ? (
           <section className="admin_specs_grid">
-            <h2>Характеристики шаблона</h2>
-            {visibleSpecs.map((spec) => (
-              <label className="admin_field" key={spec.id}>
-                <span>
-                  {spec.label}
-                  {spec.unit ? `, ${spec.unit}` : ""}
-                </span>
-                {spec.type === "BOOLEAN" ? (
-                  <input
-                    type="checkbox"
-                    checked={Boolean(form.specs[spec.key])}
-                    onChange={(event) => updateSpecValue(spec.key, event.target.checked)}
-                  />
-                ) : spec.type === "SELECT" ? (
-                  <select
-                    className="admin_select"
-                    required={spec.isRequired}
-                    value={String(form.specs[spec.key] ?? "")}
-                    onChange={(event) => updateSpecValue(spec.key, event.target.value)}
-                  >
-                    <option value="">Выберите значение</option>
-                    {spec.options.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    className="admin_input"
-                    required={spec.isRequired}
-                    type={spec.type === "NUMBER" ? "number" : "text"}
-                    value={String(form.specs[spec.key] ?? "")}
-                    onChange={(event) =>
-                      updateSpecValue(spec.key, spec.type === "NUMBER" ? Number(event.target.value) : event.target.value)
-                    }
-                  />
-                )}
-              </label>
+            <h2>Характеристики товара</h2>
+            {groupedSpecs.map((group) => (
+              <div className="admin_specs_group" key={group.id}>
+                <h3>{group.name}</h3>
+                <div className="admin_form_grid">
+                  {group.specifications.map((spec) => (
+                    <label className="admin_field" key={spec.id}>
+                      <span>
+                        {spec.name}
+                        {spec.unit ? `, ${spec.unit}` : ""}
+                      </span>
+                      {spec.type === "BOOLEAN" ? (
+                        <input
+                          type="checkbox"
+                          checked={Boolean(form.specs[spec.key])}
+                          onChange={(event) => updateSpecValue(spec.key, event.target.checked)}
+                        />
+                      ) : spec.type === "SELECT" ? (
+                        <select
+                          className="admin_select"
+                          required={spec.isRequired}
+                          value={String(form.specs[spec.key] ?? "")}
+                          onChange={(event) => updateSpecValue(spec.key, event.target.value)}
+                        >
+                          <option value="">Выберите значение</option>
+                          {spec.options.map((option) => (
+                            <option key={option.id} value={option.value}>
+                              {option.value}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          className="admin_input"
+                          required={spec.isRequired}
+                          type={spec.type === "NUMBER" ? "number" : "text"}
+                          value={String(form.specs[spec.key] ?? "")}
+                          onChange={(event) =>
+                            updateSpecValue(
+                              spec.key,
+                              spec.type === "NUMBER" ? Number(event.target.value) : event.target.value,
+                            )
+                          }
+                        />
+                      )}
+                    </label>
+                  ))}
+                </div>
+              </div>
             ))}
           </section>
         ) : form.categoryId ? (

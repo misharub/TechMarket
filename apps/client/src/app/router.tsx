@@ -10,6 +10,8 @@ import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage";
 import { AdminLayout } from "../pages/admin/AdminLayout";
 import { AdminProductFormPage } from "../pages/admin/AdminProductFormPage";
 import { AdminProductsPage } from "../pages/admin/AdminProductsPage";
+import { AdminSpecificationTemplateFormPage } from "../pages/admin/AdminSpecificationTemplateFormPage";
+import { AdminSpecificationTemplatesPage } from "../pages/admin/AdminSpecificationTemplatesPage";
 import { CareersPage } from "../pages/careers/CareersPage";
 import { CartPage } from "../pages/cart/CartPage";
 import { CatalogPage } from "../pages/catalog/CatalogPage";
@@ -57,6 +59,18 @@ export const router = createBrowserRouter([
       {
         path: "products/:id/edit",
         element: <AdminProductFormPage />,
+      },
+      {
+        path: "specification-templates",
+        element: <AdminSpecificationTemplatesPage />,
+      },
+      {
+        path: "specification-templates/new",
+        element: <AdminSpecificationTemplateFormPage />,
+      },
+      {
+        path: "specification-templates/:id/edit",
+        element: <AdminSpecificationTemplateFormPage />,
       },
       {
         path: "brands",
