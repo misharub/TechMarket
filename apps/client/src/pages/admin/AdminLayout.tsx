@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuthStore } from "../../lib/auth-store";
 import "./Admin.css";
+import { AdminToastViewport } from "./AdminToastViewport";
 
 const links = [
   { to: "/admin", label: "Обзор" },
@@ -39,6 +40,8 @@ export function AdminLayout() {
       <main className="admin_main">
         <Outlet />
       </main>
+
+      <AdminToastViewport />
     </div>
   );
 }

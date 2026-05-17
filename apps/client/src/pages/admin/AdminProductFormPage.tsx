@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { uploadImage } from "../../lib/admin-api";
 import { getBrands } from "../../lib/brands-api";
 import { getCategories } from "../../lib/categories-api";
+import { isValidSlug, slugify } from "../../lib/slug-utils";
 import { getSpecificationTemplateByCategory } from "../../lib/specification-templates-api";
 import {
   createProduct,
@@ -40,6 +41,7 @@ export function AdminProductFormPage() {
     isActive: true,
   });
   const [error, setError] = useState("");
+  const [slugEdited, setSlugEdited] = useState(false);
   const [additionalSpecDraft, setAdditionalSpecDraft] = useState<ProductAdditionalSpec>(emptyAdditionalSpec);
   const categoriesQuery = useQuery({
     queryKey: ["admin", "categories"],
@@ -100,6 +102,7 @@ export function AdminProductFormPage() {
         brandId: productQuery.data.brandId,
         isActive: productQuery.data.isActive,
       });
+      setSlugEdited(true);
     }
   }, [productQuery.data]);
 
@@ -127,6 +130,11 @@ export function AdminProductFormPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+
+    if (!isValidSlug(form.slug)) {
+      setError("Адрес страницы должен содержать только латинские буквы, цифры и одиночные дефисы.");
+      return;
+    }
 
     try {
       await saveMutation.mutateAsync(form);
@@ -197,17 +205,29 @@ export function AdminProductFormPage() {
               className="admin_input"
               required
               value={form.title}
-              onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
+              onChange={(event) =>
+                setForm((current) => ({
+                  ...current,
+                  title: event.target.value,
+                  slug: slugEdited ? current.slug : slugify(event.target.value),
+                }))
+              }
             />
           </label>
           <label className="admin_field">
-            <span>Slug</span>
+            <span>Адрес страницы</span>
             <input
               className="admin_input"
               required
               value={form.slug}
-              onChange={(event) => setForm((current) => ({ ...current, slug: event.target.value }))}
+              onChange={(event) => {
+                setSlugEdited(true);
+                setForm((current) => ({ ...current, slug: event.target.value }));
+              }}
             />
+            <p className="admin_hint">
+              Используется в ссылке на страницу. Вводите латинские буквы, цифры и дефисы без пробелов.
+            </p>
           </label>
           <label className="admin_field">
             <span>SKU</span>

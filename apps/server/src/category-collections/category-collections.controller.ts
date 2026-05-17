@@ -47,3 +47,20 @@ export class CategoryCollectionsController {
         return this.categoryCollectionsService.remove(categoryId, collectionId);
     }
 }
+
+@ApiTags("Category collections")
+@Controller("admin/collections")
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
+@ApiBearerAuth()
+export class AdminCategoryCollectionsController {
+    constructor(private readonly categoryCollectionsService: CategoryCollectionsService) {}
+
+    @Delete(":collectionId")
+    @ApiOperation({ summary: "Удалить подборку по ID, только ADMIN" })
+    async remove(@Param("collectionId") collectionId: string) {
+        await this.categoryCollectionsService.removeById(collectionId);
+
+        return { success: true };
+    }
+}

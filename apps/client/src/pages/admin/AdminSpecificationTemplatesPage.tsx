@@ -4,10 +4,12 @@ import {
   deleteSpecificationTemplate,
   getSpecificationTemplates,
 } from "../../lib/specification-templates-api";
+import { useToastStore } from "../../lib/toast-store";
 import { formatDate } from "./admin-utils";
 
 export function AdminSpecificationTemplatesPage() {
   const queryClient = useQueryClient();
+  const showToast = useToastStore((state) => state.showToast);
   const templatesQuery = useQuery({
     queryKey: ["admin", "specification_templates"],
     queryFn: getSpecificationTemplates,
@@ -16,7 +18,9 @@ export function AdminSpecificationTemplatesPage() {
     mutationFn: deleteSpecificationTemplate,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin", "specification_templates"] });
+      showToast("Шаблон характеристик удалён");
     },
+    onError: (error) => showToast(error instanceof Error ? error.message : "Не удалось удалить запись", "error"),
   });
 
   return (

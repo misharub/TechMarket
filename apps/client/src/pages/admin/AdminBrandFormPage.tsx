@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { uploadImage } from "../../lib/admin-api";
 import { createBrand, getBrand, updateBrand, type BrandPayload } from "../../lib/brands-api";
+import { isValidSlug, slugify } from "../../lib/slug-utils";
 
 export function AdminBrandFormPage() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export function AdminBrandFormPage() {
     isActive: true,
   });
   const [error, setError] = useState("");
+  const [slugEdited, setSlugEdited] = useState(false);
   const brandQuery = useQuery({
     queryKey: ["admin", "brand", id],
     queryFn: () => getBrand(id!),
@@ -49,12 +51,18 @@ export function AdminBrandFormPage() {
         logo: brandQuery.data.logo ?? "",
         isActive: brandQuery.data.isActive,
       });
+      setSlugEdited(true);
     }
   }, [brandQuery.data]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+
+    if (!isValidSlug(form.slug)) {
+      setError("Адрес страницы должен содержать только латинские буквы, цифры и одиночные дефисы.");
+      return;
+    }
 
     try {
       await saveMutation.mutateAsync(form);
@@ -89,17 +97,29 @@ export function AdminBrandFormPage() {
               className="admin_input"
               required
               value={form.name}
-              onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
+              onChange={(event) =>
+                setForm((current) => ({
+                  ...current,
+                  name: event.target.value,
+                  slug: slugEdited ? current.slug : slugify(event.target.value),
+                }))
+              }
             />
           </label>
           <label className="admin_field">
-            <span>Slug</span>
+            <span>Адрес страницы</span>
             <input
               className="admin_input"
               required
               value={form.slug}
-              onChange={(event) => setForm((current) => ({ ...current, slug: event.target.value }))}
+              onChange={(event) => {
+                setSlugEdited(true);
+                setForm((current) => ({ ...current, slug: event.target.value }));
+              }}
             />
+            <p className="admin_hint">
+              Используется в ссылке на страницу. Вводите латинские буквы, цифры и дефисы без пробелов.
+            </p>
           </label>
           <label className="admin_field admin_field_full">
             <span>Описание</span>

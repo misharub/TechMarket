@@ -52,6 +52,15 @@ export class CategoryCollectionsService {
         });
     }
 
+    async removeById(collectionId: string) {
+        await this.ensureCollectionExists(collectionId);
+
+        return this.prisma.categoryCollection.update({
+            where: { id: collectionId },
+            data: { isActive: false },
+        });
+    }
+
     private async ensureCategoryExists(categoryId: string) {
         const category = await this.prisma.category.findUnique({ where: { id: categoryId }, select: { id: true } });
 
@@ -63,6 +72,17 @@ export class CategoryCollectionsService {
     private async ensureCollectionBelongsToCategory(categoryId: string, collectionId: string) {
         const collection = await this.prisma.categoryCollection.findFirst({
             where: { id: collectionId, categoryId },
+            select: { id: true },
+        });
+
+        if (!collection) {
+            throw new NotFoundException("Category collection not found");
+        }
+    }
+
+    private async ensureCollectionExists(collectionId: string) {
+        const collection = await this.prisma.categoryCollection.findUnique({
+            where: { id: collectionId },
             select: { id: true },
         });
 

@@ -9,6 +9,7 @@ import {
   updateSpecificationTemplate,
   type SpecificationTemplatePayload,
 } from "../../lib/specification-templates-api";
+import { useToastStore } from "../../lib/toast-store";
 
 type DraftOption = SpecificationTemplatePayload["groups"][number]["specifications"][number]["options"][number];
 type DraftSpecification = SpecificationTemplatePayload["groups"][number]["specifications"][number];
@@ -46,6 +47,7 @@ export function AdminSpecificationTemplateFormPage() {
   const queryClient = useQueryClient();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const showToast = useToastStore((state) => state.showToast);
   const [form, setForm] = useState<SpecificationTemplatePayload>({
     name: "",
     categoryId: "",
@@ -66,6 +68,7 @@ export function AdminSpecificationTemplateFormPage() {
       id ? updateSpecificationTemplate(id, payload) : createSpecificationTemplate(payload),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin", "specification_templates"] });
+      showToast(id ? "Изменения сохранены" : "Шаблон характеристик создан");
       navigate("/admin/specification-templates");
     },
   });
@@ -118,7 +121,9 @@ export function AdminSpecificationTemplateFormPage() {
     try {
       await saveMutation.mutateAsync(form);
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : "Не удалось сохранить шаблон");
+      const message = nextError instanceof Error ? nextError.message : "Не удалось сохранить изменения";
+      setError(message);
+      showToast(message, "error");
     }
   }
 
@@ -134,6 +139,7 @@ export function AdminSpecificationTemplateFormPage() {
       ...current,
       groups: [...current.groups, { ...emptyGroup(), sortOrder: current.groups.length + 1 }],
     }));
+    showToast("Категория характеристик создана");
   }
 
   function removeGroup(index: number) {
@@ -141,6 +147,7 @@ export function AdminSpecificationTemplateFormPage() {
       ...current,
       groups: current.groups.filter((_, currentIndex) => currentIndex !== index),
     }));
+    showToast("Категория характеристик удалена");
   }
 
   function addSpecification(groupIndex: number) {
@@ -158,6 +165,7 @@ export function AdminSpecificationTemplateFormPage() {
           : group,
       ),
     }));
+    showToast("Характеристика создана");
   }
 
   function updateSpecification(groupIndex: number, specificationIndex: number, patch: Partial<DraftSpecification>) {
@@ -190,6 +198,7 @@ export function AdminSpecificationTemplateFormPage() {
           : group,
       ),
     }));
+    showToast("Характеристика удалена");
   }
 
   function addOption(groupIndex: number, specificationIndex: number) {
@@ -213,6 +222,7 @@ export function AdminSpecificationTemplateFormPage() {
           : group,
       ),
     }));
+    showToast("Вариант создан");
   }
 
   function updateOption(groupIndex: number, specificationIndex: number, optionIndex: number, patch: Partial<DraftOption>) {
@@ -257,6 +267,7 @@ export function AdminSpecificationTemplateFormPage() {
           : group,
       ),
     }));
+    showToast("Вариант удалён");
   }
 
   return (

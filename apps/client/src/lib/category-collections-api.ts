@@ -33,3 +33,7 @@ export function updateCategoryCollection(
 export function deleteCategoryCollection(categoryId: string, collectionId: string) {
   return apiDelete<CategoryCollection>(`/categories/${categoryId}/collections/${collectionId}`);
 }
+
+export function deleteAdminCollection(collectionId: string) {
+  return apiDelete<{ success: true }>(`/admin/collections/${collectionId}`);
+}

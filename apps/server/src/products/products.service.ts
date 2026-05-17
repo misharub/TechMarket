@@ -158,7 +158,7 @@ export class ProductsService {
               : query.categorySlug
                 ? await this.getCategoryAndDescendantIds(query.categorySlug, query.includeInactive)
                 : undefined;
-        const collectionFilters = collection?.isActive ? this.buildCollectionFilters(collection.conditions) : [];
+        const collectionFilters = collection?.isActive ? await this.buildCollectionFilters(collection.conditions) : [];
 
         return {
             ...(query.isActive !== undefined ? { isActive: query.isActive } : query.includeInactive ? {} : { isActive: true }),
@@ -187,7 +187,7 @@ export class ProductsService {
         };
     }
 
-    private buildCollectionFilters(conditions: Prisma.JsonValue): Prisma.ProductWhereInput[] {
+    private async buildCollectionFilters(conditions: Prisma.JsonValue): Promise<Prisma.ProductWhereInput[]> {
         if (!conditions || typeof conditions !== "object" || Array.isArray(conditions)) {
             return [];
         }
@@ -195,6 +195,12 @@ export class ProductsService {
         const typedConditions = conditions as {
             brandSlug?: unknown;
             specs?: Record<string, unknown>;
+            rules?: Array<{
+                specificationId?: unknown;
+                operator?: unknown;
+                value?: unknown;
+                optionId?: unknown;
+            }>;
         };
         const filters: Prisma.ProductWhereInput[] = [];
 
@@ -204,6 +210,50 @@ export class ProductsService {
 
         for (const [key, value] of Object.entries(typedConditions.specs ?? {})) {
             filters.push({ specs: { path: [key], equals: value as Prisma.InputJsonValue } });
+        }
+
+        const rules = (typedConditions.rules ?? []).filter(
+            (rule): rule is {
+                specificationId: string;
+                operator?: unknown;
+                value?: unknown;
+                optionId?: unknown;
+            } => typeof rule?.specificationId === "string",
+        );
+
+        if (!rules.length) {
+            return filters;
+        }
+
+        const specifications = await this.prisma.specification.findMany({
+            where: { id: { in: rules.map((rule) => rule.specificationId) } },
+            include: { options: true },
+        });
+        const specificationsById = new Map(specifications.map((specification) => [specification.id, specification]));
+
+        for (const rule of rules) {
+            const specification = specificationsById.get(rule.specificationId);
+
+            if (!specification) {
+                continue;
+            }
+
+            if (specification.type === SpecValueType.SELECT) {
+                const option = specification.options.find((item) => item.id === rule.optionId);
+
+                if (!option) {
+                    continue;
+                }
+
+                filters.push({ specs: { path: [specification.key], equals: option.value } });
+                continue;
+            }
+
+            if (rule.value === undefined || rule.value === null) {
+                continue;
+            }
+
+            filters.push({ specs: { path: [specification.key], equals: rule.value as Prisma.InputJsonValue } });
         }
 
         return filters;

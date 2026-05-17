@@ -359,8 +359,94 @@
   background: #ffffff;
 }
 
+.admin_collection_conditions {
+  display: grid;
+  gap: 10px;
+  border: 1px solid #dbe3ef;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.admin_collection_condition {
+  display: grid;
+  gap: 10px;
+  margin: 0 12px 12px;
+  border: 1px solid #dbe3ef;
+  border-left: 4px solid #2563eb;
+  border-radius: 10px;
+  padding: 10px;
+  background: #ffffff;
+}
+
 .admin_guard {
   padding: 24px;
+}
+
+.admin_hint {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.admin_toast_viewport {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 20;
+  display: grid;
+  gap: 8px;
+  width: min(320px, calc(100vw - 36px));
+}
+
+.admin_toast {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #0f172a;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 38px -28px rgba(15, 23, 42, 0.45);
+}
+
+.admin_toast_success {
+  border-color: #a7f3d0;
+  background: rgba(240, 253, 250, 0.98);
+}
+
+.admin_toast_error {
+  border-color: #fecaca;
+  background: rgba(254, 242, 242, 0.98);
+}
+
+.admin_confirm_backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(15, 23, 42, 0.36);
+}
+
+.admin_confirm_dialog {
+  width: min(420px, 100%);
+  border: 1px solid #dbe3ef;
+  border-radius: 16px;
+  padding: 18px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px -36px rgba(15, 23, 42, 0.56);
+}
+
+.admin_confirm_dialog h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.admin_confirm_dialog p {
+  margin: 0 0 16px;
+  color: #475569;
 }
 
 .admin_icon_actions {
