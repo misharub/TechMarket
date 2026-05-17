@@ -245,7 +245,20 @@ export class ProductsService {
                     continue;
                 }
 
-                filters.push({ specs: { path: [specification.key], equals: option.value } });
+                const numericOptionValue = this.getNumericSelectValue(specification.options, option.value);
+
+                filters.push({
+                    specs: {
+                        path: [specification.key],
+                        ...(rule.operator === "greaterThan" && numericOptionValue !== null
+                            ? { gt: numericOptionValue }
+                            : rule.operator === "lessThan" && numericOptionValue !== null
+                              ? { lt: numericOptionValue }
+                              : rule.operator === "notEquals"
+                                ? { not: option.value }
+                                : { equals: option.value }),
+                    },
+                });
                 continue;
             }
 
@@ -253,7 +266,36 @@ export class ProductsService {
                 continue;
             }
 
-            filters.push({ specs: { path: [specification.key], equals: rule.value as Prisma.InputJsonValue } });
+            if (specification.type === SpecValueType.NUMBER) {
+                const numericValue = Number(rule.value);
+
+                if (!Number.isFinite(numericValue)) {
+                    continue;
+                }
+
+                filters.push({
+                    specs: {
+                        path: [specification.key],
+                        ...(rule.operator === "greaterThan"
+                            ? { gt: numericValue }
+                            : rule.operator === "lessThan"
+                              ? { lt: numericValue }
+                              : rule.operator === "notEquals"
+                                ? { not: numericValue }
+                                : { equals: numericValue }),
+                    },
+                });
+                continue;
+            }
+
+            filters.push({
+                specs: {
+                    path: [specification.key],
+                    ...(rule.operator === "notEquals"
+                        ? { not: rule.value as Prisma.InputJsonValue }
+                        : { equals: rule.value as Prisma.InputJsonValue }),
+                },
+            });
         }
 
         return filters;
@@ -343,12 +385,16 @@ export class ProductsService {
             throw new BadRequestException(`Spec ${key} must be a string`);
         }
 
-        if (type === SpecValueType.SELECT && typeof value !== "string") {
-            throw new BadRequestException(`Spec ${key} must be a string`);
-        }
+        if (type === SpecValueType.SELECT) {
+            const isNumericSelect = this.areNumericOptions(options);
 
-        if (type === SpecValueType.SELECT && !options.includes(String(value))) {
-            throw new BadRequestException(`Spec ${key} must use one of the configured options`);
+            if ((!isNumericSelect && typeof value !== "string") || (isNumericSelect && typeof value !== "number")) {
+                throw new BadRequestException(`Spec ${key} must be a ${isNumericSelect ? "number" : "string"}`);
+            }
+
+            if (!options.includes(String(value))) {
+                throw new BadRequestException(`Spec ${key} must use one of the configured options`);
+            }
         }
 
         if (type === SpecValueType.NUMBER && (typeof value !== "number" || !Number.isFinite(value))) {
@@ -358,6 +404,14 @@ export class ProductsService {
         if (type === SpecValueType.BOOLEAN && typeof value !== "boolean") {
             throw new BadRequestException(`Spec ${key} must be a boolean`);
         }
+    }
+
+    private areNumericOptions(options: string[]) {
+        return options.length > 0 && options.every((option) => option.trim() !== "" && Number.isFinite(Number(option)));
+    }
+
+    private getNumericSelectValue(options: Array<{ value: string }>, value: string) {
+        return this.areNumericOptions(options.map((option) => option.value)) ? Number(value) : null;
     }
 
     async validateAdditionalSpecs(items: Array<{ label?: unknown; value?: unknown }>) {

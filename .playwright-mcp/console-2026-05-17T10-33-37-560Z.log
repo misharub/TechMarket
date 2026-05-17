@@ -1,0 +1,5 @@
+[ 4285747ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:5000/api/admin/specification-templates:0
+[ 4286751ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:5000/api/admin/specification-templates:0
+[ 4313840ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:5000/api/categories/cmp7aj1qi0033x8v2qyju8z0n:0
+[ 4315559ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:5000/api/categories/cmp7aj1qi0033x8v2qyju8z0n:0
+[ 4317777ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=60ff48e7:14336

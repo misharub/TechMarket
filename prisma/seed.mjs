@@ -35,7 +35,17 @@ const categories = [
         slug: "notebooks",
         description: "Ноутбуки для дома, учебы, бизнеса и игр",
       },
-      ["Аксессуары для ноутбуков", "laptop-accessories"],
+      {
+        name: "Аксессуары для ноутбуков",
+        slug: "laptop-accessories",
+        children: [
+          ["Внешние диски", "external-drives"],
+          ["Сумки для ноутбуков", "laptop-bags"],
+          ["Рюкзаки для ноутбуков", "laptop-backpacks"],
+          ["Охлаждающие подставки", "laptop-cooling-stands"],
+          ["Док-станции", "docking-stations"],
+        ],
+      },
       {
         name: "Компьютеры",
         slug: "desktop-computers",
@@ -89,39 +99,6 @@ const categories = [
     description: "Кабели, зарядные устройства, чехлы и полезные дополнения",
     children: [
       {
-        name: "Аксессуары для ноутбуков",
-        slug: "notebook-accessories",
-        children: [
-          ["Внешние диски", "external-drives"],
-          ["Сумки для ноутбуков", "laptop-bags"],
-          ["Рюкзаки для ноутбуков", "laptop-backpacks"],
-          ["Охлаждающие подставки", "laptop-cooling-stands"],
-          ["Док-станции", "docking-stations"],
-        ],
-      },
-      {
-        name: "Аксессуары для планшетов",
-        slug: "tablet-accessories",
-        children: [
-          ["Кабели USB", "usb-cables"],
-          ["Защитные стекла", "tablet-screen-protectors"],
-          ["Клавиатуры для планшетов", "tablet-keyboards"],
-          ["Чехлы для планшетов", "tablet-cases"],
-          ["Стилусы", "styluses"],
-        ],
-      },
-      {
-        name: "Аксессуары для телефонов и часов",
-        slug: "phone-watch-accessories",
-        children: [
-          ["Наушники", "accessory-phone-headphones"],
-          ["Power Bank", "accessory-powerbanks"],
-          ["Чехлы для телефонов", "accessory-phone-cases"],
-          ["Защита экрана", "accessory-phone-screen-protectors"],
-          ["Ремешки для часов", "accessory-watch-straps"],
-        ],
-      },
-      {
         name: "Кабели и питание",
         slug: "cables-power",
         children: [
@@ -152,13 +129,6 @@ const categories = [
       {
         name: "Телефоны и смартфоны",
         slug: "smartphones",
-        children: [
-          ["Apple iPhone", "apple-iphone"],
-          ["Samsung Galaxy", "samsung-galaxy"],
-          ["Смартфоны Xiaomi", "xiaomi-smartphones"],
-          ["Смартфоны 5G", "5g-smartphones"],
-          ["Телефоны для пожилых", "senior-phones"],
-        ],
       },
       {
         name: "Смарт-часы и браслеты",
@@ -463,6 +433,11 @@ const categoryCollections = {
     ["Ноутбуки с Intel Core", "intel-core-notebooks", { specs: { processorFamily: "Intel Core" } }, 80],
     ["Хромбуки", "chromebooks", { specs: { os: "ChromeOS" } }, 90],
   ],
+  smartphones: [
+    ["Apple iPhone", "apple-iphone", { brandSlug: "apple" }, 10],
+    ["Samsung Galaxy", "samsung-galaxy", { brandSlug: "samsung" }, 20],
+    ["Смартфоны Xiaomi", "xiaomi-smartphones", { brandSlug: "xiaomi" }, 30],
+  ],
 };
 
 const products = [
@@ -641,6 +616,13 @@ async function main() {
   }
 
   await upsertCategoryTree(categories);
+  await prisma.category.deleteMany({
+    where: {
+      slug: {
+        in: ["apple-iphone", "samsung-galaxy", "xiaomi-smartphones", "5g-smartphones", "senior-phones"],
+      },
+    },
+  });
 
   const menuCategorySlugs = collectCategorySlugs(categories);
 

@@ -49,6 +49,10 @@ export const router = createBrowserRouter([
         element: <AdminCategoryFormPage />,
       },
       {
+        path: "categories/:id/collections",
+        element: <AdminCategoryFormPage collectionsOnly />,
+      },
+      {
         path: "products",
         element: <AdminProductsPage />,
       },

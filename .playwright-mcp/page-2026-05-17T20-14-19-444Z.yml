@@ -1,0 +1,142 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - link "TechMarket" [ref=e5] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e6]:
+      - link "Обзор" [ref=e7] [cursor=pointer]:
+        - /url: /admin
+      - link "Категории" [ref=e8] [cursor=pointer]:
+        - /url: /admin/categories
+      - link "Товары" [ref=e9] [cursor=pointer]:
+        - /url: /admin/products
+      - link "Шаблоны характеристик" [ref=e10] [cursor=pointer]:
+        - /url: /admin/specification-templates
+      - link "Бренды" [ref=e11] [cursor=pointer]:
+        - /url: /admin/brands
+    - link "На сайт" [ref=e12] [cursor=pointer]:
+      - /url: /
+    - button "Выйти" [ref=e13] [cursor=pointer]
+  - main [ref=e14]:
+    - generic [ref=e15]:
+      - heading "Бренды" [level=1] [ref=e16]
+      - link "Добавить" [ref=e17] [cursor=pointer]:
+        - /url: /admin/brands/new
+    - generic [ref=e18]:
+      - textbox "Поиск" [ref=e19]
+      - combobox [ref=e20]:
+        - option "Все статусы" [selected]
+        - option "Активные"
+        - option "Скрытые"
+      - button "Активировать" [ref=e21] [cursor=pointer]
+      - button "Скрыть" [ref=e22] [cursor=pointer]
+      - button "Удалить" [ref=e23] [cursor=pointer]
+    - table [ref=e25]:
+      - rowgroup [ref=e26]:
+        - row "Название Slug Статус Обновлено Действие" [ref=e27]:
+          - columnheader [ref=e28]:
+            - checkbox [ref=e29]
+          - columnheader "Название" [ref=e30]
+          - columnheader "Slug" [ref=e31]
+          - columnheader "Статус" [ref=e32]
+          - columnheader "Обновлено" [ref=e33]
+          - columnheader "Действие" [ref=e34]
+      - rowgroup [ref=e35]:
+        - row "Apple apple Активен 17.05.2026 Редактировать" [ref=e36]:
+          - cell [ref=e37]:
+            - checkbox [ref=e38]
+          - cell "Apple" [ref=e39]
+          - cell "apple" [ref=e40]
+          - cell "Активен" [ref=e41]:
+            - generic [ref=e42]: Активен
+          - cell "17.05.2026" [ref=e43]
+          - cell "Редактировать" [ref=e44]:
+            - link "Редактировать" [ref=e45] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxlue000avgv26dlm5nqp/edit
+        - row "ASUS asus Активен 17.05.2026 Редактировать" [ref=e46]:
+          - cell [ref=e47]:
+            - checkbox [ref=e48]
+          - cell "ASUS" [ref=e49]
+          - cell "asus" [ref=e50]
+          - cell "Активен" [ref=e51]:
+            - generic [ref=e52]: Активен
+          - cell "17.05.2026" [ref=e53]
+          - cell "Редактировать" [ref=e54]:
+            - link "Редактировать" [ref=e55] [cursor=pointer]:
+              - /url: /admin/brands/cmp7202l90051f8v2q2j9zi0o/edit
+        - row "Bosch bosch Активен 17.05.2026 Редактировать" [ref=e56]:
+          - cell [ref=e57]:
+            - checkbox [ref=e58]
+          - cell "Bosch" [ref=e59]
+          - cell "bosch" [ref=e60]
+          - cell "Активен" [ref=e61]:
+            - generic [ref=e62]: Активен
+          - cell "17.05.2026" [ref=e63]
+          - cell "Редактировать" [ref=e64]:
+            - link "Редактировать" [ref=e65] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxlum000fvgv2s2le8k5o/edit
+        - row "HP hp Активен 17.05.2026 Редактировать" [ref=e66]:
+          - cell [ref=e67]:
+            - checkbox [ref=e68]
+          - cell "HP" [ref=e69]
+          - cell "hp" [ref=e70]
+          - cell "Активен" [ref=e71]:
+            - generic [ref=e72]: Активен
+          - cell "17.05.2026" [ref=e73]
+          - cell "Редактировать" [ref=e74]:
+            - link "Редактировать" [ref=e75] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxluj000cvgv2jw2h3sn8/edit
+        - row "Lenovo lenovo Активен 17.05.2026 Редактировать" [ref=e76]:
+          - cell [ref=e77]:
+            - checkbox [ref=e78]
+          - cell "Lenovo" [ref=e79]
+          - cell "lenovo" [ref=e80]
+          - cell "Активен" [ref=e81]:
+            - generic [ref=e82]: Активен
+          - cell "17.05.2026" [ref=e83]
+          - cell "Редактировать" [ref=e84]:
+            - link "Редактировать" [ref=e85] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxlui000bvgv2lvr8gpbh/edit
+        - row "LG lg Активен 17.05.2026 Редактировать" [ref=e86]:
+          - cell [ref=e87]:
+            - checkbox [ref=e88]
+          - cell "LG" [ref=e89]
+          - cell "lg" [ref=e90]
+          - cell "Активен" [ref=e91]:
+            - generic [ref=e92]: Активен
+          - cell "17.05.2026" [ref=e93]
+          - cell "Редактировать" [ref=e94]:
+            - link "Редактировать" [ref=e95] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxlul000evgv2xt3vxmrh/edit
+        - row "Samsung samsung Активен 17.05.2026 Редактировать" [ref=e96]:
+          - cell [ref=e97]:
+            - checkbox [ref=e98]
+          - cell "Samsung" [ref=e99]
+          - cell "samsung" [ref=e100]
+          - cell "Активен" [ref=e101]:
+            - generic [ref=e102]: Активен
+          - cell "17.05.2026" [ref=e103]
+          - cell "Редактировать" [ref=e104]:
+            - link "Редактировать" [ref=e105] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxluk000dvgv2iunkkrd6/edit
+        - row "Sony sony Активен 17.05.2026 Редактировать" [ref=e106]:
+          - cell [ref=e107]:
+            - checkbox [ref=e108]
+          - cell "Sony" [ref=e109]
+          - cell "sony" [ref=e110]
+          - cell "Активен" [ref=e111]:
+            - generic [ref=e112]: Активен
+          - cell "17.05.2026" [ref=e113]
+          - cell "Редактировать" [ref=e114]:
+            - link "Редактировать" [ref=e115] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxlum000gvgv29fvx5a4d/edit
+        - row "Xiaomi xiaomi Активен 17.05.2026 Редактировать" [ref=e116]:
+          - cell [ref=e117]:
+            - checkbox [ref=e118]
+          - cell "Xiaomi" [ref=e119]
+          - cell "xiaomi" [ref=e120]
+          - cell "Активен" [ref=e121]:
+            - generic [ref=e122]: Активен
+          - cell "17.05.2026" [ref=e123]
+          - cell "Редактировать" [ref=e124]:
+            - link "Редактировать" [ref=e125] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxlun000hvgv2p38ou8x6/edit

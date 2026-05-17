@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Pencil } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { bulkUpdateBrands, getBrands, type Brand, type BulkBrandAction } from "../../lib/brands-api";
@@ -79,7 +80,7 @@ export function AdminBrandsPage() {
       </section>
 
       <section className="admin_card admin_table_wrap">
-        <table className="admin_table">
+        <table className="admin_table admin_full_table">
           <thead>
             <tr>
               <th>
@@ -130,8 +131,13 @@ function BrandRow({ brand, selected, onToggle }: { brand: Brand; selected: boole
       </td>
       <td>{formatDate(brand.updatedAt)}</td>
       <td>
-        <Link className="admin_button_muted" to={`/admin/brands/${brand.id}/edit`}>
-          Редактировать
+        <Link
+          aria-label="????????????? ?????"
+          className="admin_icon_button"
+          title="????????????? ?????"
+          to={`/admin/brands/${brand.id}/edit`}
+        >
+          <Pencil size={16} />
         </Link>
       </td>
     </tr>

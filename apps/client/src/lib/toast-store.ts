@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type ToastTone = "success" | "error";
+export type ToastTone = "success" | "error" | "danger";
 
 type ToastItem = {
   id: string;
@@ -27,7 +27,7 @@ export const useToastStore = create<ToastState>((set) => ({
       set((state) => ({
         items: state.items.filter((item) => item.id !== id),
       }));
-    }, tone === "error" ? 4000 : 2800);
+    }, tone === "error" ? 2800 : 2000);
   },
   dismissToast(id) {
     set((state) => ({

@@ -18,6 +18,43 @@ export function getParentCategories(categories: CategoryNode[]) {
   return categories.filter((category) => categories.some((item) => item.parentId === category.id));
 }
 
+export function getRootCategories(categories: CategoryNode[]) {
+  return categories.filter((category) => !category.parentId);
+}
+
+export function getCategoryDepth(category: CategoryNode, categories: CategoryNode[]) {
+  let depth = 0;
+  let current = category;
+
+  while (current.parentId) {
+    const parent = categories.find((item) => item.id === current.parentId);
+
+    if (!parent) {
+      break;
+    }
+
+    depth += 1;
+    current = parent;
+  }
+
+  return depth;
+}
+
+export function getSelectableParentCategories(categories: CategoryNode[], excludedId?: string) {
+  return categories
+    .filter((category) => category.id !== excludedId && getCategoryDepth(category, categories) < 2)
+    .sort((first, second) => {
+      const firstDepth = getCategoryDepth(first, categories);
+      const secondDepth = getCategoryDepth(second, categories);
+
+      if (firstDepth !== secondDepth) {
+        return firstDepth - secondDepth;
+      }
+
+      return first.name.localeCompare(second.name, "ru");
+    });
+}
+
 export function getChildCategories(categories: CategoryNode[], parentId: string) {
   return categories.filter((category) => category.parentId === parentId);
 }

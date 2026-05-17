@@ -147,7 +147,7 @@ export function AdminSpecificationTemplateFormPage() {
       ...current,
       groups: current.groups.filter((_, currentIndex) => currentIndex !== index),
     }));
-    showToast("Категория характеристик удалена");
+      showToast("Категория характеристик удалена", "danger");
   }
 
   function addSpecification(groupIndex: number) {
@@ -198,7 +198,7 @@ export function AdminSpecificationTemplateFormPage() {
           : group,
       ),
     }));
-    showToast("Характеристика удалена");
+      showToast("Характеристика удалена", "danger");
   }
 
   function addOption(groupIndex: number, specificationIndex: number) {
@@ -267,7 +267,7 @@ export function AdminSpecificationTemplateFormPage() {
           : group,
       ),
     }));
-    showToast("Вариант удалён");
+      showToast("Вариант удалён", "danger");
   }
 
   return (

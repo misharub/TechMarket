@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { uploadImage } from "../../lib/admin-api";
 import { createBrand, getBrand, updateBrand, type BrandPayload } from "../../lib/brands-api";
 import { isValidSlug, slugify } from "../../lib/slug-utils";
+import { AdminImageUploadField } from "./AdminImageUploadField";
 
 export function AdminBrandFormPage() {
   const navigate = useNavigate();
@@ -91,7 +92,7 @@ export function AdminBrandFormPage() {
 
       <form className="admin_panel admin_form" onSubmit={handleSubmit}>
         <div className="admin_form_grid">
-          <label className="admin_field">
+          <label className="admin_field admin_category_name_field">
             <span>Название</span>
             <input
               className="admin_input"
@@ -106,8 +107,9 @@ export function AdminBrandFormPage() {
               }
             />
           </label>
-          <label className="admin_field">
+          <label className="admin_field admin_category_slug_field">
             <span>Адрес страницы</span>
+            <p className="admin_hint">Латинские буквы, цифры и дефисы без пробелов.</p>
             <input
               className="admin_input"
               required
@@ -117,9 +119,6 @@ export function AdminBrandFormPage() {
                 setForm((current) => ({ ...current, slug: event.target.value }));
               }}
             />
-            <p className="admin_hint">
-              Используется в ссылке на страницу. Вводите латинские буквы, цифры и дефисы без пробелов.
-            </p>
           </label>
           <label className="admin_field admin_field_full">
             <span>Описание</span>
@@ -129,19 +128,17 @@ export function AdminBrandFormPage() {
               onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
             />
           </label>
-          <label className="admin_field">
-            <span>Логотип</span>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) {
-                  void handleLogoUpload(file);
-                }
-              }}
-            />
-          </label>
+          <AdminImageUploadField
+            label="Логотип"
+            images={form.logo ? [form.logo] : []}
+            onSelect={(files) => {
+              const file = files?.[0];
+              if (file) {
+                void handleLogoUpload(file);
+              }
+            }}
+            onRemove={() => setForm((current) => ({ ...current, logo: "" }))}
+          />
           <label className="admin_checkbox">
             <input
               type="checkbox"
@@ -152,7 +149,6 @@ export function AdminBrandFormPage() {
           </label>
         </div>
 
-        {form.logo ? <p>Логотип: {form.logo}</p> : null}
         {error ? <p className="admin_error">{error}</p> : null}
 
         <div className="admin_form_actions">

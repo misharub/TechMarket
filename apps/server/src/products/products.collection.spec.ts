@@ -66,4 +66,95 @@ describe("ProductsService collection filters", () => {
             ],
         });
     });
+
+    it("builds collection filters for not-equals and numeric comparison operators", async () => {
+        const service = new ProductsService({
+            categoryCollection: {
+                findUnique: jest.fn().mockResolvedValue({
+                    categoryId: "laptops",
+                    conditions: {
+                        rules: [
+                            { specificationId: "ram", operator: "greaterThan", value: 16 },
+                            { specificationId: "storage", operator: "lessThan", value: 1024 },
+                            { specificationId: "os", operator: "notEquals", optionId: "windows" },
+                        ],
+                    },
+                    isActive: true,
+                }),
+            },
+            specification: {
+                findMany: jest.fn().mockResolvedValue([
+                    {
+                        id: "ram",
+                        key: "ramGb",
+                        type: "NUMBER",
+                        options: [],
+                    },
+                    {
+                        id: "storage",
+                        key: "storageGb",
+                        type: "NUMBER",
+                        options: [],
+                    },
+                    {
+                        id: "os",
+                        key: "os",
+                        type: "SELECT",
+                        options: [{ id: "windows", value: "Windows" }],
+                    },
+                ]),
+            },
+        } as never);
+
+        await expect((service as any).buildWhere({ collectionSlug: "power-laptops" })).resolves.toEqual({
+            isActive: true,
+            categoryId: { in: ["laptops"] },
+            AND: [
+                { specs: { path: ["ramGb"], gt: 16 } },
+                { specs: { path: ["storageGb"], lt: 1024 } },
+                { specs: { path: ["os"], not: "Windows" } },
+            ],
+        });
+    });
+
+    it("treats numeric select options as numbers for greater-than and less-than rules", async () => {
+        const service = new ProductsService({
+            categoryCollection: {
+                findUnique: jest.fn().mockResolvedValue({
+                    categoryId: "laptops",
+                    conditions: {
+                        rules: [
+                            { specificationId: "ssd", operator: "greaterThan", optionId: "ssd-512" },
+                            { specificationId: "ssd", operator: "lessThan", optionId: "ssd-1024" },
+                        ],
+                    },
+                    isActive: true,
+                }),
+            },
+            specification: {
+                findMany: jest.fn().mockResolvedValue([
+                    {
+                        id: "ssd",
+                        key: "ssd",
+                        type: "SELECT",
+                        options: [
+                            { id: "ssd-128", value: "128" },
+                            { id: "ssd-256", value: "256" },
+                            { id: "ssd-512", value: "512" },
+                            { id: "ssd-1024", value: "1024" },
+                        ],
+                    },
+                ]),
+            },
+        } as never);
+
+        await expect((service as any).buildWhere({ collectionSlug: "ssd-range" })).resolves.toEqual({
+            isActive: true,
+            categoryId: { in: ["laptops"] },
+            AND: [
+                { specs: { path: ["ssd"], gt: 512 } },
+                { specs: { path: ["ssd"], lt: 1024 } },
+            ],
+        });
+    });
 });

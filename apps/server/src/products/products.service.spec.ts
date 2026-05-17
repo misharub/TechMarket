@@ -80,4 +80,28 @@ describe("ProductsService template specs", () => {
             "Spec matrixType must use one of the configured options",
         );
     });
+
+    it("accepts numeric values for select specs whose options are numeric", async () => {
+        const service = new ProductsService({
+            specificationTemplate: {
+                findUnique: jest.fn().mockResolvedValue({
+                    groups: [
+                        {
+                            specifications: [
+                                {
+                                    key: "ssd",
+                                    name: "SSD",
+                                    type: "SELECT",
+                                    isRequired: true,
+                                    options: [{ value: "128" }, { value: "256" }, { value: "512" }],
+                                },
+                            ],
+                        },
+                    ],
+                }),
+            },
+        } as never);
+
+        await expect(service["validateSpecs"]("category_1", { ssd: 512 })).resolves.toBeUndefined();
+    });
 });

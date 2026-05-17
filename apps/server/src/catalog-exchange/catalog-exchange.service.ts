@@ -253,16 +253,25 @@ export class CatalogExchangeService {
                 throw new Error(`Spec ${template.key} must be a boolean`);
             }
 
+            const isNumericSelect =
+                template.type === SpecValueType.SELECT &&
+                template.options.length > 0 &&
+                template.options.every((option) => option.value.trim() !== "" && Number.isFinite(Number(option.value)));
+
             if (
-                (template.type === SpecValueType.STRING || template.type === SpecValueType.SELECT) &&
+                (template.type === SpecValueType.STRING || (template.type === SpecValueType.SELECT && !isNumericSelect)) &&
                 typeof value !== "string"
             ) {
                 throw new Error(`Spec ${template.key} must be a string`);
             }
 
+            if (template.type === SpecValueType.SELECT && isNumericSelect && typeof value !== "number") {
+                throw new Error(`Spec ${template.key} must be a number`);
+            }
+
             if (
                 template.type === SpecValueType.SELECT &&
-                !template.options.some((option) => option.value === value)
+                !template.options.some((option) => option.value === String(value))
             ) {
                 throw new Error(`Spec ${template.key} must use one of the configured options`);
             }

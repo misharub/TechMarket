@@ -18,6 +18,12 @@ export class CategoriesService {
     findAll(query: FindCategoriesDto) {
         return this.prisma.category.findMany({
             where: this.buildWhere(query),
+            include: {
+                collections: {
+                    where: query.includeInactive ? {} : { isActive: true },
+                    orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+                },
+            },
             orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
         });
     }

@@ -13,16 +13,24 @@ import {
 import { getBrands, type Brand } from "../../lib/brands-api";
 import { createCategory, getCategories, getCategory, updateCategory, type CategoryPayload } from "../../lib/categories-api";
 import { isValidSlug, slugify } from "../../lib/slug-utils";
-import { getSpecificationTemplateByCategory, type SpecificationTemplate } from "../../lib/specification-templates-api";
+import {
+  getSpecificationTemplateByCategory,
+  type Specification,
+  type SpecificationTemplate,
+} from "../../lib/specification-templates-api";
 import { useToastStore } from "../../lib/toast-store";
+import { AdminImageUploadField } from "./AdminImageUploadField";
+import { getCategoryDepth, getChildCategories, getRootCategories } from "./admin-utils";
 
 type CollectionConditionDraft = {
   groupId: string;
   specificationId: string;
-  operator: "equals";
+  operator: CollectionOperator;
   value: string;
   optionId: string;
 };
+
+type CollectionOperator = "equals" | "notEquals" | "greaterThan" | "lessThan";
 
 type CollectionDraft = {
   name: string;
@@ -31,6 +39,9 @@ type CollectionDraft = {
   sortOrder: number;
   legacyBrandSlug?: string;
 };
+
+const NEW_FIRST_LEVEL = "__new_first_level__";
+const NEW_SECOND_LEVEL = "__new_second_level__";
 
 const emptyCondition = (): CollectionConditionDraft => ({
   groupId: "",
@@ -56,9 +67,9 @@ function getGroupIdForSpecification(specificationId: string, template: Specifica
 }
 
 function conditionFromRule(
-  rule: { specificationId?: string; value?: unknown; optionId?: string },
+  rule: { specificationId?: string; operator?: unknown; value?: unknown; optionId?: string },
   template: SpecificationTemplate | null | undefined,
-) {
+): CollectionConditionDraft | null {
   if (!rule.specificationId) {
     return null;
   }
@@ -72,13 +83,17 @@ function conditionFromRule(
   return {
     groupId: getGroupIdForSpecification(specification.id, template),
     specificationId: specification.id,
-    operator: "equals" as const,
+    operator: normalizeOperator(rule.operator, specification),
     value: rule.value === undefined || rule.value === null ? "" : String(rule.value),
     optionId: rule.optionId ?? "",
   };
 }
 
-function conditionFromLegacySpec(key: string, value: unknown, template: SpecificationTemplate | null | undefined) {
+function conditionFromLegacySpec(
+  key: string,
+  value: unknown,
+  template: SpecificationTemplate | null | undefined,
+): CollectionConditionDraft | null {
   const specification = template?.groups
     .flatMap((group) => group.specifications)
     .find((item) => item.key === key);
@@ -94,9 +109,53 @@ function conditionFromLegacySpec(key: string, value: unknown, template: Specific
     value: specification.type === "SELECT" ? "" : String(value ?? ""),
     optionId:
       specification.type === "SELECT"
-        ? specification.options.find((option) => option.value === value)?.id ?? ""
+        ? specification.options.find((option) => option.value === String(value))?.id ?? ""
         : "",
   };
+}
+
+function isNumericSelectSpecification(specification: Specification | undefined) {
+  return Boolean(
+    specification &&
+      specification.type === "SELECT" &&
+      specification.options.length > 0 &&
+      specification.options.every((option) => option.value.trim() !== "" && Number.isFinite(Number(option.value))),
+  );
+}
+
+function getOperatorsForSpecification(specification: Specification | undefined): Array<{
+  value: CollectionOperator;
+  label: string;
+}> {
+  if (specification?.type === "NUMBER" || isNumericSelectSpecification(specification)) {
+    return [
+      { value: "equals", label: "Равно" },
+      { value: "notEquals", label: "Не равно" },
+      { value: "greaterThan", label: "Больше" },
+      { value: "lessThan", label: "Меньше" },
+    ];
+  }
+
+  return [
+    { value: "equals", label: "Равно" },
+    { value: "notEquals", label: "Не равно" },
+  ];
+}
+
+function normalizeOperator(operator: unknown, specification: Specification): CollectionOperator {
+  const allowedOperators = getOperatorsForSpecification(specification).map((item) => item.value);
+  return typeof operator === "string" && allowedOperators.includes(operator as CollectionOperator)
+    ? (operator as CollectionOperator)
+    : "equals";
+}
+
+function getOperatorLabel(operator: CollectionOperator) {
+  return [
+    { value: "equals", label: "Равно" },
+    { value: "notEquals", label: "Не равно" },
+    { value: "greaterThan", label: "Больше" },
+    { value: "lessThan", label: "Меньше" },
+  ].find((item) => item.value === operator)?.label ?? "Равно";
 }
 
 function summarizeCollectionConditions(
@@ -107,7 +166,7 @@ function summarizeCollectionConditions(
   const conditions = collection.conditions as {
     brandSlug?: string;
     specs?: Record<string, unknown>;
-    rules?: Array<{ specificationId?: string; value?: unknown; optionId?: string }>;
+    rules?: Array<{ specificationId?: string; operator?: CollectionOperator; value?: unknown; optionId?: string }>;
   };
   const labels: string[] = [];
 
@@ -124,7 +183,7 @@ function summarizeCollectionConditions(
         : rule.value;
 
     if (value !== undefined && value !== null && value !== "") {
-      labels.push(`${specification.name} = ${String(value)}`);
+      labels.push(`${specification.name} ${getOperatorLabel(rule.operator ?? "equals").toLowerCase()} ${String(value)}`);
     }
   }
 
@@ -141,7 +200,7 @@ function summarizeCollectionConditions(
   return labels.length ? labels.join(", ") : "Без условий";
 }
 
-export function AdminCategoryFormPage() {
+export function AdminCategoryFormPage({ collectionsOnly = false }: { collectionsOnly?: boolean }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { id } = useParams();
@@ -164,35 +223,64 @@ export function AdminCategoryFormPage() {
   const [collectionDraft, setCollectionDraft] = useState<CollectionDraft>(emptyCollection);
   const [editingCollectionId, setEditingCollectionId] = useState<string | null>(null);
   const [deletingCollectionId, setDeletingCollectionId] = useState<string | null>(null);
+  const [firstLevelId, setFirstLevelId] = useState("");
+  const [secondLevelId, setSecondLevelId] = useState("");
+  const [sortOrderDraft, setSortOrderDraft] = useState("0");
 
   const categoryQuery = useQuery({ queryKey: ["admin", "category", id], queryFn: () => getCategory(id!), enabled: isEdit });
   const categoriesQuery = useQuery({ queryKey: ["admin", "categories"], queryFn: () => getCategories(true) });
-  const isSection = Boolean(form.parentId);
+  const categories = categoriesQuery.data ?? [];
+  const firstLevelCategories = useMemo(
+    () => getRootCategories(categories).filter((category) => category.id !== id),
+    [categories, id],
+  );
+  const secondLevelCategories = useMemo(
+    () =>
+      firstLevelId && firstLevelId !== NEW_FIRST_LEVEL
+        ? getChildCategories(categories, firstLevelId).filter((category) => category.id !== id)
+        : [],
+    [categories, firstLevelId, id],
+  );
+  const currentCategory = categories.find((category) => category.id === id);
+  const isSecondLevelCategory = Boolean(currentCategory && getCategoryDepth(currentCategory, categories) === 1);
   const collectionsQuery = useQuery({
     queryKey: ["admin", "category_collections", id],
     queryFn: () => getCategoryCollections(id!),
-    enabled: isEdit && isSection,
+    enabled: isEdit && isSecondLevelCategory,
   });
   const templateQuery = useQuery({
     queryKey: ["admin", "specification_template_by_category", id],
     queryFn: () => getSpecificationTemplateByCategory(id!),
-    enabled: isEdit && isSection,
+    enabled: isEdit && isSecondLevelCategory,
   });
   const brandsQuery = useQuery({
     queryKey: ["admin", "brands"],
     queryFn: () => getBrands({ includeInactive: true }),
-    enabled: isEdit && isSection,
+    enabled: isEdit && isSecondLevelCategory,
   });
 
   const saveMutation = useMutation({
     mutationFn: (payload: CategoryPayload) =>
       id
         ? updateCategory(id, payload)
-        : createCategory({ ...payload, parentId: payload.parentId ?? undefined }),
+        : createCategory({
+            name: payload.name,
+            slug: payload.slug,
+            description: payload.description,
+            image: payload.image,
+            sortOrder: payload.sortOrder,
+            parentId: payload.parentId ?? undefined,
+          }),
     onSuccess: async (category) => {
       await queryClient.invalidateQueries({ queryKey: ["admin", "categories"] });
       await queryClient.invalidateQueries({ queryKey: ["admin", "catalog_stats"] });
-      if (!id) navigate(`/admin/categories/${category.id}/edit`, { replace: true });
+      if (!id) {
+        navigate(`/admin/categories/${category.id}/edit`, { replace: true });
+        showToast("Категория создана");
+        return;
+      }
+
+      showToast("Изменения сохранены");
     },
   });
   const createCollectionMutation = useMutation({
@@ -220,13 +308,16 @@ export function AdminCategoryFormPage() {
     onSuccess: async () => {
       setDeletingCollectionId(null);
       await queryClient.invalidateQueries({ queryKey: ["admin", "category_collections", id] });
-      showToast("Подборка удалена");
+      showToast("Подборка удалена", "danger");
     },
     onError: (nextError) => showToast(nextError instanceof Error ? nextError.message : "Не удалось удалить подборку", "error"),
   });
 
   useEffect(() => {
     if (categoryQuery.data) {
+      const parent = categories.find((category) => category.id === categoryQuery.data.parentId);
+      const grandParent = parent?.parentId ? categories.find((category) => category.id === parent.parentId) : undefined;
+
       setForm({
         name: categoryQuery.data.name,
         slug: categoryQuery.data.slug,
@@ -236,9 +327,51 @@ export function AdminCategoryFormPage() {
         parentId: categoryQuery.data.parentId,
         isActive: categoryQuery.data.isActive,
       });
+      setSortOrderDraft(String(categoryQuery.data.sortOrder));
+      setFirstLevelId(grandParent?.id ?? parent?.id ?? "");
+      setSecondLevelId(grandParent ? parent?.id ?? "" : "");
       setSlugEdited(true);
     }
-  }, [categoryQuery.data]);
+  }, [categories, categoryQuery.data]);
+
+  useEffect(() => {
+    if (isEdit || !form.parentId || !categories.length) {
+      return;
+    }
+
+    const parent = categories.find((category) => category.id === form.parentId);
+    const grandParent = parent?.parentId ? categories.find((category) => category.id === parent.parentId) : undefined;
+
+    setFirstLevelId(grandParent?.id ?? parent?.id ?? "");
+    setSecondLevelId(grandParent ? parent?.id ?? "" : "");
+  }, [categories, form.parentId, isEdit]);
+
+  useEffect(() => {
+    if (isEdit || !categories.length) {
+      return;
+    }
+
+    const targetParentId = form.parentId ?? null;
+    const siblings = categories.filter((category) => category.parentId === targetParentId);
+    const nextSortOrder = siblings.length ? Math.max(...siblings.map((category) => category.sortOrder)) + 1 : 1;
+
+    setForm((current) => (current.sortOrder === nextSortOrder ? current : { ...current, sortOrder: nextSortOrder }));
+    setSortOrderDraft(String(nextSortOrder));
+  }, [categories, form.parentId, isEdit]);
+
+  function updateCategoryLevel(nextFirstLevelId: string, nextSecondLevelId: string) {
+    setFirstLevelId(nextFirstLevelId);
+    setSecondLevelId(nextSecondLevelId);
+    setForm((current) => ({
+      ...current,
+      parentId:
+        nextFirstLevelId === NEW_FIRST_LEVEL
+          ? null
+          : nextSecondLevelId === NEW_SECOND_LEVEL
+            ? nextFirstLevelId || null
+            : nextSecondLevelId || nextFirstLevelId || null,
+    }));
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -298,7 +431,7 @@ export function AdminCategoryFormPage() {
 
           return {
             specificationId: specification.id,
-            operator: "equals",
+            operator: normalizeOperator(condition.operator, specification),
             optionId: condition.optionId,
           };
         }
@@ -312,7 +445,7 @@ export function AdminCategoryFormPage() {
 
           return {
             specificationId: specification.id,
-            operator: "equals",
+            operator: normalizeOperator(condition.operator, specification),
             value,
           };
         }
@@ -324,7 +457,7 @@ export function AdminCategoryFormPage() {
 
           return {
             specificationId: specification.id,
-            operator: "equals",
+            operator: normalizeOperator(condition.operator, specification),
             value: condition.value === "true",
           };
         }
@@ -335,7 +468,7 @@ export function AdminCategoryFormPage() {
 
         return {
           specificationId: specification.id,
-          operator: "equals",
+          operator: normalizeOperator(condition.operator, specification),
           value: condition.value.trim(),
         };
       });
@@ -364,7 +497,7 @@ export function AdminCategoryFormPage() {
     const conditions = collection.conditions as {
       brandSlug?: string;
       specs?: Record<string, unknown>;
-      rules?: Array<{ specificationId?: string; value?: unknown; optionId?: string }>;
+      rules?: Array<{ specificationId?: string; operator?: unknown; value?: unknown; optionId?: string }>;
     };
     const template = templateQuery.data;
     const modernConditions = (conditions.rules ?? [])
@@ -415,34 +548,76 @@ export function AdminCategoryFormPage() {
   return (
     <>
       <header className="admin_header">
-        <h1 className="admin_title">{isEdit ? "Редактировать категорию" : "Новая категория"}</h1>
+        <h1 className="admin_title">
+          {collectionsOnly ? "Подборки категории" : isEdit ? "Редактировать категорию" : "Новая категория"}
+        </h1>
         <Link className="admin_button_muted" to="/admin/categories">Назад</Link>
       </header>
 
-      <form className="admin_panel admin_form" onSubmit={handleSubmit}>
+      {!collectionsOnly ? <form className="admin_panel admin_form" onSubmit={handleSubmit}>
         <div className="admin_form_grid">
-          <label className="admin_field"><span>Название</span><input className="admin_input" required value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value, slug: slugEdited ? current.slug : slugify(event.target.value) }))} /></label>
-          <label className="admin_field"><span>Адрес страницы</span><input className="admin_input" required value={form.slug} onChange={(event) => { setSlugEdited(true); setForm((current) => ({ ...current, slug: event.target.value })); }} /><p className="admin_hint">Используется в ссылке на страницу. Вводите латинские буквы, цифры и дефисы без пробелов.</p></label>
-          <label className="admin_field"><span>Родитель</span><select className="admin_select" value={form.parentId ?? ""} onChange={(event) => setForm((current) => ({ ...current, parentId: event.target.value || null }))}><option value="">Без родителя</option>{(categoriesQuery.data ?? []).filter((category) => category.id !== id).map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-          <label className="admin_field"><span>Порядок</span><input className="admin_input" type="number" min={0} value={form.sortOrder ?? 0} onChange={(event) => setForm((current) => ({ ...current, sortOrder: Number(event.target.value) }))} /></label>
+          <label className="admin_field admin_category_name_field"><span>Название</span><input className="admin_input" required value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value, slug: slugEdited ? current.slug : slugify(event.target.value) }))} /></label>
+          <label className="admin_field admin_category_slug_field"><span>Адрес страницы</span><p className="admin_hint">Латинские буквы, цифры и дефисы без пробелов.</p><input className="admin_input" required value={form.slug} onChange={(event) => { setSlugEdited(true); setForm((current) => ({ ...current, slug: event.target.value })); }} /></label>
+          <label className="admin_field">
+            <span>1-й уровень</span>
+            <select
+              className="admin_select"
+              value={firstLevelId}
+              onChange={(event) => updateCategoryLevel(event.target.value, "")}
+            >
+              {!firstLevelId ? <option value="" disabled hidden>Выберите категорию</option> : null}
+              <option value={NEW_FIRST_LEVEL}>Новый 1-й уровень</option>
+              {firstLevelCategories.map((category) => (
+                <option key={category.id} value={category.id}>{category.name}</option>
+              ))}
+            </select>
+          </label>
+          <label className="admin_field">
+            <span>2-й уровень</span>
+            <select
+              className="admin_select"
+              disabled={!firstLevelId || firstLevelId === NEW_FIRST_LEVEL}
+              value={secondLevelId}
+              onChange={(event) => updateCategoryLevel(firstLevelId, event.target.value)}
+            >
+              {!secondLevelId ? <option value="" disabled hidden>Выберите категорию</option> : null}
+              {firstLevelId && firstLevelId !== NEW_FIRST_LEVEL ? (
+                <option value={NEW_SECOND_LEVEL}>Новый 2-й уровень</option>
+              ) : null}
+              {secondLevelCategories.map((category) => (
+                <option key={category.id} value={category.id}>{category.name}</option>
+              ))}
+            </select>
+          </label>
+          <p className="admin_hint admin_field_full">
+            Новый 1-й уровень создаёт корневую категорию. Новый 2-й уровень — раздел внутри выбранного 1-го уровня.
+          </p>
+          <label className="admin_field"><span>Порядок</span><input className="admin_input" inputMode="numeric" min={0} type="number" value={sortOrderDraft} onChange={(event) => { const value = event.target.value; setSortOrderDraft(value); if (value !== "") setForm((current) => ({ ...current, sortOrder: Number(value) })); }} onBlur={() => { const normalized = sortOrderDraft === "" ? 0 : Number(sortOrderDraft); setSortOrderDraft(String(normalized)); setForm((current) => ({ ...current, sortOrder: normalized })); }} /></label>
           <label className="admin_field admin_field_full"><span>Описание</span><textarea className="admin_textarea" value={form.description ?? ""} onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))} /></label>
-          <label className="admin_field"><span>Изображение</span><input type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) void handleImageUpload(file); }} /></label>
+          <AdminImageUploadField
+            label="Изображение"
+            images={form.image ? [form.image] : []}
+            onSelect={(files) => {
+              const file = files?.[0];
+              if (file) void handleImageUpload(file);
+            }}
+            onRemove={() => setForm((current) => ({ ...current, image: "" }))}
+          />
           <label className="admin_checkbox"><input type="checkbox" checked={Boolean(form.isActive)} onChange={(event) => setForm((current) => ({ ...current, isActive: event.target.checked }))} />Активна</label>
         </div>
-        {form.image ? <p>Изображение: {form.image}</p> : null}
         {imageBusy ? <p>Загрузка изображения...</p> : null}
         {error ? <p className="admin_error">{error}</p> : null}
         <div className="admin_form_actions"><button className="admin_button" type="submit">Сохранить</button></div>
-      </form>
+      </form> : null}
 
-      {id && isSection ? (
+      {id && collectionsOnly && isSecondLevelCategory ? (
         <>
           <section className="admin_panel admin_form">
             <h2>Подборки</h2>
             <form className="admin_form" onSubmit={handleCollectionSubmit}>
               <div className="admin_form_grid">
-                <label className="admin_field"><span>Название</span><input className="admin_input" required value={collectionDraft.name} onChange={(event) => setCollectionDraft((current) => ({ ...current, name: event.target.value, slug: collectionSlugEdited ? current.slug : slugify(event.target.value) }))} /></label>
-                <label className="admin_field"><span>Адрес страницы</span><input className="admin_input" required value={collectionDraft.slug} onChange={(event) => { setCollectionSlugEdited(true); setCollectionDraft((current) => ({ ...current, slug: event.target.value })); }} /><p className="admin_hint">Используется в ссылке на страницу. Вводите латинские буквы, цифры и дефисы без пробелов.</p></label>
+                <label className="admin_field admin_category_name_field"><span>Название</span><input className="admin_input" required value={collectionDraft.name} onChange={(event) => setCollectionDraft((current) => ({ ...current, name: event.target.value, slug: collectionSlugEdited ? current.slug : slugify(event.target.value) }))} /></label>
+                <label className="admin_field admin_category_slug_field"><span>Адрес страницы</span><p className="admin_hint">Латинские буквы, цифры и дефисы без пробелов.</p><input className="admin_input" required value={collectionDraft.slug} onChange={(event) => { setCollectionSlugEdited(true); setCollectionDraft((current) => ({ ...current, slug: event.target.value })); }} /></label>
                 <label className="admin_field"><span>Порядок</span><input className="admin_input" type="number" min={0} value={collectionDraft.sortOrder} onChange={(event) => setCollectionDraft((current) => ({ ...current, sortOrder: Number(event.target.value) }))} /></label>
                 <label className="admin_field">
                   <span>Бренд</span>
@@ -494,6 +669,7 @@ export function AdminCategoryFormPage() {
                               updateCondition(conditionIndex, {
                                 groupId: event.target.value,
                                 specificationId: "",
+                                operator: "equals",
                                 value: "",
                                 optionId: "",
                               })
@@ -515,6 +691,7 @@ export function AdminCategoryFormPage() {
                             onChange={(event) =>
                               updateCondition(conditionIndex, {
                                 specificationId: event.target.value,
+                                operator: "equals",
                                 value: "",
                                 optionId: "",
                               })
@@ -528,8 +705,16 @@ export function AdminCategoryFormPage() {
                         </label>
                         <label className="admin_field">
                           <span>Оператор</span>
-                          <select className="admin_select" value={condition.operator} disabled>
-                            <option value="equals">Равно</option>
+                          <select
+                            className="admin_select"
+                            value={condition.operator}
+                            onChange={(event) =>
+                              updateCondition(conditionIndex, { operator: event.target.value as CollectionOperator })
+                            }
+                          >
+                            {getOperatorsForSpecification(specification).map((operator) => (
+                              <option key={operator.value} value={operator.value}>{operator.label}</option>
+                            ))}
                           </select>
                         </label>
                         <label className="admin_field">
@@ -584,8 +769,8 @@ export function AdminCategoryFormPage() {
             <div className="admin_table_wrap"><table className="admin_table"><thead><tr><th>Название</th><th>Адрес страницы</th><th>Условия</th><th>Действие</th></tr></thead><tbody>{collections.map((collection) => <tr key={collection.id}><td>{collection.name}</td><td>{collection.slug}</td><td>{summarizeCollectionConditions(collection, template, brands)}</td><td><div className="admin_inline_actions"><button className="admin_button_muted" type="button" onClick={() => startEditCollection(collection)}>Редактировать</button><button className="admin_button_danger" type="button" onClick={() => setDeletingCollectionId(collection.id)}>Удалить</button></div></td></tr>)}</tbody></table></div>
           </section>
         </>
-      ) : id ? (
-        <section className="admin_panel"><p className="admin_empty">Подборки доступны только у разделов категорий.</p></section>
+      ) : id && collectionsOnly ? (
+        <section className="admin_panel"><p className="admin_empty">Подборки доступны только у категорий 2-го уровня.</p></section>
       ) : null}
 
       {deletingCollectionId ? (

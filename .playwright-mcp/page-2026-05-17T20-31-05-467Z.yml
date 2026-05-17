@@ -1,0 +1,151 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - link "TechMarket" [ref=e5] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e6]:
+      - link "Обзор" [ref=e7] [cursor=pointer]:
+        - /url: /admin
+      - link "Категории" [ref=e8] [cursor=pointer]:
+        - /url: /admin/categories
+      - link "Товары" [ref=e9] [cursor=pointer]:
+        - /url: /admin/products
+      - link "Шаблоны характеристик" [ref=e10] [cursor=pointer]:
+        - /url: /admin/specification-templates
+      - link "Бренды" [ref=e11] [cursor=pointer]:
+        - /url: /admin/brands
+    - link "На сайт" [ref=e12] [cursor=pointer]:
+      - /url: /
+    - button "Выйти" [ref=e13] [cursor=pointer]
+  - main [ref=e14]:
+    - generic [ref=e15]:
+      - heading "Бренды" [level=1] [ref=e16]
+      - link "Добавить" [ref=e17] [cursor=pointer]:
+        - /url: /admin/brands/new
+    - generic [ref=e18]:
+      - textbox "Поиск" [ref=e19]
+      - combobox [ref=e20]:
+        - option "Все статусы" [selected]
+        - option "Активные"
+        - option "Скрытые"
+      - button "Активировать" [ref=e21] [cursor=pointer]
+      - button "Скрыть" [ref=e22] [cursor=pointer]
+      - button "Удалить" [ref=e23] [cursor=pointer]
+    - table [ref=e25]:
+      - rowgroup [ref=e26]:
+        - row "Название Slug Статус Обновлено Действие" [ref=e27]:
+          - columnheader [ref=e28]:
+            - checkbox [ref=e29]
+          - columnheader "Название" [ref=e30]
+          - columnheader "Slug" [ref=e31]
+          - columnheader "Статус" [ref=e32]
+          - columnheader "Обновлено" [ref=e33]
+          - columnheader "Действие" [ref=e34]
+      - rowgroup [ref=e35]:
+        - row "Apple apple Активен 17.05.2026 ????????????? ?????" [ref=e36]:
+          - cell [ref=e37]:
+            - checkbox [ref=e38]
+          - cell "Apple" [ref=e39]
+          - cell "apple" [ref=e40]
+          - cell "Активен" [ref=e41]:
+            - generic [ref=e42]: Активен
+          - cell "17.05.2026" [ref=e43]
+          - cell "????????????? ?????" [ref=e44]:
+            - link "????????????? ?????" [ref=e45] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxlue000avgv26dlm5nqp/edit
+              - img [ref=e46]
+        - row "ASUS asus Активен 17.05.2026 ????????????? ?????" [ref=e49]:
+          - cell [ref=e50]:
+            - checkbox [ref=e51]
+          - cell "ASUS" [ref=e52]
+          - cell "asus" [ref=e53]
+          - cell "Активен" [ref=e54]:
+            - generic [ref=e55]: Активен
+          - cell "17.05.2026" [ref=e56]
+          - cell "????????????? ?????" [ref=e57]:
+            - link "????????????? ?????" [ref=e58] [cursor=pointer]:
+              - /url: /admin/brands/cmp7202l90051f8v2q2j9zi0o/edit
+              - img [ref=e59]
+        - row "Bosch bosch Активен 17.05.2026 ????????????? ?????" [ref=e62]:
+          - cell [ref=e63]:
+            - checkbox [ref=e64]
+          - cell "Bosch" [ref=e65]
+          - cell "bosch" [ref=e66]
+          - cell "Активен" [ref=e67]:
+            - generic [ref=e68]: Активен
+          - cell "17.05.2026" [ref=e69]
+          - cell "????????????? ?????" [ref=e70]:
+            - link "????????????? ?????" [ref=e71] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxlum000fvgv2s2le8k5o/edit
+              - img [ref=e72]
+        - row "HP hp Активен 17.05.2026 ????????????? ?????" [ref=e75]:
+          - cell [ref=e76]:
+            - checkbox [ref=e77]
+          - cell "HP" [ref=e78]
+          - cell "hp" [ref=e79]
+          - cell "Активен" [ref=e80]:
+            - generic [ref=e81]: Активен
+          - cell "17.05.2026" [ref=e82]
+          - cell "????????????? ?????" [ref=e83]:
+            - link "????????????? ?????" [ref=e84] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxluj000cvgv2jw2h3sn8/edit
+              - img [ref=e85]
+        - row "Lenovo lenovo Активен 17.05.2026 ????????????? ?????" [ref=e88]:
+          - cell [ref=e89]:
+            - checkbox [ref=e90]
+          - cell "Lenovo" [ref=e91]
+          - cell "lenovo" [ref=e92]
+          - cell "Активен" [ref=e93]:
+            - generic [ref=e94]: Активен
+          - cell "17.05.2026" [ref=e95]
+          - cell "????????????? ?????" [ref=e96]:
+            - link "????????????? ?????" [ref=e97] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxlui000bvgv2lvr8gpbh/edit
+              - img [ref=e98]
+        - row "LG lg Активен 17.05.2026 ????????????? ?????" [ref=e101]:
+          - cell [ref=e102]:
+            - checkbox [ref=e103]
+          - cell "LG" [ref=e104]
+          - cell "lg" [ref=e105]
+          - cell "Активен" [ref=e106]:
+            - generic [ref=e107]: Активен
+          - cell "17.05.2026" [ref=e108]
+          - cell "????????????? ?????" [ref=e109]:
+            - link "????????????? ?????" [ref=e110] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxlul000evgv2xt3vxmrh/edit
+              - img [ref=e111]
+        - row "Samsung samsung Активен 17.05.2026 ????????????? ?????" [ref=e114]:
+          - cell [ref=e115]:
+            - checkbox [ref=e116]
+          - cell "Samsung" [ref=e117]
+          - cell "samsung" [ref=e118]
+          - cell "Активен" [ref=e119]:
+            - generic [ref=e120]: Активен
+          - cell "17.05.2026" [ref=e121]
+          - cell "????????????? ?????" [ref=e122]:
+            - link "????????????? ?????" [ref=e123] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxluk000dvgv2iunkkrd6/edit
+              - img [ref=e124]
+        - row "Sony sony Активен 17.05.2026 ????????????? ?????" [ref=e127]:
+          - cell [ref=e128]:
+            - checkbox [ref=e129]
+          - cell "Sony" [ref=e130]
+          - cell "sony" [ref=e131]
+          - cell "Активен" [ref=e132]:
+            - generic [ref=e133]: Активен
+          - cell "17.05.2026" [ref=e134]
+          - cell "????????????? ?????" [ref=e135]:
+            - link "????????????? ?????" [ref=e136] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxlum000gvgv29fvx5a4d/edit
+              - img [ref=e137]
+        - row "Xiaomi xiaomi Активен 17.05.2026 ????????????? ?????" [ref=e140]:
+          - cell [ref=e141]:
+            - checkbox [ref=e142]
+          - cell "Xiaomi" [ref=e143]
+          - cell "xiaomi" [ref=e144]
+          - cell "Активен" [ref=e145]:
+            - generic [ref=e146]: Активен
+          - cell "17.05.2026" [ref=e147]
+          - cell "????????????? ?????" [ref=e148]:
+            - link "????????????? ?????" [ref=e149] [cursor=pointer]:
+              - /url: /admin/brands/cmorbxlun000hvgv2p38ou8x6/edit
+              - img [ref=e150]

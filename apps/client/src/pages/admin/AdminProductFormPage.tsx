@@ -6,18 +6,26 @@ import { uploadImage } from "../../lib/admin-api";
 import { getBrands } from "../../lib/brands-api";
 import { getCategories } from "../../lib/categories-api";
 import { isValidSlug, slugify } from "../../lib/slug-utils";
-import { getSpecificationTemplateByCategory } from "../../lib/specification-templates-api";
+import { getSpecificationTemplateByCategory, type Specification } from "../../lib/specification-templates-api";
 import {
   createProduct,
   getProduct,
-  resolveUploadUrl,
   updateProduct,
   type ProductAdditionalSpec,
   type ProductPayload,
 } from "../../lib/products-api";
-import { getChildCategories, getParentCategories } from "./admin-utils";
+import { getChildCategories, getRootCategories } from "./admin-utils";
+import { AdminImageUploadField } from "./AdminImageUploadField";
 
 const emptyAdditionalSpec: ProductAdditionalSpec = { label: "", value: "" };
+
+function isNumericSelectSpecification(specification: Specification) {
+  return (
+    specification.type === "SELECT" &&
+    specification.options.length > 0 &&
+    specification.options.every((option) => option.value.trim() !== "" && Number.isFinite(Number(option.value)))
+  );
+}
 
 export function AdminProductFormPage() {
   const navigate = useNavigate();
@@ -57,7 +65,7 @@ export function AdminProductFormPage() {
     enabled: isEdit,
   });
   const categories = categoriesQuery.data ?? [];
-  const parentCategories = useMemo(() => getParentCategories(categories), [categories]);
+  const parentCategories = useMemo(() => getRootCategories(categories), [categories]);
   const childCategories = useMemo(
     () => (parentCategoryId ? getChildCategories(categories, parentCategoryId) : []),
     [categories, parentCategoryId],
@@ -120,6 +128,8 @@ export function AdminProductFormPage() {
       for (const spec of visibleSpecs) {
         if (!(spec.key in nextSpecs)) {
           nextSpecs[spec.key] = spec.type === "BOOLEAN" ? false : "";
+        } else if (isNumericSelectSpecification(spec) && typeof nextSpecs[spec.key] === "string") {
+          nextSpecs[spec.key] = Number(nextSpecs[spec.key]);
         }
       }
 
@@ -199,7 +209,7 @@ export function AdminProductFormPage() {
 
       <form className="admin_panel admin_form" onSubmit={handleSubmit}>
         <div className="admin_form_grid">
-          <label className="admin_field">
+          <label className="admin_field admin_category_name_field">
             <span>Название</span>
             <input
               className="admin_input"
@@ -214,8 +224,9 @@ export function AdminProductFormPage() {
               }
             />
           </label>
-          <label className="admin_field">
+          <label className="admin_field admin_category_slug_field">
             <span>Адрес страницы</span>
+            <p className="admin_hint">Латинские буквы, цифры и дефисы без пробелов.</p>
             <input
               className="admin_input"
               required
@@ -225,9 +236,6 @@ export function AdminProductFormPage() {
                 setForm((current) => ({ ...current, slug: event.target.value }));
               }}
             />
-            <p className="admin_hint">
-              Используется в ссылке на страницу. Вводите латинские буквы, цифры и дефисы без пробелов.
-            </p>
           </label>
           <label className="admin_field">
             <span>SKU</span>
@@ -343,10 +351,18 @@ export function AdminProductFormPage() {
               onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
             />
           </label>
-          <label className="admin_field">
-            <span>Изображения</span>
-            <input type="file" accept="image/*" multiple onChange={(event) => void handleImageUpload(event.target.files)} />
-          </label>
+          <AdminImageUploadField
+            label="Изображения"
+            images={form.images ?? []}
+            multiple
+            onSelect={(files) => void handleImageUpload(files)}
+            onRemove={(image) =>
+              setForm((current) => ({
+                ...current,
+                images: current.images?.filter((item) => item !== image),
+              }))
+            }
+          />
           <label className="admin_checkbox">
             <input
               type="checkbox"
@@ -356,28 +372,6 @@ export function AdminProductFormPage() {
             Активен
           </label>
         </div>
-
-        {form.images?.length ? (
-          <div className="admin_image_list">
-            {form.images.map((image) => (
-              <div className="admin_image_item" key={image}>
-                {resolveUploadUrl(image) ? <img src={resolveUploadUrl(image) ?? ""} alt="" /> : null}
-                <button
-                  className="admin_button_muted"
-                  type="button"
-                  onClick={() =>
-                    setForm((current) => ({
-                      ...current,
-                      images: current.images?.filter((item) => item !== image),
-                    }))
-                  }
-                >
-                  Убрать
-                </button>
-              </div>
-            ))}
-          </div>
-        ) : null}
 
         {visibleSpecs.length ? (
           <section className="admin_specs_grid">
@@ -403,7 +397,12 @@ export function AdminProductFormPage() {
                           className="admin_select"
                           required={spec.isRequired}
                           value={String(form.specs[spec.key] ?? "")}
-                          onChange={(event) => updateSpecValue(spec.key, event.target.value)}
+                          onChange={(event) =>
+                            updateSpecValue(
+                              spec.key,
+                              isNumericSelectSpecification(spec) ? Number(event.target.value) : event.target.value,
+                            )
+                          }
                         >
                           <option value="">Выберите значение</option>
                           {spec.options.map((option) => (

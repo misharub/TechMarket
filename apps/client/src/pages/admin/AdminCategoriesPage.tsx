@@ -10,7 +10,7 @@ import {
   type BulkCatalogAction,
   type CategoryNode,
 } from "../../lib/categories-api";
-import { formatDate, groupCategoriesByParent } from "./admin-utils";
+import { formatDate, getCategoryDepth } from "./admin-utils";
 
 export function AdminCategoriesPage() {
   const queryClient = useQueryClient();
@@ -45,22 +45,30 @@ export function AdminCategoriesPage() {
   });
 
   const categories = categoriesQuery.data ?? [];
-  const { parentGroups, standaloneRoots } = useMemo(() => groupCategoriesByParent(categories), [categories]);
-  const visibleGroups = useMemo(
-    () =>
-      parentGroups
-        .map((group) => ({
-          ...group,
-          children: group.children.filter((category) => matchesFilters(category, search, status)),
-        }))
-        .filter((group) => group.children.length > 0 || matchesFilters(group.parent, search, status)),
-    [parentGroups, search, status],
-  );
-  const visibleStandaloneRoots = useMemo(
-    () => standaloneRoots.filter((category) => matchesFilters(category, search, status)),
-    [standaloneRoots, search, status],
-  );
-  const selectableCategories = [...visibleGroups.flatMap((group) => group.children), ...visibleStandaloneRoots];
+  const visibleGroups = useMemo(() => {
+    const parents = categories.filter((category) => getCategoryDepth(category, categories) < 2);
+
+    return parents
+      .map((parent) => ({
+        parent,
+        level: getCategoryDepth(parent, categories) + 1,
+        children: categories.filter(
+          (category) => category.parentId === parent.id && matchesFilters(category, search, status),
+        ),
+        collections: (parent.collections ?? []).filter((collection) =>
+          matchesCollectionFilters(collection.name, search, status, collection.isActive),
+        ),
+      }))
+      .filter(
+        (group) =>
+          group.children.length > 0 ||
+          group.collections.length > 0 ||
+          matchesFilters(group.parent, search, status),
+      );
+  }, [categories, search, status]);
+  const firstLevelGroups = visibleGroups.filter((group) => group.level === 1);
+  const secondLevelGroups = visibleGroups.filter((group) => group.level === 2);
+  const selectableCategories = visibleGroups.flatMap((group) => group.children);
 
   function toggleCategory(id: string) {
     setSelectedIds((current) =>
@@ -119,11 +127,14 @@ export function AdminCategoriesPage() {
         </label>
       </section>
 
-      {visibleGroups.map((group) => (
+      {firstLevelGroups.length ? <h2 className="admin_section_title">Категории 1-го уровня</h2> : null}
+      {firstLevelGroups.map((group) => (
         <CategoryGroup
           key={group.parent.id}
           parent={group.parent}
+          level={group.level}
           categories={group.children}
+          collections={group.collections}
           selectedIds={selectedIds}
           onToggle={toggleCategory}
           onToggleStatus={(category) => toggleMutation.mutate(category)}
@@ -131,18 +142,22 @@ export function AdminCategoriesPage() {
         />
       ))}
 
-      {visibleStandaloneRoots.length ? (
+      {secondLevelGroups.length ? <h2 className="admin_section_title">Категории 2-го уровня</h2> : null}
+      {secondLevelGroups.map((group) => (
         <CategoryGroup
-          title="Без разделов"
-          categories={visibleStandaloneRoots}
+          key={group.parent.id}
+          parent={group.parent}
+          level={group.level}
+          categories={group.children}
+          collections={group.collections}
           selectedIds={selectedIds}
           onToggle={toggleCategory}
           onToggleStatus={(category) => toggleMutation.mutate(category)}
           onDelete={(categoryId) => deleteMutation.mutate(categoryId)}
         />
-      ) : null}
+      ))}
 
-      {!visibleGroups.length && !visibleStandaloneRoots.length && !categoriesQuery.isLoading ? (
+      {!visibleGroups.length && !categoriesQuery.isLoading ? (
         <section className="admin_card">
           <p className="admin_empty">Категории не найдены.</p>
         </section>
@@ -158,18 +173,27 @@ function matchesFilters(category: CategoryNode, search: string, status: string) 
   return matchesSearch && matchesStatus;
 }
 
+function matchesCollectionFilters(name: string, search: string, status: string, isActive: boolean) {
+  const matchesSearch = name.toLowerCase().includes(search.toLowerCase());
+  const matchesStatus = status === "all" || (status === "active" ? isActive : !isActive);
+
+  return matchesSearch && matchesStatus;
+}
+
 function CategoryGroup({
-  title,
   parent,
+  level,
   categories,
+  collections,
   selectedIds,
   onToggle,
   onToggleStatus,
   onDelete,
 }: {
-  title?: string;
-  parent?: CategoryNode;
+  parent: CategoryNode;
+  level: number;
   categories: CategoryNode[];
+  collections: CategoryNode["collections"];
   selectedIds: string[];
   onToggle: (id: string) => void;
   onToggleStatus: (category: CategoryNode) => void;
@@ -178,24 +202,31 @@ function CategoryGroup({
   return (
     <section className="admin_card admin_table_wrap">
       <div className="admin_panel_title">
-        <span>{parent?.name ?? title}</span>
-        {parent ? (
-          <div className="admin_inline_actions">
-            <Link className="admin_button" to={`/admin/categories/new?parentId=${parent.id}`}>
+        <span>
+          {parent.name} <em className="admin_panel_meta">категория {level}-го уровня</em>
+        </span>
+        <div className="admin_inline_actions">
+          <Link className="admin_button" to={`/admin/categories/new?parentId=${parent.id}`}>
+            <Plus size={16} />
+            Добавить раздел
+          </Link>
+          {level === 2 ? (
+            <Link className="admin_button" to={`/admin/categories/${parent.id}/collections`}>
               <Plus size={16} />
-              Добавить раздел
+              Добавить подборку
             </Link>
-            <Link className="admin_button_muted" to={`/admin/categories/${parent.id}/edit`}>
-              Редактировать категорию
-            </Link>
-          </div>
-        ) : null}
+          ) : null}
+          <Link className="admin_button_muted" to={`/admin/categories/${parent.id}/edit`}>
+            Редактировать категорию
+          </Link>
+        </div>
       </div>
-      <table className="admin_table">
+      <table className="admin_table admin_categories_table">
         <thead>
           <tr>
             <th />
             <th>Название</th>
+            <th>Тип</th>
             <th>Порядок</th>
             <th>Статус</th>
             <th>Обновлено</th>
@@ -213,6 +244,7 @@ function CategoryGroup({
                 />
               </td>
               <td>{category.name}</td>
+              <td><span className="admin_badge">Категория</span></td>
               <td>{category.sortOrder}</td>
               <td>
                 <span className={`admin_badge ${category.isActive ? "admin_badge_active" : "admin_badge_inactive"}`}>
@@ -252,6 +284,25 @@ function CategoryGroup({
               </td>
             </tr>
           ))}
+          {level === 2 ? collections.map((collection) => (
+            <tr key={collection.id}>
+              <td />
+              <td>{collection.name}</td>
+              <td><span className="admin_badge admin_badge_collection">Подборка</span></td>
+              <td>{collection.sortOrder}</td>
+              <td>
+                <span className={`admin_badge ${collection.isActive ? "admin_badge_active" : "admin_badge_inactive"}`}>
+                  {collection.isActive ? "Активна" : "Скрыта"}
+                </span>
+              </td>
+              <td>{formatDate(collection.updatedAt)}</td>
+              <td>
+                <Link className="admin_button_muted" to={`/admin/categories/${parent.id}/collections`}>
+                  Управлять подборками
+                </Link>
+              </td>
+            </tr>
+          )) : null}
         </tbody>
       </table>
     </section>

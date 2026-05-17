@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   deleteSpecificationTemplate,
@@ -18,7 +19,7 @@ export function AdminSpecificationTemplatesPage() {
     mutationFn: deleteSpecificationTemplate,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin", "specification_templates"] });
-      showToast("Шаблон характеристик удалён");
+      showToast("Шаблон характеристик удалён", "danger");
     },
     onError: (error) => showToast(error instanceof Error ? error.message : "Не удалось удалить запись", "error"),
   });
@@ -33,7 +34,7 @@ export function AdminSpecificationTemplatesPage() {
       </header>
 
       <section className="admin_card admin_table_wrap">
-        <table className="admin_table">
+        <table className="admin_table admin_full_table">
           <thead>
             <tr>
               <th>ID</th>
@@ -54,15 +55,22 @@ export function AdminSpecificationTemplatesPage() {
                 <td>{formatDate(template.createdAt)}</td>
                 <td>
                   <div className="admin_inline_actions">
-                    <Link className="admin_button_muted" to={`/admin/specification-templates/${template.id}/edit`}>
-                      Редактировать
+                    <Link
+                      aria-label="????????????? ??????"
+                      className="admin_icon_button"
+                      title="????????????? ??????"
+                      to={`/admin/specification-templates/${template.id}/edit`}
+                    >
+                      <Pencil size={16} />
                     </Link>
                     <button
-                      className="admin_button_danger"
+                      aria-label="??????? ??????"
+                      className="admin_icon_button admin_icon_button_danger"
+                      title="??????? ??????"
                       type="button"
                       onClick={() => deleteMutation.mutate(template.id)}
                     >
-                      Удалить
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </td>

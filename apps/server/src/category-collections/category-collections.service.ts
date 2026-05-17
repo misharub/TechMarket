@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateCategoryCollectionDto } from "./dto/create-category-collection.dto";
@@ -19,7 +19,7 @@ export class CategoryCollectionsService {
     }
 
     async create(categoryId: string, dto: CreateCategoryCollectionDto) {
-        await this.ensureCategoryExists(categoryId);
+        await this.ensureSecondLevelCategory(categoryId);
 
         return this.prisma.categoryCollection.create({
             data: {
@@ -46,18 +46,16 @@ export class CategoryCollectionsService {
     async remove(categoryId: string, collectionId: string) {
         await this.ensureCollectionBelongsToCategory(categoryId, collectionId);
 
-        return this.prisma.categoryCollection.update({
+        return this.prisma.categoryCollection.delete({
             where: { id: collectionId },
-            data: { isActive: false },
         });
     }
 
     async removeById(collectionId: string) {
         await this.ensureCollectionExists(collectionId);
 
-        return this.prisma.categoryCollection.update({
+        return this.prisma.categoryCollection.delete({
             where: { id: collectionId },
-            data: { isActive: false },
         });
     }
 
@@ -77,6 +75,29 @@ export class CategoryCollectionsService {
 
         if (!collection) {
             throw new NotFoundException("Category collection not found");
+        }
+    }
+
+    private async ensureSecondLevelCategory(categoryId: string) {
+        const category = await this.prisma.category.findUnique({
+            where: { id: categoryId },
+            select: {
+                id: true,
+                parent: {
+                    select: {
+                        id: true,
+                        parentId: true,
+                    },
+                },
+            },
+        });
+
+        if (!category) {
+            throw new NotFoundException("Category not found");
+        }
+
+        if (!category.parent || category.parent.parentId) {
+            throw new BadRequestException("Collections are available only for second-level categories");
         }
     }
 
