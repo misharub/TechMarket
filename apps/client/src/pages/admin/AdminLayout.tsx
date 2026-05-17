@@ -6,6 +6,7 @@ import { AdminToastViewport } from "./AdminToastViewport";
 const links = [
   { to: "/admin", label: "Обзор" },
   { to: "/admin/categories", label: "Категории" },
+  { to: "/admin/category-tree", label: "Дерево категорий" },
   { to: "/admin/products", label: "Товары" },
   { to: "/admin/specification-templates", label: "Шаблоны характеристик" },
   { to: "/admin/brands", label: "Бренды" },

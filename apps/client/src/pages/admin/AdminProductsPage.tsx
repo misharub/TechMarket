@@ -12,6 +12,7 @@ import {
   type Product,
 } from "../../lib/products-api";
 import { formatDate, getChildCategories, getRootCategories } from "./admin-utils";
+import { AdminPagination } from "./AdminPagination";
 
 const productLimit = 20;
 
@@ -203,26 +204,9 @@ export function AdminProductsPage() {
         {!products.length && !productsQuery.isLoading ? <p className="admin_empty">Товары не найдены.</p> : null}
       </section>
 
-      <div className="admin_pagination admin_pagination_compact">
-        <button className="admin_page_button" type="button" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>{"<"}</button>
-        {buildPageItems(productsQuery.data?.page ?? page, productsQuery.data?.pages ?? 1).map((item, index) =>
-          item === "ellipsis" ? (
-            <span className="admin_page_ellipsis" key={`ellipsis-${index}`}>...</span>
-          ) : (
-            <button className={`admin_page_button ${item === (productsQuery.data?.page ?? page) ? "active" : ""}`} key={item} type="button" onClick={() => setPage(item)}>{item}</button>
-          ),
-        )}
-        <button className="admin_page_button" type="button" disabled={page >= (productsQuery.data?.pages ?? 1)} onClick={() => setPage((current) => current + 1)}>{">"}</button>
-      </div>
+      <AdminPagination page={productsQuery.data?.page ?? page} pages={productsQuery.data?.pages ?? 1} onChange={setPage} />
     </>
   );
-}
-
-function buildPageItems(currentPage: number, pages: number): Array<number | "ellipsis"> {
-  if (pages <= 7) return Array.from({ length: pages }, (_, index) => index + 1);
-  if (currentPage <= 4) return [1, 2, 3, 4, 5, "ellipsis", pages];
-  if (currentPage >= pages - 3) return [1, "ellipsis", pages - 4, pages - 3, pages - 2, pages - 1, pages];
-  return [1, "ellipsis", currentPage - 1, currentPage, currentPage + 1, "ellipsis", pages];
 }
 
 function ProductRow({ product, selected, onToggle }: { product: Product; selected: boolean; onToggle: () => void }) {

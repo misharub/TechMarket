@@ -769,6 +769,80 @@
   color: #64748b;
 }
 
+.admin_category_tree {
+  display: grid;
+  gap: 12px;
+}
+
+.admin_category_tree h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.admin_category_tree_list,
+.admin_category_tree_children {
+  display: grid;
+  gap: 8px;
+}
+
+.admin_category_tree_children {
+  margin-left: 18px;
+  padding-left: 14px;
+  border-left: 1px solid #cbd5e1;
+}
+
+.admin_category_tree_node {
+  display: grid;
+  gap: 6px;
+}
+
+.admin_category_tree_label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin_category_tree_toggle {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  color: #0f172a;
+  background: #e2e8f0;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.admin_category_tree_toggle:hover {
+  background: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.admin_category_tree_label em {
+  color: #64748b;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.admin_category_tree_collections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: 18px;
+}
+
+.admin_category_tree_collections span {
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: #6d28d9;
+  background: #ede9fe;
+  font-size: 12px;
+}
+
 @media (max-width: 900px) {
   .admin_shell {
     grid-template-columns: 1fr;

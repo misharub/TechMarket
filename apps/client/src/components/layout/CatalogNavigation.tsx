@@ -35,8 +35,6 @@ function DesktopMegaMenu({
   activeChild: CategoryNode | undefined;
   onChildChange: (category: CategoryNode) => void;
 }) {
-  const menuItems = activeChild?.children.length ? activeChild.children : activeRoot.children;
-
   return (
     <div className="catalog_mega" role="group" aria-label={`Раздел ${activeRoot.name}`}>
       <div className="catalog_mega-inner">
@@ -71,7 +69,7 @@ function DesktopMegaMenu({
                     {collection.name}
                   </a>
                 ))
-              : menuItems.map((category) => (
+              : activeChild?.children.map((category) => (
                   <CategoryLink category={category} className="catalog_grid-link" key={category.slug} />
                 ))}
           </div>

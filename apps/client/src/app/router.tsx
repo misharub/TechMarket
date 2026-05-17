@@ -6,6 +6,7 @@ import { AdminBrandFormPage } from "../pages/admin/AdminBrandFormPage";
 import { AdminBrandsPage } from "../pages/admin/AdminBrandsPage";
 import { AdminCategoriesPage } from "../pages/admin/AdminCategoriesPage";
 import { AdminCategoryFormPage } from "../pages/admin/AdminCategoryFormPage";
+import { AdminCategoryTreePage } from "../pages/admin/AdminCategoryTreePage";
 import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage";
 import { AdminLayout } from "../pages/admin/AdminLayout";
 import { AdminProductFormPage } from "../pages/admin/AdminProductFormPage";
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
       {
         path: "categories",
         element: <AdminCategoriesPage />,
+      },
+      {
+        path: "category-tree",
+        element: <AdminCategoryTreePage />,
       },
       {
         path: "categories/new",

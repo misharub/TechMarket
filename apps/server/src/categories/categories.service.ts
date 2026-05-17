@@ -44,6 +44,7 @@ export class CategoriesService {
     async create(dto: CreateCategoryDto) {
         if (dto.parentId) {
             await this.ensureCategoryExists(dto.parentId);
+            await this.ensureParentAllowsChild(dto.parentId);
         }
 
         try {
@@ -64,6 +65,7 @@ export class CategoriesService {
 
         if (dto.parentId) {
             await this.ensureCategoryExists(dto.parentId);
+            await this.ensureParentAllowsChild(dto.parentId);
         }
 
         try {
@@ -135,6 +137,29 @@ export class CategoriesService {
 
         if (!category) {
             throw new NotFoundException("Category not found");
+        }
+    }
+
+    private async ensureParentAllowsChild(parentId: string) {
+        const parent = await this.prisma.category.findUnique({
+            where: { id: parentId },
+            select: {
+                id: true,
+                parent: {
+                    select: {
+                        id: true,
+                        parentId: true,
+                    },
+                },
+            },
+        });
+
+        if (!parent) {
+            throw new NotFoundException("Category not found");
+        }
+
+        if (parent.parent?.parentId) {
+            throw new BadRequestException("Category tree cannot be deeper than 3 levels");
         }
     }
 
