@@ -111,7 +111,6 @@
   transform: translateY(-2px);
 }
 
-/* Кнопка "Мои заказы" (заливка) */
 .checkout_success_actions a:last-child {
   background: #0f766e;
   color: white;
@@ -143,4 +142,12 @@
     min-width: 140px;
     padding: 10px 20px;
   }
+}
+
+
+
+.checkout_state {
+    min-height: calc(100vh - 96px);
+    padding: 102px 20px 48px;
+    background: #f8fafc;
 }
