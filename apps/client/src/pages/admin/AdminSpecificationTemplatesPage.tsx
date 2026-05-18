@@ -37,7 +37,6 @@ export function AdminSpecificationTemplatesPage() {
         <table className="admin_table admin_full_table">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Название</th>
               <th>Категория товара</th>
               <th>Кол-во групп</th>
@@ -48,7 +47,6 @@ export function AdminSpecificationTemplatesPage() {
           <tbody>
             {(templatesQuery.data ?? []).map((template) => (
               <tr key={template.id}>
-                <td>{template.id}</td>
                 <td>{template.name}</td>
                 <td>{template.category.name}</td>
                 <td>{template._count.groups}</td>

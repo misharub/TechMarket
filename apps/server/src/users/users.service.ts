@@ -86,7 +86,8 @@ export class UsersService {
                 ? {
                       OR: [
                           { email: { contains: query.search, mode: "insensitive" } },
-                          { name: { contains: query.search, mode: "insensitive" } },
+                          { firstName: { contains: query.search, mode: "insensitive" } },
+                          { lastName: { contains: query.search, mode: "insensitive" } },
                       ],
                   }
                 : {}),

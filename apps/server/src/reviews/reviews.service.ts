@@ -20,7 +20,7 @@ export class ReviewsService {
         const [items, total, rating] = await this.prisma.$transaction([
             this.prisma.review.findMany({
                 where,
-                include: { user: { select: { id: true, name: true } } },
+                include: { user: { select: { id: true, firstName: true, lastName: true } } },
                 orderBy: { createdAt: "desc" },
                 skip,
                 take: limit,
@@ -71,7 +71,7 @@ export class ReviewsService {
                     comment: dto.comment,
                     isActive: true,
                 },
-                include: { user: { select: { id: true, name: true } } },
+                include: { user: { select: { id: true, firstName: true, lastName: true } } },
             });
         }
 
@@ -82,7 +82,7 @@ export class ReviewsService {
                 rating: dto.rating,
                 comment: dto.comment,
             },
-            include: { user: { select: { id: true, name: true } } },
+                include: { user: { select: { id: true, firstName: true, lastName: true } } },
         });
     }
 
@@ -96,7 +96,7 @@ export class ReviewsService {
         return this.prisma.review.update({
             where: { id: reviewId },
             data: dto,
-            include: { user: { select: { id: true, name: true } } },
+                include: { user: { select: { id: true, firstName: true, lastName: true } } },
         });
     }
 

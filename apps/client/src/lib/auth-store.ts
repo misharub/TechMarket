@@ -1,5 +1,13 @@
 import { create } from "zustand";
-import { login, logout, refreshAuth, type AuthUser, type LoginPayload } from "./auth-api";
+import {
+  login,
+  logout,
+  refreshAuth,
+  register,
+  type AuthUser,
+  type LoginPayload,
+  type RegisterPayload,
+} from "./auth-api";
 import { setApiAccessToken } from "./api";
 
 type AuthState = {
@@ -8,6 +16,8 @@ type AuthState = {
   isBootstrapped: boolean;
   bootstrap: () => Promise<void>;
   signIn: (payload: LoginPayload) => Promise<AuthUser>;
+  signUp: (payload: RegisterPayload) => Promise<AuthUser>;
+  setUser: (user: AuthUser) => void;
   signOut: () => Promise<void>;
 };
 
@@ -30,6 +40,15 @@ export const useAuthStore = create<AuthState>((set) => ({
     setApiAccessToken(result.accessToken);
     set({ user: result.user, accessToken: result.accessToken, isBootstrapped: true });
     return result.user;
+  },
+  async signUp(payload) {
+    const result = await register(payload);
+    setApiAccessToken(result.accessToken);
+    set({ user: result.user, accessToken: result.accessToken, isBootstrapped: true });
+    return result.user;
+  },
+  setUser(user) {
+    set((state) => ({ ...state, user }));
   },
   async signOut() {
     await logout();

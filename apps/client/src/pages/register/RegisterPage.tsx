@@ -1,21 +1,21 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AuthShell } from "../auth/AuthShell";
 import { GoogleIcon, VkIcon } from "../auth/SocialIcons";
 import { apiBaseUrl } from "../../lib/api";
 import { useAuthStore } from "../../lib/auth-store";
 
-export function LoginPage() {
+export function RegisterPage() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const signIn = useAuthStore((state) => state.signIn);
+  const signUp = useAuthStore((state) => state.signUp);
   const user = useAuthStore((state) => state.user);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const from = (location.state as { from?: string } | null)?.from;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -23,10 +23,10 @@ export function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      await signIn({ email, password });
-      navigate(from && from !== "/admin" ? from : "/", { replace: true });
+      await signUp({ firstName, lastName, email, password });
+      navigate("/", { replace: true });
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : "Не удалось войти");
+      setError(nextError instanceof Error ? nextError.message : "Не удалось создать аккаунт");
     } finally {
       setIsSubmitting(false);
     }
@@ -34,16 +34,16 @@ export function LoginPage() {
 
   return (
     <AuthShell
-      eyebrow="С возвращением"
-      title="Войдите, чтобы продолжить покупки"
-      description="Сохраняйте адреса, отслеживайте заказы и возвращайтесь к корзине без лишних шагов."
-      footerText="Нет аккаунта?"
-      footerLinkLabel="Создать"
-      footerLinkTo="/register"
+      eyebrow="Новый аккаунт"
+      title="Создайте профиль TechMarket"
+      description="Один аккаунт — для заказов, адресов, избранного и будущего личного кабинета."
+      footerText="Уже есть аккаунт?"
+      footerLinkLabel="Войти"
+      footerLinkTo="/login"
     >
       <div className="auth_heading">
-        <h2>Войти</h2>
-        <p>Используйте email и пароль или быстрый вход.</p>
+        <h2>Регистрация</h2>
+        <p>Заполните три поля — остальное можно добавить позже.</p>
       </div>
 
       {user ? (
@@ -53,17 +53,41 @@ export function LoginPage() {
           <div className="auth_socials">
             <a className="auth_social_button" href={`${apiBaseUrl}/auth/google`}>
               <GoogleIcon />
-              Войти через Google
+              Продолжить через Google
             </a>
             <a className="auth_social_button" href={`${apiBaseUrl}/auth/vk`}>
               <VkIcon />
-              Войти через VK
+              Продолжить через VK
             </a>
           </div>
 
           <div className="auth_divider">или</div>
 
           <form className="auth_form" onSubmit={handleSubmit}>
+            <label className="auth_field">
+              <span>Имя</span>
+              <input
+                required
+                minLength={2}
+                maxLength={100}
+                value={firstName}
+                onChange={(event) => setFirstName(event.target.value)}
+                autoComplete="given-name"
+              />
+            </label>
+
+            <label className="auth_field">
+              <span>Фамилия</span>
+              <input
+                required
+                minLength={2}
+                maxLength={100}
+                value={lastName}
+                onChange={(event) => setLastName(event.target.value)}
+                autoComplete="family-name"
+              />
+            </label>
+
             <label className="auth_field">
               <span>Email</span>
               <input
@@ -79,17 +103,18 @@ export function LoginPage() {
               <span>Пароль</span>
               <input
                 required
+                minLength={8}
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                autoComplete="current-password"
+                autoComplete="new-password"
               />
             </label>
 
             {error ? <p className="auth_error">{error}</p> : null}
 
             <button className="auth_submit" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Входим..." : "Войти"}
+              {isSubmitting ? "Создаём..." : "Создать аккаунт"}
             </button>
           </form>
         </>

@@ -18,7 +18,8 @@ type OAuthProfile = {
     provider: OAuthProvider;
     providerUserId: string;
     email: string;
-    name: string;
+    firstName: string;
+    lastName?: string;
 };
 
 @Injectable()
@@ -39,7 +40,8 @@ export class AuthService {
             const user = await this.prisma.user.create({
                 data: {
                     email,
-                    name: dto.name,
+                    firstName: dto.firstName,
+                    lastName: dto.lastName,
                     passwordHash,
                 },
             });
@@ -168,7 +170,8 @@ export class AuthService {
             update: {},
             create: {
                 email,
-                name: profile.name,
+                firstName: profile.firstName,
+                lastName: profile.lastName,
                 role: Role.USER,
             },
         });
@@ -284,7 +287,8 @@ export class AuthService {
             provider: OAuthProvider.GOOGLE,
             providerUserId: profile.sub,
             email: profile.email,
-            name: profile.name ?? profile.email,
+            firstName: this.extractFirstName(profile.name ?? profile.email),
+            lastName: this.extractLastName(profile.name ?? profile.email),
         });
     }
 
@@ -321,13 +325,12 @@ export class AuthService {
             response?: Array<{ first_name?: string; last_name?: string }>;
         };
         const profile = profileData.response?.[0];
-        const name = [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") || tokenData.email;
-
         return this.loginWithOAuth({
             provider: OAuthProvider.VK,
             providerUserId: String(tokenData.user_id),
             email: tokenData.email,
-            name,
+            firstName: profile?.first_name || tokenData.email,
+            lastName: profile?.last_name,
         });
     }
 
@@ -350,11 +353,12 @@ export class AuthService {
         );
     }
 
-    toPublicUser(user: Pick<User, "id" | "email" | "name" | "phone" | "role" | "isBlocked" | "createdAt">) {
+    toPublicUser(user: Pick<User, "id" | "email" | "firstName" | "lastName" | "phone" | "role" | "isBlocked" | "createdAt">) {
         return {
             id: user.id,
             email: user.email,
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             phone: user.phone,
             role: user.role,
             isBlocked: user.isBlocked,
@@ -396,5 +400,14 @@ export class AuthService {
         const rightBuffer = Buffer.from(right);
 
         return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer);
+    }
+
+    private extractFirstName(name: string) {
+        return name.trim().split(/\s+/)[0] || name;
+    }
+
+    private extractLastName(name: string) {
+        const [, ...rest] = name.trim().split(/\s+/);
+        return rest.join(" ") || undefined;
     }
 }

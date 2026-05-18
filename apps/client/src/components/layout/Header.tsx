@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import techMarketMark from "../../assets/techmarket-mark.svg";
 import { useAuthStore } from "../../lib/auth-store";
 import { CatalogNavigation } from "./CatalogNavigation";
@@ -85,7 +86,8 @@ function HeaderActionButton({ action }: { action: HeaderAction }) {
 function HeaderActions() {
   const user = useAuthStore((state) => state.user);
   const signOut = useAuthStore((state) => state.signOut);
-  const actions = [
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const actions: HeaderAction[] = [
     ...baseHeaderActions,
     ...(user?.role === "ADMIN"
       ? [
@@ -96,17 +98,15 @@ function HeaderActions() {
           },
         ]
       : []),
-    user
-      ? {
-          label: "Выйти",
-          icon: <LogOut className={iconClassName} />,
-          onClick: () => void signOut(),
-        }
-      : {
+    ...(!user
+      ? [
+          {
           label: "Войти",
           href: "/login",
           icon: <User className={iconClassName} />,
-        },
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -114,6 +114,52 @@ function HeaderActions() {
       {actions.map((action) => (
         <HeaderActionButton key={action.label} action={action} />
       ))}
+      {user ? (
+        <div
+          className="header_account"
+          onMouseEnter={() => setAccountMenuOpen(true)}
+          onMouseLeave={() => setAccountMenuOpen(false)}
+        >
+          <button
+            type="button"
+            className="header_action header_account-trigger"
+            aria-expanded={accountMenuOpen}
+            onFocus={() => setAccountMenuOpen(true)}
+          >
+            <span className="header_action-icon">
+              <User className={iconClassName} />
+            </span>
+            <span className="header_action-label">{[user.firstName, user.lastName].filter(Boolean).join(" ")}</span>
+          </button>
+
+          {accountMenuOpen ? (
+            <div className="header_account-menu">
+              <Link to="/account/profile" onClick={() => setAccountMenuOpen(false)}>
+                Личные данные
+              </Link>
+              <Link to="/account/orders" onClick={() => setAccountMenuOpen(false)}>
+                Мои заказы
+              </Link>
+              <Link to="/account/addresses" onClick={() => setAccountMenuOpen(false)}>
+                Адреса доставки
+              </Link>
+              <Link to="/account/favorites" onClick={() => setAccountMenuOpen(false)}>
+                Избранное
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setAccountMenuOpen(false);
+                  void signOut();
+                }}
+              >
+                <LogOut />
+                <span>Выйти</span>
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

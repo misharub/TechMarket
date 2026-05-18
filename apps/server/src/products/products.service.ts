@@ -522,7 +522,7 @@ export class ProductsService {
 
     private handlePrismaError(error: unknown): never {
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-            throw new ConflictException("Product slug or sku already exists");
+            throw new ConflictException("Адрес страницы или код товара уже существует");
         }
 
         throw error;

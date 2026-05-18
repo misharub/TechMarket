@@ -42,7 +42,7 @@ export class AdminStatsService {
                 take: 5,
                 orderBy: { createdAt: "desc" },
                 include: {
-                    user: { select: { id: true, email: true, name: true } },
+                    user: { select: { id: true, email: true, firstName: true, lastName: true } },
                     items: {
                         include: {
                             product: {

@@ -3,7 +3,8 @@ import { apiGet, apiPost } from "./api";
 export type AuthUser = {
   id: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string | null;
   phone: string | null;
   role: "USER" | "ADMIN";
   isBlocked: boolean;
@@ -20,8 +21,19 @@ export type LoginPayload = {
   password: string;
 };
 
+export type RegisterPayload = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+};
+
 export function login(payload: LoginPayload) {
   return apiPost<AuthResult, LoginPayload>("/auth/login", payload);
+}
+
+export function register(payload: RegisterPayload) {
+  return apiPost<AuthResult, RegisterPayload>("/auth/register", payload);
 }
 
 export function refreshAuth() {

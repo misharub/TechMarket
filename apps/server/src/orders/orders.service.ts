@@ -19,7 +19,7 @@ export class OrdersService {
     async create(userId: string, dto: CheckoutOrderDto) {
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
-            select: { id: true, email: true, name: true, isBlocked: true },
+            select: { id: true, email: true, firstName: true, lastName: true, isBlocked: true },
         });
 
         if (!user) {
@@ -225,7 +225,10 @@ export class OrdersService {
         return order;
     }
 
-    private async notifyOrderCreated(user: { id: string; email: string; name: string }, orderNumber: string) {
+    private async notifyOrderCreated(
+        user: { id: string; email: string; firstName: string; lastName: string | null },
+        orderNumber: string,
+    ) {
         try {
             await this.notificationsService.createUserNotification({
                 userId: user.id,
@@ -235,7 +238,7 @@ export class OrdersService {
                 email: {
                     to: user.email,
                     subject: `TechMarket: заказ ${orderNumber} создан`,
-                    body: `Здравствуйте, ${user.name}. Ваш заказ ${orderNumber} успешно создан и ожидает обработки.`,
+                    body: `Здравствуйте, ${[user.firstName, user.lastName].filter(Boolean).join(" ")}. Ваш заказ ${orderNumber} успешно создан и ожидает обработки.`,
                 },
             });
         } catch (error) {

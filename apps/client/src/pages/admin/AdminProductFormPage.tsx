@@ -207,8 +207,14 @@ export function AdminProductFormPage() {
         </Link>
       </header>
 
-      <form className="admin_panel admin_form" onSubmit={handleSubmit}>
-        <div className="admin_form_grid">
+      <form className="admin_form admin_product_form" onSubmit={handleSubmit}>
+        <section className="admin_panel admin_product_section">
+          <div className="admin_product_section_header">
+            <h2>Основная информация</h2>
+            <p>Название, код товара и место в каталоге.</p>
+          </div>
+
+          <div className="admin_form_grid admin_product_overview_grid">
           <label className="admin_field admin_category_name_field">
             <span>Название</span>
             <input
@@ -238,7 +244,8 @@ export function AdminProductFormPage() {
             />
           </label>
           <label className="admin_field">
-            <span>SKU</span>
+            <span>Код товара</span>
+            <p className="admin_hint">Уникальный код товара. Он не должен повторяться у других товаров.</p>
             <input
               className="admin_input"
               required
@@ -257,7 +264,9 @@ export function AdminProductFormPage() {
                 setForm((current) => ({ ...current, categoryId: "", specs: {} }));
               }}
             >
-              <option value="">Выберите родителя</option>
+              <option value="" disabled hidden>
+                Выберите родителя
+              </option>
               {parentCategories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -280,7 +289,9 @@ export function AdminProductFormPage() {
                 }))
               }
             >
-              <option value="">Выберите подкатегорию</option>
+              <option value="" disabled hidden>
+                Выберите подкатегорию
+              </option>
               {childCategories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -296,51 +307,15 @@ export function AdminProductFormPage() {
               value={form.brandId}
               onChange={(event) => setForm((current) => ({ ...current, brandId: event.target.value }))}
             >
-              <option value="">Выберите бренд</option>
+              <option value="" disabled hidden>
+                Выберите бренд
+              </option>
               {(brandsQuery.data ?? []).map((brand) => (
                 <option key={brand.id} value={brand.id}>
                   {brand.name}
                 </option>
               ))}
             </select>
-          </label>
-          <label className="admin_field">
-            <span>Цена</span>
-            <input
-              className="admin_input"
-              required
-              type="number"
-              min="0.01"
-              step="0.01"
-              value={form.price}
-              onChange={(event) => setForm((current) => ({ ...current, price: Number(event.target.value) }))}
-            />
-          </label>
-          <label className="admin_field">
-            <span>Старая цена</span>
-            <input
-              className="admin_input"
-              type="number"
-              min="0.01"
-              step="0.01"
-              value={form.oldPrice ?? ""}
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  oldPrice: event.target.value ? Number(event.target.value) : undefined,
-                }))
-              }
-            />
-          </label>
-          <label className="admin_field">
-            <span>Остаток</span>
-            <input
-              className="admin_input"
-              type="number"
-              min={0}
-              value={form.stock ?? 0}
-              onChange={(event) => setForm((current) => ({ ...current, stock: Number(event.target.value) }))}
-            />
           </label>
           <label className="admin_field admin_field_full">
             <span>Описание</span>
@@ -351,31 +326,93 @@ export function AdminProductFormPage() {
               onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
             />
           </label>
-          <AdminImageUploadField
-            label="Изображения"
-            images={form.images ?? []}
-            multiple
-            onSelect={(files) => void handleImageUpload(files)}
-            onRemove={(image) =>
-              setForm((current) => ({
-                ...current,
-                images: current.images?.filter((item) => item !== image),
-              }))
-            }
-          />
-          <label className="admin_checkbox">
-            <input
-              type="checkbox"
-              checked={Boolean(form.isActive)}
-              onChange={(event) => setForm((current) => ({ ...current, isActive: event.target.checked }))}
+          </div>
+        </section>
+
+        <section className="admin_panel admin_product_section">
+          <div className="admin_product_section_header">
+            <h2>Цена и остатки</h2>
+            <p>Коммерческие данные, которые видит покупатель и использует магазин.</p>
+          </div>
+
+          <div className="admin_form_grid admin_product_commerce_grid">
+            <label className="admin_field">
+              <span>Цена</span>
+              <input
+                className="admin_input"
+                required
+                type="number"
+                min="0.01"
+                step="0.01"
+                value={form.price}
+                onChange={(event) => setForm((current) => ({ ...current, price: Number(event.target.value) }))}
+              />
+            </label>
+            <label className="admin_field">
+              <span>Старая цена</span>
+              <input
+                className="admin_input"
+                type="number"
+                min="0.01"
+                step="0.01"
+                value={form.oldPrice ?? ""}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    oldPrice: event.target.value ? Number(event.target.value) : undefined,
+                  }))
+                }
+              />
+            </label>
+            <label className="admin_field">
+              <span>Остаток</span>
+              <input
+                className="admin_input"
+                type="number"
+                min={0}
+                value={form.stock ?? 0}
+                onChange={(event) => setForm((current) => ({ ...current, stock: Number(event.target.value) }))}
+              />
+            </label>
+          </div>
+        </section>
+
+        <section className="admin_panel admin_product_section">
+          <div className="admin_product_section_header">
+            <h2>Публикация</h2>
+            <p>Изображения и доступность товара в каталоге.</p>
+          </div>
+
+          <div className="admin_product_publication">
+            <AdminImageUploadField
+              label="Изображения"
+              images={form.images ?? []}
+              multiple
+              onSelect={(files) => void handleImageUpload(files)}
+              onRemove={(image) =>
+                setForm((current) => ({
+                  ...current,
+                  images: current.images?.filter((item) => item !== image),
+                }))
+              }
             />
-            Активен
-          </label>
-        </div>
+            <label className="admin_checkbox admin_product_status">
+              <input
+                type="checkbox"
+                checked={Boolean(form.isActive)}
+                onChange={(event) => setForm((current) => ({ ...current, isActive: event.target.checked }))}
+              />
+              Товар активен
+            </label>
+          </div>
+        </section>
 
         {visibleSpecs.length ? (
-          <section className="admin_specs_grid">
-            <h2>Характеристики товара</h2>
+          <section className="admin_panel admin_product_section admin_specs_grid">
+            <div className="admin_product_section_header">
+              <h2>Характеристики товара</h2>
+              <p>Поля подстраиваются под выбранную подкатегорию.</p>
+            </div>
             {groupedSpecs.map((group) => (
               <div className="admin_specs_group" key={group.id}>
                 <h3>{group.name}</h3>
@@ -404,7 +441,9 @@ export function AdminProductFormPage() {
                             )
                           }
                         >
-                          <option value="">Выберите значение</option>
+                          <option value="" disabled hidden>
+                            Выберите значение
+                          </option>
                           {spec.options.map((option) => (
                             <option key={option.id} value={option.value}>
                               {option.value}
@@ -435,8 +474,11 @@ export function AdminProductFormPage() {
           <p className="admin_empty">У выбранной подкатегории пока нет шаблона характеристик.</p>
         ) : null}
 
-        <section className="admin_specs_grid">
-          <h2>Дополнительные характеристики</h2>
+        <section className="admin_panel admin_product_section admin_specs_grid">
+          <div className="admin_product_section_header">
+            <h2>Дополнительные характеристики</h2>
+            <p>Добавляй только то, что не покрыто основным шаблоном.</p>
+          </div>
           {(form.additionalSpecs ?? []).map((spec, index) => (
             <div className="admin_inline_actions" key={`${spec.label}-${index}`}>
               <span>

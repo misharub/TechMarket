@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { RequireAdmin } from "../components/auth/RequireAdmin";
 import { MainLayout } from "../components/layout/MainLayout";
 import { AboutPage } from "../pages/about/AboutPage";
+import { AccountPage } from "../pages/account/AccountPage";
 import { AdminBrandFormPage } from "../pages/admin/AdminBrandFormPage";
 import { AdminBrandsPage } from "../pages/admin/AdminBrandsPage";
 import { AdminCategoriesPage } from "../pages/admin/AdminCategoriesPage";
@@ -21,6 +22,7 @@ import { ContactsPage } from "../pages/contacts/ContactsPage";
 import { OrderHelpPage } from "../pages/help/OrderHelpPage";
 import { HomePage } from "../pages/home/HomePage";
 import { LoginPage } from "../pages/login/LoginPage";
+import { RegisterPage } from "../pages/register/RegisterPage";
 import { ProductPage } from "../pages/product/ProductPage";
 import { StoresPage } from "../pages/stores/StoresPage";
 
@@ -130,6 +132,18 @@ export const router = createBrowserRouter([
       {
         path: "login",
         element: <LoginPage />,
+      },
+      {
+        path: "register",
+        element: <RegisterPage />,
+      },
+      {
+        path: "account",
+        element: <AccountPage />,
+      },
+      {
+        path: "account/:section",
+        element: <AccountPage />,
       },
       {
         path: "product/:slug",
