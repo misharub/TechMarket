@@ -1,4 +1,4 @@
-// Вспомогательные функции для работы с белорусскими номерами телефонов
+
 function extractBelarusPhoneDigits(value: string | null | undefined) {
   const digits = (value ?? "").replace(/\D/g, "");
   return digits.startsWith("375") ? digits.slice(3, 12) : digits.slice(0, 9);
@@ -117,25 +117,15 @@ export function CheckoutPage() {
   });
   const createOrderMutation = useMutation({
     mutationFn: createOrder,
-    onSuccess: async () => {
+    onSuccess: async (result) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["cart"] }),
         queryClient.invalidateQueries({ queryKey: ["orders"] }),
       ]);
-      navigate("/account/orders");
+      navigate("/checkout/success", { state: { id: result.id, orderNumber: result.orderNumber } });
     },
   });
 
-  // useEffect(() => {
-  //   if (user) {
-  //     setForm((current) => ({
-  //       ...current,
-  //       customerName: [user.firstName, user.lastName].filter(Boolean).join(" "),
-  //       customerPhone: user.phone ?? "",
-  //       customerEmail: user.email,
-  //     }));
-  //   }
-  // }, [user]);
 
   useEffect(() => {
     if (user) {

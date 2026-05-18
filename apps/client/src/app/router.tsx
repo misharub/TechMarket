@@ -17,6 +17,7 @@ import { AdminSpecificationTemplatesPage } from "../pages/admin/AdminSpecificati
 import { CareersPage } from "../pages/careers/CareersPage";
 import { CartPage } from "../pages/cart/CartPage";
 import { CheckoutPage } from "../pages/checkout/CheckoutPage";
+import { OrderSuccessPage } from "../pages/checkout/OrderSuccessPage";
 import { CatalogPage } from "../pages/catalog/CatalogPage";
 import { ComparePage } from "../pages/compare/ComparePage";
 import { ContactsPage } from "../pages/contacts/ContactsPage";
@@ -133,6 +134,10 @@ export const router = createBrowserRouter([
       {
         path: "checkout",
         element: <CheckoutPage />,
+      },
+      {
+        path: "checkout/success",
+        element: <OrderSuccessPage />,
       },
       {
         path: "login",

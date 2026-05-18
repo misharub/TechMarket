@@ -1,0 +1,146 @@
+/* OrderSuccessPage.css */
+
+/* Основной контейнер (переиспользуем checkout_state из CheckoutPage, но добавим свои стили) */
+.checkout_state {
+  padding: 28px 0 64px;
+}
+
+.checkout_state > div {
+  display: grid;
+  width: min(560px, calc(100% - 40px));
+  margin: 0 auto;
+  place-items: center;
+  gap: 12px;
+  padding: 40px 32px;
+  border: 1px solid #dbe5ee;
+  border-radius: 32px;
+  background: #ffffff;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
+}
+
+/* Анимированная иконка галочки */
+.checkout_success_icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  background: #0f766e;
+  border-radius: 50%;
+  color: white;
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  80% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.checkout_success_icon svg {
+  width: 48px;
+  height: 48px;
+  stroke-width: 1.5;
+}
+
+/* Заголовок */
+.checkout_success_title {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* Основное сообщение */
+.checkout_success_message {
+  margin: 0;
+  color: #334155;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+/* Блок с номером заказа */
+.checkout_success_order {
+  margin: 16px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid #eef2f7;
+  color: #0f766e;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+/* Контейнер для кнопок */
+.checkout_success_actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.checkout_success_actions a {
+  display: inline-block;
+  min-width: 160px;
+  padding: 12px 24px;
+  border-radius: 40px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  font-size: 15px;
+}
+
+/* Кнопка "На главную" (обводка) */
+.checkout_success_actions a:first-child {
+  border: 1px solid #0f766e;
+  color: #0f766e;
+  background: transparent;
+}
+
+.checkout_success_actions a:first-child:hover {
+  background: rgba(15, 118, 110, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Кнопка "Мои заказы" (заливка) */
+.checkout_success_actions a:last-child {
+  background: #0f766e;
+  color: white;
+  border: 1px solid #0f766e;
+}
+
+.checkout_success_actions a:last-child:hover {
+  background: #0d5f58;
+  border-color: #0d5f58;
+  transform: translateY(-2px);
+}
+
+/* Адаптивность */
+@media (max-width: 640px) {
+  .checkout_state > div {
+    padding: 32px 20px;
+    width: calc(100% - 32px);
+  }
+
+  .checkout_success_title {
+    font-size: 24px;
+  }
+
+  .checkout_success_message {
+    font-size: 16px;
+  }
+
+  .checkout_success_actions a {
+    min-width: 140px;
+    padding: 10px 20px;
+  }
+}
