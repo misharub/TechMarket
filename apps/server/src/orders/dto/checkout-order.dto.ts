@@ -23,6 +23,11 @@ export class CheckoutOrderDto {
     @IsString()
     addressId?: string;
 
+    @ApiPropertyOptional({ example: "pickup-point-id" })
+    @IsOptional()
+    @IsString()
+    pickupPointId?: string;
+
     @ApiPropertyOptional({ example: "Минск" })
     @IsOptional()
     @IsString()

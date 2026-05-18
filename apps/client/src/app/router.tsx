@@ -16,6 +16,7 @@ import { AdminSpecificationTemplateFormPage } from "../pages/admin/AdminSpecific
 import { AdminSpecificationTemplatesPage } from "../pages/admin/AdminSpecificationTemplatesPage";
 import { CareersPage } from "../pages/careers/CareersPage";
 import { CartPage } from "../pages/cart/CartPage";
+import { CheckoutPage } from "../pages/checkout/CheckoutPage";
 import { CatalogPage } from "../pages/catalog/CatalogPage";
 import { ComparePage } from "../pages/compare/ComparePage";
 import { ContactsPage } from "../pages/contacts/ContactsPage";
@@ -128,6 +129,10 @@ export const router = createBrowserRouter([
       {
         path: "cart",
         element: <CartPage />,
+      },
+      {
+        path: "checkout",
+        element: <CheckoutPage />,
       },
       {
         path: "login",

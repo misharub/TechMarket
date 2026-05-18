@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { Role } from "@prisma/client";
+import { DeliveryScenario, Role } from "@prisma/client";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
@@ -25,6 +25,12 @@ export class CheckoutOptionsController {
     @ApiOperation({ summary: "Get active payment methods for checkout" })
     findActivePaymentMethods() {
         return this.checkoutOptionsService.findActivePaymentMethods();
+    }
+
+    @Get("pickup-points")
+    @ApiOperation({ summary: "Get active pickup points for checkout" })
+    findActivePickupPoints(@Query("scenario") scenario?: DeliveryScenario) {
+        return this.checkoutOptionsService.findActivePickupPoints(scenario);
     }
 
     @Get("admin/delivery-methods")

@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsBoolean, IsInt, IsNumber, IsOptional, IsString, Matches, MaxLength, Min } from "class-validator";
+import { DeliveryScenario } from "@prisma/client";
+import { IsBoolean, IsEnum, IsInt, IsNumber, IsOptional, IsString, Matches, MaxLength, Min } from "class-validator";
 
 export class CreateDeliveryMethodDto {
     @ApiProperty({ example: "courier" })
@@ -17,6 +18,11 @@ export class CreateDeliveryMethodDto {
     @IsString()
     @MaxLength(500)
     description?: string;
+
+    @ApiPropertyOptional({ enum: DeliveryScenario, example: DeliveryScenario.COURIER })
+    @IsOptional()
+    @IsEnum(DeliveryScenario)
+    scenario?: DeliveryScenario;
 
     @ApiPropertyOptional({ example: 15 })
     @IsOptional()

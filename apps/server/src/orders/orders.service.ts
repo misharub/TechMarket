@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { NotificationType, OrderStatus, Prisma } from "@prisma/client";
+import { DeliveryScenario, NotificationType, OrderStatus, Prisma } from "@prisma/client";
 import { CheckoutOptionsService } from "../checkout-options/checkout-options.service";
 import { NotificationsService } from "../notifications/notifications.service";
 import { PromoCodesService } from "../promo-codes/promo-codes.service";
@@ -31,7 +31,7 @@ export class OrdersService {
         }
 
         const cartItems = await this.prisma.cartItem.findMany({
-            where: { userId },
+            where: { userId, isSelected: true },
             include: { product: true },
             orderBy: { createdAt: "asc" },
         });
@@ -39,8 +39,6 @@ export class OrdersService {
         if (!cartItems.length) {
             throw new BadRequestException("Cart is empty");
         }
-
-        const deliveryAddress = await this.resolveDeliveryAddress(userId, dto);
 
         for (const item of cartItems) {
             if (!item.product.isActive) {
@@ -55,6 +53,7 @@ export class OrdersService {
         const subtotal = this.calculateTotal(cartItems);
         const promo = await this.promoCodesService.validateForSubtotal(dto.promoCode, subtotal);
         const deliveryMethod = await this.checkoutOptionsService.validateDeliveryMethod(dto.deliveryMethod, subtotal);
+        const deliveryDestination = await this.resolveDeliveryDestination(userId, dto, deliveryMethod);
         const paymentMethod = await this.checkoutOptionsService.validatePaymentMethod(dto.paymentMethod);
         const deliveryPrice = Number(deliveryMethod.price);
         const finalTotalPrice = Number((promo.totalPrice + deliveryPrice).toFixed(2));
@@ -76,11 +75,14 @@ export class OrdersService {
                     customerName: dto.customerName,
                     customerPhone: dto.customerPhone,
                     customerEmail: dto.customerEmail,
-                    city: deliveryAddress.city,
-                    deliveryAddress: deliveryAddress.deliveryAddress,
+                    city: deliveryDestination.city,
+                    deliveryAddress: deliveryDestination.deliveryAddress,
                     deliveryMethod: deliveryMethod.code,
                     deliveryMethodName: deliveryMethod.name,
                     deliveryPrice,
+                    pickupPointId: deliveryDestination.pickupPointId,
+                    pickupPointName: deliveryDestination.pickupPointName,
+                    pickupPointAddress: deliveryDestination.pickupPointAddress,
                     paymentMethod: paymentMethod.code,
                     paymentMethodName: paymentMethod.name,
                     comment: dto.comment,
@@ -120,7 +122,7 @@ export class OrdersService {
             }
 
             await tx.cartItem.deleteMany({
-                where: { userId },
+                where: { userId, id: { in: cartItems.map((item) => item.id) } },
             });
 
             return createdOrder;
@@ -268,7 +270,30 @@ export class OrdersService {
         return Number(items.reduce((sum, item) => sum + Number(item.product.price) * item.quantity, 0).toFixed(2));
     }
 
-    private async resolveDeliveryAddress(userId: string, dto: CheckoutOrderDto) {
+    private async resolveDeliveryDestination(
+        userId: string,
+        dto: CheckoutOrderDto,
+        deliveryMethod?: { scenario: DeliveryScenario },
+    ) {
+        const method =
+            deliveryMethod ?? (await this.checkoutOptionsService.validateDeliveryMethod(dto.deliveryMethod, Number.POSITIVE_INFINITY));
+
+        if (method.scenario !== DeliveryScenario.COURIER) {
+            if (!dto.pickupPointId) {
+                throw new BadRequestException("Pickup point must be provided");
+            }
+
+            const pickupPoint = await this.checkoutOptionsService.validatePickupPoint(method.scenario, dto.pickupPointId);
+
+            return {
+                city: pickupPoint.city,
+                deliveryAddress: pickupPoint.address,
+                pickupPointId: pickupPoint.id,
+                pickupPointName: pickupPoint.name,
+                pickupPointAddress: pickupPoint.address,
+            };
+        }
+
         if (dto.addressId) {
             const address = await this.prisma.address.findFirst({
                 where: {
@@ -284,6 +309,9 @@ export class OrdersService {
             return {
                 city: address.city,
                 deliveryAddress: this.formatAddress(address),
+                pickupPointId: null,
+                pickupPointName: null,
+                pickupPointAddress: null,
             };
         }
 
@@ -294,6 +322,9 @@ export class OrdersService {
         return {
             city: dto.city,
             deliveryAddress: dto.deliveryAddress,
+            pickupPointId: null,
+            pickupPointName: null,
+            pickupPointAddress: null,
         };
     }
 

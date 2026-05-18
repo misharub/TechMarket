@@ -1,0 +1,177 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - link "Перейти на главную страницу" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]:
+          - img [ref=e9]
+          - generic [ref=e10]: TechMarket
+      - generic [ref=e11]:
+        - link "Контакты" [ref=e12] [cursor=pointer]:
+          - /url: /contacts
+          - img [ref=e14]
+          - generic [ref=e16]: Контакты
+        - link "Найти салон" [ref=e17] [cursor=pointer]:
+          - /url: /stores
+          - img [ref=e19]
+          - generic [ref=e22]: Найти салон
+        - link "Сравнение" [ref=e23] [cursor=pointer]:
+          - /url: /compare
+          - img [ref=e25]
+          - generic [ref=e29]: Сравнение
+        - generic [ref=e30]:
+          - link "Корзина" [ref=e31] [cursor=pointer]:
+            - /url: /cart
+            - img [ref=e33]
+            - generic [ref=e39]: Корзина
+          - generic [ref=e196]: "2"
+        - button "TechMarket User" [ref=e198] [cursor=pointer]:
+          - img [ref=e200]
+          - generic [ref=e203]: TechMarket User
+      - generic [ref=e48]:
+        - searchbox "Поиск" [ref=e49]
+        - button "Найти" [ref=e50] [cursor=pointer]:
+          - img [ref=e51]
+    - navigation "Каталог товаров" [ref=e54]:
+      - generic [ref=e56]:
+        - link "Ноутбуки и компьютеры" [ref=e57] [cursor=pointer]:
+          - /url: /catalog/laptops-computers
+        - link "Аксессуары" [ref=e58] [cursor=pointer]:
+          - /url: /catalog/accessories
+        - link "Телефоны и умные часы" [ref=e59] [cursor=pointer]:
+          - /url: /catalog/phones-smartwatch
+        - link "Бытовая техника" [ref=e60] [cursor=pointer]:
+          - /url: /catalog/home-appliances
+        - link "Телевизоры" [ref=e61] [cursor=pointer]:
+          - /url: /catalog/tv-audio
+        - link "Умный дом" [ref=e62] [cursor=pointer]:
+          - /url: /catalog/smart-home
+        - link "Фото и Видео" [ref=e63] [cursor=pointer]:
+          - /url: /catalog/photo-video
+  - main [ref=e204]:
+    - generic [ref=e205]:
+      - generic [ref=e206]:
+        - generic [ref=e207]:
+          - generic [ref=e208]:
+            - generic [ref=e209]: "1"
+            - heading "Данные покупателя" [level=2] [ref=e210]
+          - generic [ref=e211]:
+            - generic [ref=e212]:
+              - generic [ref=e213]:
+                - generic [ref=e214]: Имя и фамилия
+                - textbox "Имя и фамилия" [ref=e215]: TechMarket User
+              - generic [ref=e216]:
+                - generic [ref=e217]: Телефон
+                - textbox "Телефон" [ref=e218]
+              - generic [ref=e219]:
+                - generic [ref=e220]: Email
+                - textbox "Email" [ref=e221]: user@techmarket.local
+            - generic [ref=e222]:
+              - generic [ref=e223]: Комментарий
+              - textbox "Комментарий" [ref=e224]
+        - generic [ref=e225]:
+          - generic [ref=e226]:
+            - generic [ref=e227]: "2"
+            - heading "Способ получения" [level=2] [ref=e228]
+          - generic [ref=e229]:
+            - generic [ref=e230]:
+              - button "Courier delivery" [ref=e231] [cursor=pointer]
+              - button "Store pickup" [ref=e232] [cursor=pointer]
+              - button "Pickup point" [ref=e233] [cursor=pointer]
+            - generic [ref=e234]:
+              - generic [ref=e235]:
+                - button "Сохранённый адрес" [ref=e236] [cursor=pointer]
+                - button "Новый адрес" [ref=e237] [cursor=pointer]
+              - generic [ref=e238]:
+                - generic [ref=e239]:
+                  - radio "Seed home Минск, ул. Ленина, 10" [checked] [ref=e240]
+                  - generic [ref=e241]:
+                    - strong [ref=e242]: Seed home
+                    - text: Минск, ул. Ленина, 10
+                - generic [ref=e243]:
+                  - radio "Seed pickup Минск, пр-т Победителей, 25" [ref=e244]
+                  - generic [ref=e245]:
+                    - strong [ref=e246]: Seed pickup
+                    - text: Минск, пр-т Победителей, 25
+        - generic [ref=e247]:
+          - generic [ref=e248]:
+            - generic [ref=e249]: "3"
+            - heading "Способ оплаты" [level=2] [ref=e250]
+          - generic [ref=e252]:
+            - button "Cash on delivery" [ref=e253] [cursor=pointer]
+            - button "Bank card mock" [ref=e254] [cursor=pointer]
+            - button "Online payment mock" [ref=e255] [cursor=pointer]
+        - generic [ref=e256]:
+          - generic [ref=e257]:
+            - generic [ref=e258]: "4"
+            - heading "Промокод" [level=2] [ref=e259]
+          - generic [ref=e261]:
+            - textbox "WELCOME10" [ref=e262]
+            - button "Применить" [disabled] [ref=e263] [cursor=pointer]
+        - button "Подтвердить заказ" [ref=e264] [cursor=pointer]
+      - complementary [ref=e265]:
+        - generic [ref=e266]: Оформляем
+        - strong [ref=e267]: 1 товаров
+        - generic [ref=e268]:
+          - generic [ref=e269]:
+            - term [ref=e270]: Товары
+            - definition [ref=e271]: 3 900 Br
+          - generic [ref=e272]:
+            - term [ref=e273]: Доставка
+            - definition [ref=e274]: 15 Br
+          - generic [ref=e275]:
+            - term [ref=e276]: Скидка
+            - definition [ref=e277]: −0 Br
+        - generic [ref=e278]: 3 915 Br
+  - contentinfo [ref=e104]:
+    - generic [ref=e105]:
+      - generic [ref=e107]:
+        - navigation "Компания" [ref=e108]:
+          - heading "Компания" [level=2] [ref=e109]
+          - list [ref=e110]:
+            - listitem [ref=e111]:
+              - link "О компании" [ref=e112] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e113]:
+              - link "Контакты" [ref=e114] [cursor=pointer]:
+                - /url: /contacts
+            - listitem [ref=e115]:
+              - link "Вакансии" [ref=e116] [cursor=pointer]:
+                - /url: /careers
+        - navigation "Покупателям" [ref=e117]:
+          - heading "Покупателям" [level=2] [ref=e118]
+          - list [ref=e119]:
+            - listitem [ref=e120]:
+              - link "Как оформить заказ" [ref=e121] [cursor=pointer]:
+                - /url: /help#how_to_order
+            - listitem [ref=e122]:
+              - link "Оплата и Доставка" [ref=e123] [cursor=pointer]:
+                - /url: /help#payment_and_delivery
+            - listitem [ref=e124]:
+              - link "Гарантия и возврат" [ref=e125] [cursor=pointer]:
+                - /url: /help#warranty_and_return
+        - region "Связь" [ref=e126]:
+          - heading "Связь" [level=2] [ref=e127]
+          - generic "Социальные сети" [ref=e128]:
+            - link "Telegram" [ref=e129] [cursor=pointer]:
+              - /url: https://t.me/
+              - img [ref=e130]
+            - link "Чат" [ref=e133] [cursor=pointer]:
+              - /url: /contacts
+              - img [ref=e134]
+            - link "Видео" [ref=e136] [cursor=pointer]:
+              - /url: https://youtube.com/
+              - img [ref=e137]
+          - list [ref=e140]:
+            - listitem [ref=e141]:
+              - img [ref=e142]
+              - link "+375 12 345-67-89" [ref=e144] [cursor=pointer]:
+                - /url: tel:+375123456789
+            - listitem [ref=e145]:
+              - img [ref=e146]
+              - generic [ref=e149]: Минск
+            - listitem [ref=e150]:
+              - img [ref=e151]
+              - link "support@techmarket.by" [ref=e154] [cursor=pointer]:
+                - /url: mailto:support@techmarket.by
+      - paragraph [ref=e156]: 2024-2026 © TechMarket. Интернет-магазин техники для дипломного проекта.

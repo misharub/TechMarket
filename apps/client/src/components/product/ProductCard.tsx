@@ -1,5 +1,6 @@
 import { Scale, ShoppingCart, Star } from "lucide-react";
 import { useState } from "react";
+import { useAddToCart } from "../../lib/cart-hooks";
 import { resolveUploadUrl, type Product } from "../../lib/products-api";
 import "./ProductCard.css";
 
@@ -64,6 +65,7 @@ function ProductImage({ product }: { product: Product }) {
 export function ProductCard({ product, view = "grid" }: { product: Product; view?: "grid" | "compact" }) {
   const discountPercent = getDiscountPercent(product);
   const hasRating = product.rating.count > 0;
+  const { addProduct, isPending } = useAddToCart();
 
   return (
     <article className={`product-card product-card--${view}`}>
@@ -96,9 +98,14 @@ export function ProductCard({ product, view = "grid" }: { product: Product; view
         </div>
 
         <div className="product-card_actions">
-          <button className="product-card_cart" type="button">
+          <button
+            className="product-card_cart"
+            type="button"
+            disabled={product.stock <= 0 || isPending}
+            onClick={() => void addProduct(product)}
+          >
             <ShoppingCart className="product-card_action-icon" />
-            <span>В корзину</span>
+            <span>{isPending ? "Добавляем..." : "В корзину"}</span>
           </button>
           <button className="product-card_compare" type="button" aria-label={`Сравнить ${product.title}`}>
             <Scale className="product-card_action-icon" />

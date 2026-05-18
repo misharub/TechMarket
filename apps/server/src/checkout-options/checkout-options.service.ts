@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import { DeliveryScenario, PickupPointType, Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateDeliveryMethodDto } from "./dto/create-delivery-method.dto";
 import { CreatePaymentMethodDto } from "./dto/create-payment-method.dto";
@@ -53,6 +53,16 @@ export class CheckoutOptionsService {
     findActivePaymentMethods() {
         return this.prisma.paymentMethod.findMany({
             where: { isActive: true },
+            orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+        });
+    }
+
+    findActivePickupPoints(scenario?: DeliveryScenario) {
+        return this.prisma.pickupPoint.findMany({
+            where: {
+                isActive: true,
+                ...(scenario ? { type: this.pickupPointTypeForScenario(scenario) } : {}),
+            },
             orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
         });
     }
@@ -114,6 +124,18 @@ export class CheckoutOptionsService {
         return paymentMethod;
     }
 
+    async validatePickupPoint(scenario: DeliveryScenario, pickupPointId: string) {
+        const pickupPoint = await this.prisma.pickupPoint.findUnique({
+            where: { id: pickupPointId },
+        });
+
+        if (!pickupPoint || !pickupPoint.isActive || pickupPoint.type !== this.pickupPointTypeForScenario(scenario)) {
+            throw new BadRequestException("Pickup point is not available");
+        }
+
+        return pickupPoint;
+    }
+
     private async ensureDeliveryMethodExists(id: string) {
         const deliveryMethod = await this.prisma.deliveryMethod.findUnique({
             where: { id },
@@ -142,5 +164,17 @@ export class CheckoutOptionsService {
         }
 
         throw error;
+    }
+
+    private pickupPointTypeForScenario(scenario: DeliveryScenario) {
+        if (scenario === DeliveryScenario.STORE_PICKUP) {
+            return PickupPointType.STORE;
+        }
+
+        if (scenario === DeliveryScenario.PICKUP_POINT) {
+            return PickupPointType.PICKUP_POINT;
+        }
+
+        throw new BadRequestException("Pickup point is not available for courier delivery");
     }
 }

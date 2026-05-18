@@ -1,7 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { AddCartItemDto } from "./dto/add-cart-item.dto";
+import { MergeCartItemDto } from "./dto/merge-cart.dto";
 import { UpdateCartItemDto } from "./dto/update-cart-item.dto";
+import { UpdateCartSelectionDto } from "./dto/update-cart-selection.dto";
 
 @Injectable()
 export class CartService {
@@ -16,7 +18,11 @@ export class CartService {
 
         return {
             items,
-            totalPrice: this.calculateCartTotal(items),
+            totalPrice: this.calculateCartTotal(items.filter((item) => item.isSelected)),
+            itemsCount: items.length,
+            selectedItemsCount: items.filter((item) => item.isSelected).length,
+            totalQuantity: items.reduce((sum, item) => sum + item.quantity, 0),
+            selectedQuantity: items.filter((item) => item.isSelected).reduce((sum, item) => sum + item.quantity, 0),
         };
     }
 
@@ -45,7 +51,7 @@ export class CartService {
         if (existingItem) {
             return this.prisma.cartItem.update({
                 where: { id: existingItem.id },
-                data: { quantity: nextQuantity },
+                data: { quantity: nextQuantity, isSelected: true },
                 include: { product: { include: { brand: true, category: true } } },
             });
         }
@@ -55,6 +61,7 @@ export class CartService {
                 userId,
                 productId: dto.productId,
                 quantity: dto.quantity,
+                isSelected: true,
             },
             include: { product: { include: { brand: true, category: true } } },
         });
@@ -73,9 +80,69 @@ export class CartService {
 
         return this.prisma.cartItem.update({
             where: { id: itemId },
-            data: { quantity: dto.quantity },
+            data: { quantity: dto.quantity, ...(dto.isSelected === undefined ? {} : { isSelected: dto.isSelected }) },
             include: { product: { include: { brand: true, category: true } } },
         });
+    }
+
+    async mergeGuestItems(userId: string, guestItems: MergeCartItemDto[]) {
+        const productIds = [...new Set(guestItems.map((item) => item.productId))];
+        const [products, existingItems] = await Promise.all([
+            this.prisma.product.findMany({
+                where: { id: { in: productIds }, isActive: true },
+                select: { id: true, stock: true, isActive: true },
+            }),
+            this.prisma.cartItem.findMany({
+                where: { userId, productId: { in: productIds } },
+            }),
+        ]);
+
+        const productsById = new Map(products.map((product) => [product.id, product]));
+        const existingByProductId = new Map(existingItems.map((item) => [item.productId, item]));
+
+        for (const guestItem of guestItems) {
+            const product = productsById.get(guestItem.productId);
+            if (!product || product.stock <= 0) {
+                continue;
+            }
+
+            const existingItem = existingByProductId.get(guestItem.productId);
+            const nextQuantity = Math.min(product.stock, (existingItem?.quantity ?? 0) + guestItem.quantity);
+            const isSelected = (existingItem?.isSelected ?? false) || (guestItem.isSelected ?? true);
+
+            if (existingItem) {
+                await this.prisma.cartItem.update({
+                    where: { id: existingItem.id },
+                    data: { quantity: nextQuantity, isSelected },
+                });
+                continue;
+            }
+
+            await this.prisma.cartItem.create({
+                data: {
+                    userId,
+                    productId: guestItem.productId,
+                    quantity: Math.min(product.stock, guestItem.quantity),
+                    isSelected: guestItem.isSelected ?? true,
+                },
+            });
+        }
+
+        return this.findAll(userId);
+    }
+
+    async updateSelection(userId: string, dto: UpdateCartSelectionDto) {
+        const result = await this.prisma.cartItem.updateMany({
+            where: {
+                userId,
+                ...(dto.itemIds?.length ? { id: { in: dto.itemIds } } : {}),
+            },
+            data: { isSelected: dto.isSelected },
+        });
+
+        return {
+            updated: result.count,
+        };
     }
 
     async removeItem(userId: string, itemId: string) {
@@ -89,6 +156,16 @@ export class CartService {
     async clear(userId: string) {
         const result = await this.prisma.cartItem.deleteMany({
             where: { userId },
+        });
+
+        return {
+            deleted: result.count,
+        };
+    }
+
+    async removeSelected(userId: string) {
+        const result = await this.prisma.cartItem.deleteMany({
+            where: { userId, isSelected: true },
         });
 
         return {

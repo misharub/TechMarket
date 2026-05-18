@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { BadgeCheck, Heart, Scale, ShoppingCart, Star, Store, Truck } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useAddToCart } from "../../lib/cart-hooks";
 import { getProductBySlug, resolveUploadUrl } from "../../lib/products-api";
 import { getSpecificationTemplateByCategory } from "../../lib/specification-templates-api";
 import "./ProductPage.css";
@@ -21,6 +22,7 @@ export function ProductPage() {
     enabled: Boolean(slug),
   });
   const product = productQuery.data;
+  const { addProduct, isPending } = useAddToCart();
   const templateQuery = useQuery({
     queryKey: ["product", "specification_template", product?.categoryId],
     queryFn: () => getSpecificationTemplateByCategory(product!.categoryId),
@@ -131,9 +133,9 @@ export function ProductPage() {
                 {product.oldPrice ? <span>{currencyFormatter.format(Number(product.oldPrice))}</span> : null}
                 <strong>{currencyFormatter.format(Number(product.price))}</strong>
               </div>
-              <button type="button">
+              <button type="button" disabled={product.stock <= 0 || isPending} onClick={() => void addProduct(product)}>
                 <ShoppingCart />
-                В корзину
+                {isPending ? "Добавляем..." : "В корзину"}
               </button>
             </div>
 

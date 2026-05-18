@@ -584,44 +584,82 @@ const promoCodes = [
 const deliveryMethods = [
   {
     code: "courier",
-    name: "Courier delivery",
-    description: "Delivery to the customer address.",
+    name: "Доставка на дом",
+    description: "Доставка заказа до адреса покупателя.",
+    scenario: "COURIER",
     price: 15,
     sortOrder: 10,
   },
   {
     code: "pickup",
-    name: "Store pickup",
-    description: "Pickup from a TechMarket store.",
+    name: "Из магазина",
+    description: "Самовывоз из магазина TechMarket.",
+    scenario: "STORE_PICKUP",
     price: 0,
     sortOrder: 20,
   },
   {
     code: "pickup_point",
-    name: "Pickup point",
-    description: "Delivery to a partner pickup point.",
+    name: "Отделение Европочты",
+    description: "Доставка заказа в отделение Европочты.",
+    scenario: "PICKUP_POINT",
     price: 7,
     sortOrder: 30,
+  },
+];
+
+const pickupPoints = [
+  {
+    code: "store_1",
+    name: "Магазин 1",
+    city: "Минск",
+    address: "Адрес 1",
+    type: "STORE",
+    sortOrder: 10,
+  },
+  {
+    code: "store_2",
+    name: "Магазин 2",
+    city: "Минск",
+    address: "Адрес 2",
+    type: "STORE",
+    sortOrder: 20,
+  },
+  {
+    code: "store_3",
+    name: "Магазин 3",
+    city: "Минск",
+    address: "Адрес 3",
+    type: "STORE",
+    sortOrder: 30,
+  },
+  {
+    code: "pickup_point_1",
+    name: "Отделение Европочты 1",
+    city: "Минск",
+    address: "Адрес отделения 1",
+    type: "PICKUP_POINT",
+    sortOrder: 40,
   },
 ];
 
 const paymentMethods = [
   {
     code: "cash_on_delivery",
-    name: "Cash on delivery",
-    description: "Payment when receiving the order.",
+    name: "Наличными или картой",
+    description: "Оплата при получении заказа.",
     sortOrder: 10,
   },
   {
     code: "card_mock",
-    name: "Bank card mock",
-    description: "Demo card payment without a real payment provider.",
+    name: "Банковской картой",
+    description: "Демо-оплата банковской картой.",
     sortOrder: 20,
   },
   {
     code: "online_mock",
-    name: "Online payment mock",
-    description: "Online payment stub for diploma demonstration.",
+    name: "Онлайн-оплата",
+    description: "Демо-онлайн-оплата.",
     sortOrder: 30,
   },
 ];
@@ -886,11 +924,27 @@ async function main() {
       update: {
         name: deliveryMethod.name,
         description: deliveryMethod.description,
+        scenario: deliveryMethod.scenario,
         price: deliveryMethod.price,
         sortOrder: deliveryMethod.sortOrder,
         isActive: true,
       },
       create: deliveryMethod,
+    });
+  }
+
+  for (const pickupPoint of pickupPoints) {
+    await prisma.pickupPoint.upsert({
+      where: { code: pickupPoint.code },
+      update: {
+        name: pickupPoint.name,
+        city: pickupPoint.city,
+        address: pickupPoint.address,
+        type: pickupPoint.type,
+        sortOrder: pickupPoint.sortOrder,
+        isActive: true,
+      },
+      create: pickupPoint,
     });
   }
 

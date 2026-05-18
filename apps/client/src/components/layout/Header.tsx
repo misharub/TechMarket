@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import techMarketMark from "../../assets/techmarket-mark.svg";
 import { useAuthStore } from "../../lib/auth-store";
+import { useCartSummary } from "../../lib/cart-hooks";
 import { CatalogNavigation } from "./CatalogNavigation";
 import "./Header.css";
 
@@ -87,6 +88,7 @@ function HeaderActions() {
   const user = useAuthStore((state) => state.user);
   const signOut = useAuthStore((state) => state.signOut);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const cartSummary = useCartSummary();
   const actions: HeaderAction[] = [
     ...baseHeaderActions,
     ...(user?.role === "ADMIN"
@@ -111,9 +113,16 @@ function HeaderActions() {
 
   return (
     <div className="header_actions" data-name="headerActions">
-      {actions.map((action) => (
-        <HeaderActionButton key={action.label} action={action} />
-      ))}
+      {actions.map((action) =>
+        action.label === "Корзина" ? (
+          <div className="header_cart-action" key={action.label}>
+            <HeaderActionButton action={action} />
+            {cartSummary?.totalQuantity ? <span>{cartSummary.totalQuantity}</span> : null}
+          </div>
+        ) : (
+          <HeaderActionButton key={action.label} action={action} />
+        ),
+      )}
       {user ? (
         <div
           className="header_account"

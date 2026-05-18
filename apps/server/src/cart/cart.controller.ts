@@ -5,7 +5,9 @@ import type { RequestUser } from "../auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { CartService } from "./cart.service";
 import { AddCartItemDto } from "./dto/add-cart-item.dto";
+import { MergeCartDto } from "./dto/merge-cart.dto";
 import { UpdateCartItemDto } from "./dto/update-cart-item.dto";
+import { UpdateCartSelectionDto } from "./dto/update-cart-selection.dto";
 
 @ApiTags("Cart")
 @Controller("cart")
@@ -26,10 +28,28 @@ export class CartController {
         return this.cartService.addItem(user.id, dto);
     }
 
+    @Post("merge")
+    @ApiOperation({ summary: "Объединить гостевую корзину с корзиной пользователя" })
+    merge(@CurrentUser() user: RequestUser, @Body() dto: MergeCartDto) {
+        return this.cartService.mergeGuestItems(user.id, dto.items);
+    }
+
+    @Patch("selection")
+    @ApiOperation({ summary: "Изменить выбор нескольких позиций корзины" })
+    updateSelection(@CurrentUser() user: RequestUser, @Body() dto: UpdateCartSelectionDto) {
+        return this.cartService.updateSelection(user.id, dto);
+    }
+
     @Patch(":id")
     @ApiOperation({ summary: "Изменить количество товара в корзине" })
     updateItem(@CurrentUser() user: RequestUser, @Param("id") id: string, @Body() dto: UpdateCartItemDto) {
         return this.cartService.updateItem(user.id, id, dto);
+    }
+
+    @Delete("selected")
+    @ApiOperation({ summary: "Удалить выбранные позиции из корзины" })
+    removeSelected(@CurrentUser() user: RequestUser) {
+        return this.cartService.removeSelected(user.id);
     }
 
     @Delete(":id")

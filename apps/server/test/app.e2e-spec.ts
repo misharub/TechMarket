@@ -316,6 +316,69 @@ describe("TechMarket API e2e", () => {
             .expect(400);
     });
 
+    it("keeps unselected cart items after checkout and supports pickup delivery", async () => {
+        const user = await login("user@techmarket.local", "User12345");
+        const products = await prisma.product.findMany({
+            where: { isActive: true, stock: { gt: 1 } },
+            orderBy: { title: "asc" },
+            take: 2,
+        });
+
+        expect(products).toHaveLength(2);
+
+        await request(server).delete("/api/cart").set(authHeader(user.accessToken)).expect(200);
+
+        const selectedItem = await request(server)
+            .post("/api/cart")
+            .set(authHeader(user.accessToken))
+            .send({ productId: products[0].id, quantity: 1 })
+            .expect(201);
+        const unselectedItem = await request(server)
+            .post("/api/cart")
+            .set(authHeader(user.accessToken))
+            .send({ productId: products[1].id, quantity: 1 })
+            .expect(201);
+
+        await request(server)
+            .patch(`/api/cart/${unselectedItem.body.id}`)
+            .set(authHeader(user.accessToken))
+            .send({ quantity: 1, isSelected: false })
+            .expect(200);
+
+        const pickupPointsResponse = await request(server).get("/api/pickup-points?scenario=STORE_PICKUP").expect(200);
+        expect(pickupPointsResponse.body.length).toBeGreaterThan(0);
+
+        await request(server)
+            .post("/api/orders")
+            .set(authHeader(user.accessToken))
+            .send({
+                customerName: "TechMarket User",
+                customerPhone: "+375291112233",
+                customerEmail: "user@techmarket.local",
+                deliveryMethod: "pickup",
+                pickupPointId: pickupPointsResponse.body[0].id,
+                paymentMethod: "cash_on_delivery",
+            })
+            .expect(201)
+            .expect(({ body }) => {
+                expect(body.items).toHaveLength(1);
+                expect(body.items[0].productId).toBe(products[0].id);
+                expect(body.pickupPointName).toBe(pickupPointsResponse.body[0].name);
+            });
+
+        await request(server)
+            .get("/api/cart")
+            .set(authHeader(user.accessToken))
+            .expect(200)
+            .expect(({ body }) => {
+                expect(body.items).toHaveLength(1);
+                expect(body.items[0].id).toBe(unselectedItem.body.id);
+                expect(body.items[0].isSelected).toBe(false);
+            });
+
+        expect(selectedItem.body.id).toEqual(expect.any(String));
+    });
+
     it("compares products only inside one category", async () => {
         const products = await prisma.product.findMany({
             where: { isActive: true },

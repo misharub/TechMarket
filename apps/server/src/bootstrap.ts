@@ -9,8 +9,15 @@ import { createRateLimitMiddleware, securityHeaders } from "./security/security.
 export function configureApp(app: INestApplication) {
     // Все маршруты backend начинаются с /api, чтобы отделить REST API от будущего frontend.
     app.setGlobalPrefix("api");
+    const allowedOrigins = Array.from(new Set([
+        process.env.CLIENT_URL,
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+    ].filter(Boolean)));
+
     app.enableCors({
-        origin: ["http://localhost:5173", "http://localhost:3000"],
+        origin: allowedOrigins,
         credentials: true,
     });
     app.getHttpAdapter().getInstance().disable("x-powered-by");

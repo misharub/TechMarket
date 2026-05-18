@@ -47,6 +47,17 @@ enum NotificationType {
   SYSTEM
 }
 
+enum DeliveryScenario {
+  COURIER
+  STORE_PICKUP
+  PICKUP_POINT
+}
+
+enum PickupPointType {
+  STORE
+  PICKUP_POINT
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -271,6 +282,7 @@ model CartItem {
   userId    String
   productId String
   quantity  Int
+  isSelected Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -369,6 +381,7 @@ model DeliveryMethod {
   code          String   @unique
   name          String
   description   String?
+  scenario      DeliveryScenario @default(COURIER)
   price         Decimal  @default(0) @db.Decimal(10, 2)
   minOrderTotal Decimal? @db.Decimal(10, 2)
   isActive      Boolean  @default(true)
@@ -377,6 +390,24 @@ model DeliveryMethod {
   updatedAt     DateTime @updatedAt
 
   @@index([code])
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+model PickupPoint {
+  id        String          @id @default(cuid())
+  code      String          @unique
+  name      String
+  city      String
+  address   String
+  type      PickupPointType
+  isActive  Boolean         @default(true)
+  sortOrder Int             @default(0)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@index([code])
+  @@index([type])
   @@index([isActive])
   @@index([sortOrder])
 }
@@ -413,6 +444,9 @@ model Order {
   deliveryMethod     String
   deliveryMethodName String?
   deliveryPrice      Decimal     @default(0) @db.Decimal(10, 2)
+  pickupPointId      String?
+  pickupPointName    String?
+  pickupPointAddress String?
   paymentMethod      String
   paymentMethodName  String?
   comment            String?

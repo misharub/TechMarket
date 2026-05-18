@@ -78,7 +78,7 @@ export class PromoCodesService {
 
     async validateForUserCart(userId: string, dto: ValidatePromoCodeDto) {
         const cartItems = await this.prisma.cartItem.findMany({
-            where: { userId },
+            where: { userId, isSelected: true },
             include: { product: true },
         });
 
