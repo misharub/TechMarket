@@ -687,8 +687,33 @@
     grid-template-columns: 1fr;
   }
 
-  /* Стили для картинок более не нужны */
-  /* .checkout_delivery-photo {
-    min-height: 180px;
-  } */
+}
+
+.checkout_phone_field {
+  display: flex;
+  align-items: center;
+  border: 1px solid #dbe5ee;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.checkout_phone_field span {
+  padding-left: 14px;
+  color: #0f172a;
+  font-weight: normal;
+}
+
+.checkout_phone_field input {
+  flex: 1;
+  min-height: 48px;
+  border: 0;
+  background: transparent;
+  outline: none;
+  padding: 0 6px 0 6px;
+  font-size: inherit;
+  color: #0f172a;
+}
+
+.checkout_phone_field input::placeholder {
+  color: #94a3b8;
 }

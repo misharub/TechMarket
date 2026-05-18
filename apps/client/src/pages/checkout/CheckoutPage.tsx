@@ -1,3 +1,25 @@
+// Вспомогательные функции для работы с белорусскими номерами телефонов
+function extractBelarusPhoneDigits(value: string | null | undefined) {
+  const digits = (value ?? "").replace(/\D/g, "");
+  return digits.startsWith("375") ? digits.slice(3, 12) : digits.slice(0, 9);
+}
+
+function formatBelarusPhone(digits: string) {
+  const normalized = digits.slice(0, 9);
+  const parts = [
+    normalized.slice(0, 2),
+    normalized.slice(2, 5),
+    normalized.slice(5, 7),
+    normalized.slice(7, 9),
+  ];
+
+  if (!normalized) return "";
+  if (normalized.length <= 2) return `(${parts[0]}`;
+  if (normalized.length <= 5) return `(${parts[0]}) ${parts[1]}`;
+  if (normalized.length <= 7) return `(${parts[0]}) ${parts[1]}-${parts[2]}`;
+  return `(${parts[0]}) ${parts[1]}-${parts[2]}-${parts[3]}`;
+}
+
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Dispatch, FormEvent, ReactNode, SetStateAction } from "react";
@@ -104,12 +126,23 @@ export function CheckoutPage() {
     },
   });
 
+  // useEffect(() => {
+  //   if (user) {
+  //     setForm((current) => ({
+  //       ...current,
+  //       customerName: [user.firstName, user.lastName].filter(Boolean).join(" "),
+  //       customerPhone: user.phone ?? "",
+  //       customerEmail: user.email,
+  //     }));
+  //   }
+  // }, [user]);
+
   useEffect(() => {
     if (user) {
       setForm((current) => ({
         ...current,
         customerName: [user.firstName, user.lastName].filter(Boolean).join(" "),
-        customerPhone: user.phone ?? "",
+        customerPhone: extractBelarusPhoneDigits(user.phone),
         customerEmail: user.email,
       }));
     }
@@ -194,7 +227,7 @@ export function CheckoutPage() {
 
     const orderPayload: any = {
       customerName: form.customerName,
-      customerPhone: form.customerPhone,
+      customerPhone: form.customerPhone ? `+375${form.customerPhone}` : "",
       customerEmail: form.customerEmail,
       deliveryMethod: activeDeliveryMethod.code,
       paymentMethod: paymentMethodCode,
@@ -241,11 +274,19 @@ export function CheckoutPage() {
                 />
               </Field>
               <Field label="Телефон">
-                <input
-                  required
-                  value={form.customerPhone}
-                  onChange={(event) => setForm((current) => ({ ...current, customerPhone: event.target.value }))}
-                />
+                <div className="checkout_phone_field">
+                  <span>+375</span>
+                  <input
+                    required
+                    value={formatBelarusPhone(extractBelarusPhoneDigits(form.customerPhone))}
+                    onChange={(event) => {
+                      const digits = extractBelarusPhoneDigits(event.target.value);
+                      setForm((current) => ({ ...current, customerPhone: digits }));
+                    }}
+                    placeholder="(29) 123-45-67"
+                    inputMode="numeric"
+                  />
+                </div>
               </Field>
               <Field label="Email">
                 <input
@@ -445,6 +486,7 @@ function HomeDelivery({
         <div>
           <h3>Доставка до двери</h3>
           <p>Укажите, куда привезти заказ. Остальное мы уже знаем из данных покупателя.</p>
+          <p>По срокам и стоимости доставки с вами свяжется наш менеджер.</p>
         </div>
 
         <div className="checkout_toggle">
