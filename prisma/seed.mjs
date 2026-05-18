@@ -13,13 +13,15 @@ const users = [
   {
     email: "admin@techmarket.local",
     password: "Admin12345",
-    name: "TechMarket Admin",
+    firstName: "TechMarket",
+    lastName: "Admin",
     role: Role.ADMIN,
   },
   {
     email: "user@techmarket.local",
     password: "User12345",
-    name: "TechMarket User",
+    firstName: "TechMarket",
+    lastName: "User",
     role: Role.USER,
   },
 ];
@@ -419,6 +421,50 @@ const specificationTemplateSeeds = {
     ["ram", "Оперативная память", SpecValueType.NUMBER, "GB", true, true, 70, []],
     ["ssd", "Объем SSD", SpecValueType.NUMBER, "GB", true, true, 80, []],
   ],
+  smartphones: [
+    ["modelLine", "Линейка", SpecValueType.STRING, null, true, true, 10, []],
+    ["releaseYear", "Год выпуска", SpecValueType.NUMBER, null, true, true, 20, []],
+    ["color", "Цвет", SpecValueType.STRING, null, true, true, 30, []],
+    ["os", "Операционная система", SpecValueType.STRING, null, true, true, 40, []],
+    ["waterResistance", "Защита корпуса", SpecValueType.STRING, null, true, true, 50, []],
+    ["bodyMaterial", "Материал корпуса", SpecValueType.STRING, null, true, true, 60, []],
+    ["screenSize", "Диагональ экрана", SpecValueType.NUMBER, "дюйма", true, true, 70, []],
+    ["screenType", "Тип экрана", SpecValueType.STRING, null, true, true, 80, []],
+    ["resolution", "Разрешение экрана", SpecValueType.STRING, null, true, true, 90, []],
+    ["refreshRate", "Частота обновления", SpecValueType.NUMBER, "Гц", true, true, 100, []],
+    ["peakBrightness", "Пиковая яркость", SpecValueType.NUMBER, "нит", true, true, 110, []],
+    ["processor", "Процессор", SpecValueType.STRING, null, true, true, 120, []],
+    ["cpuCores", "Количество ядер", SpecValueType.NUMBER, null, true, true, 130, []],
+    ["ram", "Оперативная память", SpecValueType.NUMBER, "ГБ", true, true, 140, []],
+    ["storage", "Встроенная память", SpecValueType.SELECT, "ГБ", true, true, 150, ["128", "256", "512"]],
+    ["mainCamera", "Основная камера", SpecValueType.STRING, "Мп", true, true, 160, []],
+    ["ultraWideCamera", "Сверхширокоугольная камера", SpecValueType.STRING, "Мп", true, true, 170, []],
+    ["frontCamera", "Фронтальная камера", SpecValueType.STRING, "Мп", true, true, 180, []],
+    ["videoRecording", "Запись видео", SpecValueType.STRING, null, true, true, 190, []],
+    ["simCount", "Количество SIM", SpecValueType.NUMBER, null, true, true, 200, []],
+    ["esim", "eSIM", SpecValueType.BOOLEAN, null, true, true, 210, []],
+    ["nfc", "NFC", SpecValueType.BOOLEAN, null, true, true, 220, []],
+    ["network5g", "5G", SpecValueType.BOOLEAN, null, true, true, 230, []],
+    ["network4g", "4G", SpecValueType.BOOLEAN, null, true, true, 240, []],
+    ["gps", "GPS", SpecValueType.BOOLEAN, null, true, true, 250, []],
+    ["bluetooth", "Bluetooth", SpecValueType.STRING, null, true, true, 260, []],
+    ["wifi", "Wi‑Fi", SpecValueType.STRING, null, true, true, 270, []],
+    ["battery", "Емкость аккумулятора", SpecValueType.NUMBER, "мА·ч", true, true, 280, []],
+    ["chargingPort", "Разъем зарядки", SpecValueType.STRING, null, true, true, 290, []],
+    ["wirelessCharging", "Беспроводная зарядка", SpecValueType.BOOLEAN, null, true, true, 300, []],
+    ["weight", "Вес", SpecValueType.NUMBER, "г", true, true, 310, []],
+  ],
+};
+
+const specificationTemplateGroupSeeds = {
+  smartphones: [
+    { name: "Общие сведения", keys: ["modelLine", "releaseYear", "color", "os", "waterResistance", "bodyMaterial"] },
+    { name: "Экран", keys: ["screenSize", "screenType", "resolution", "refreshRate", "peakBrightness"] },
+    { name: "Производительность", keys: ["processor", "cpuCores", "ram", "storage"] },
+    { name: "Камеры", keys: ["mainCamera", "ultraWideCamera", "frontCamera", "videoRecording"] },
+    { name: "Связь", keys: ["simCount", "esim", "nfc", "network5g", "network4g", "gps", "bluetooth", "wifi"] },
+    { name: "Питание и корпус", keys: ["battery", "chargingPort", "wirelessCharging", "weight"] },
+  ],
 };
 
 const categoryCollections = {
@@ -479,6 +525,35 @@ const products = [
     images: [],
     specs: { purpose: "business", os: "Windows 11", processorFamily: "Intel Core", gpuSeries: "Integrated", screenSize: 14, processor: "Intel Core Ultra 7 155U", ram: 16, ssd: 512 },
     additionalSpecs: [{ label: "Вес", value: "1.29 кг" }],
+  },
+  {
+    title: "Apple iPhone 16 256 ГБ",
+    slug: "apple-iphone-16-256gb",
+    sku: "PH-APL-IP16-256",
+    shortDescription: "6 ядер, 8 ГБ, 1 SIM, Super Retina XDR, 2556×1179, камера 48+12 Мп, NFC, 5G, 4G, GPS, 3561 мА·ч",
+    description: "Apple iPhone 16 — компактный смартфон с ярким OLED-экраном Super Retina XDR, быстрым чипом A18 и камерой 48 Мп для повседневной съемки.",
+    price: 3299.99,
+    oldPrice: 3499.99,
+    categorySlug: "smartphones",
+    brandSlug: "apple",
+    stock: 8,
+    images: ["/products/iphone-16-demo.svg"],
+    specs: { modelLine: "iPhone 16", releaseYear: 2024, color: "Ультрамарин", os: "iOS 18", waterResistance: "IP68", bodyMaterial: "Алюминий и стекло", screenSize: 6.1, screenType: "Super Retina XDR", resolution: "2556×1179", refreshRate: 60, peakBrightness: 2000, processor: "Apple A18", cpuCores: 6, ram: 8, storage: 256, mainCamera: "48+12", ultraWideCamera: "12", frontCamera: "12", videoRecording: "4K до 60 кадр/с", simCount: 1, esim: true, nfc: true, network5g: true, network4g: true, gps: true, bluetooth: "5.3", wifi: "Wi‑Fi 7", battery: 3561, chargingPort: "USB‑C", wirelessCharging: true, weight: 170 },
+    additionalSpecs: [{ label: "Комплектация", value: "Смартфон, кабель USB‑C" }],
+  },
+  {
+    title: "Apple iPhone 17 256 ГБ",
+    slug: "apple-iphone-17-256gb",
+    sku: "PH-APL-IP17-256",
+    shortDescription: "6 ядер, 8 ГБ, 1 SIM, Super Retina XDR, 2622×1206, камера 48+48 Мп, NFC, 5G, 4G, GPS, 3692 мА·ч",
+    description: "Apple iPhone 17 — смартфон с экраном 6.3 дюйма, чипом A19, частотой до 120 Гц и двойной камерой Fusion 48+48 Мп.",
+    price: 3899.99,
+    categorySlug: "smartphones",
+    brandSlug: "apple",
+    stock: 6,
+    images: ["/products/iphone-17-demo.svg"],
+    specs: { modelLine: "iPhone 17", releaseYear: 2025, color: "Голубой", os: "iOS 19", waterResistance: "IP68", bodyMaterial: "Алюминий и стекло", screenSize: 6.3, screenType: "Super Retina XDR", resolution: "2622×1206", refreshRate: 120, peakBrightness: 3000, processor: "Apple A19", cpuCores: 6, ram: 8, storage: 256, mainCamera: "48+48", ultraWideCamera: "48", frontCamera: "18", videoRecording: "4K Dolby Vision до 60 кадр/с", simCount: 1, esim: true, nfc: true, network5g: true, network4g: true, gps: true, bluetooth: "6", wifi: "Wi‑Fi 7", battery: 3692, chargingPort: "USB‑C", wirelessCharging: true, weight: 177 },
+    additionalSpecs: [{ label: "Комплектация", value: "Смартфон, кабель USB‑C" }],
   },
 ];
 
@@ -601,14 +676,16 @@ async function main() {
     await prisma.user.upsert({
       where: { email: user.email },
       update: {
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         passwordHash,
         role: user.role,
         isBlocked: false,
       },
       create: {
         email: user.email,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         passwordHash,
         role: user.role,
       },
@@ -688,29 +765,39 @@ async function main() {
         where: { templateId: template.id },
       });
 
-      await prisma.specificationGroup.create({
-        data: {
-          templateId: template.id,
-          name: "Основные характеристики",
-          sortOrder: 1,
-          specifications: {
-            create: templates.map(([key, label, type, unit, isRequired, _isComparable, sortOrder, options]) => ({
-              key,
-              name: label,
-              type,
-              unit,
-              isRequired,
-              sortOrder,
-              options: {
-                create: options.map((value, index) => ({
-                  value,
-                  sortOrder: index + 1,
+      const groups = specificationTemplateGroupSeeds[categorySlug] ?? [
+        { name: "Основные характеристики", keys: templates.map(([key]) => key) },
+      ];
+      const templatesByKey = new Map(templates.map((template) => [template[0], template]));
+
+      for (const [groupIndex, group] of groups.entries()) {
+        await prisma.specificationGroup.create({
+          data: {
+            templateId: template.id,
+            name: group.name,
+            sortOrder: groupIndex + 1,
+            specifications: {
+              create: group.keys
+                .map((key) => templatesByKey.get(key))
+                .filter(Boolean)
+                .map(([key, label, type, unit, isRequired, _isComparable, sortOrder, options]) => ({
+                  key,
+                  name: label,
+                  type,
+                  unit,
+                  isRequired,
+                  sortOrder,
+                  options: {
+                    create: options.map((value, index) => ({
+                      value,
+                      sortOrder: index + 1,
+                    })),
+                  },
                 })),
-              },
-            })),
+            },
           },
-        },
-      });
+        });
+      }
     }
   }
 
@@ -735,6 +822,7 @@ async function main() {
       update: {
         title: product.title,
         slug: product.slug,
+        shortDescription: product.shortDescription ?? null,
         description: product.description,
         price: product.price,
         oldPrice: product.oldPrice ?? null,
@@ -750,6 +838,7 @@ async function main() {
         title: product.title,
         slug: product.slug,
         sku: product.sku,
+        shortDescription: product.shortDescription ?? null,
         description: product.description,
         price: product.price,
         oldPrice: product.oldPrice ?? null,

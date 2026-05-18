@@ -36,6 +36,7 @@ export type Product = {
   title: string;
   slug: string;
   sku: string;
+  shortDescription: string | null;
   description: string;
   price: string | number;
   oldPrice: string | number | null;
@@ -111,6 +112,7 @@ export type ProductPayload = {
   title: string;
   slug: string;
   sku: string;
+  shortDescription?: string;
   description: string;
   price: number;
   oldPrice?: number;

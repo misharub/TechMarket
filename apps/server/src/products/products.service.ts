@@ -177,6 +177,7 @@ export class ProductsService {
                 ? {
                       OR: [
                           { title: { contains: query.search, mode: "insensitive" } },
+                          { shortDescription: { contains: query.search, mode: "insensitive" } },
                           { description: { contains: query.search, mode: "insensitive" } },
                           { sku: { contains: query.search, mode: "insensitive" } },
                           { brand: { name: { contains: query.search, mode: "insensitive" } } },

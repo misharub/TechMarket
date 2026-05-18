@@ -37,6 +37,7 @@ export function AdminProductFormPage() {
     title: "",
     slug: "",
     sku: "",
+    shortDescription: "",
     description: "",
     price: 0,
     oldPrice: undefined,
@@ -99,6 +100,7 @@ export function AdminProductFormPage() {
         title: productQuery.data.title,
         slug: productQuery.data.slug,
         sku: productQuery.data.sku,
+        shortDescription: productQuery.data.shortDescription ?? "",
         description: productQuery.data.description,
         price: Number(productQuery.data.price),
         oldPrice: productQuery.data.oldPrice === null ? undefined : Number(productQuery.data.oldPrice),
@@ -316,6 +318,16 @@ export function AdminProductFormPage() {
                 </option>
               ))}
             </select>
+          </label>
+          <label className="admin_field admin_field_full">
+            <span>Краткое описание</span>
+            <p className="admin_hint">Короткая строка для верхнего блока карточки: например, «6 ядер, 8 ГБ, 1 SIM, OLED, NFC».</p>
+            <input
+              className="admin_input"
+              maxLength={240}
+              value={form.shortDescription ?? ""}
+              onChange={(event) => setForm((current) => ({ ...current, shortDescription: event.target.value }))}
+            />
           </label>
           <label className="admin_field admin_field_full">
             <span>Описание</span>

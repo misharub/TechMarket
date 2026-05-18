@@ -35,6 +35,12 @@ export class CreateProductDto {
     @MaxLength(60)
     sku: string;
 
+    @ApiPropertyOptional({ example: "6 ядер, 8 ГБ, OLED, NFC" })
+    @IsOptional()
+    @IsString()
+    @MaxLength(240)
+    shortDescription?: string;
+
     @ApiProperty({ example: "Ноутбук для учебы, работы и мультимедиа." })
     @IsString()
     @MinLength(10)

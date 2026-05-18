@@ -54,6 +54,38 @@ describe("ProductsService additionalSpecs", () => {
     });
 });
 
+describe("ProductsService shortDescription", () => {
+    it("stores the short description when creating a product", async () => {
+        const create = jest.fn().mockResolvedValue({ id: "product_1" });
+        const service = new ProductsService({
+            category: { findUnique: jest.fn().mockResolvedValue({ id: "category_1" }) },
+            brand: { findUnique: jest.fn().mockResolvedValue({ id: "brand_1" }) },
+            specificationTemplate: { findUnique: jest.fn().mockResolvedValue(null) },
+            product: { create },
+        } as never);
+
+        await service.create({
+            title: "Phone",
+            slug: "phone",
+            sku: "PHONE-1",
+            shortDescription: "6 ядер, 8 ГБ, OLED, NFC",
+            description: "Phone description",
+            price: 10,
+            categoryId: "category_1",
+            brandId: "brand_1",
+            specs: {},
+        });
+
+        expect(create).toHaveBeenCalledWith(
+            expect.objectContaining({
+                data: expect.objectContaining({
+                    shortDescription: "6 ядер, 8 ГБ, OLED, NFC",
+                }),
+            }),
+        );
+    });
+});
+
 describe("ProductsService template specs", () => {
     it("rejects select values outside configured options", async () => {
         const service = new ProductsService({
