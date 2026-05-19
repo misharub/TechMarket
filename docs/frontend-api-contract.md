@@ -180,6 +180,9 @@ sort
   "city": "Минск",
   "deliveryAddress": "ул. Ленина, 10-15",
   "deliveryMethod": "courier",
+  "recipientName": "Ivan Ivanov",
+  "pickupCity": "Minsk",
+  "pickupNumber": "67",
   "paymentMethod": "cash_on_delivery",
   "promoCode": "WELCOME10",
   "comment": "Позвонить за час до доставки"
@@ -195,6 +198,9 @@ status
 totalPrice
 discountAmount
 deliveryPrice
+recipientName
+pickupCity
+pickupNumber
 items
 statusHistory
 ```

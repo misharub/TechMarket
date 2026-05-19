@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Role } from "@prisma/client";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
@@ -6,6 +6,7 @@ import type { RequestUser } from "../auth/decorators/current-user.decorator";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
+import { AdminMessageUserDto } from "./dto/admin-message-user.dto";
 import { AdminUpdateUserDto } from "./dto/admin-update-user.dto";
 import { BlockUserDto } from "./dto/block-user.dto";
 import { FindUsersDto } from "./dto/find-users.dto";
@@ -58,5 +59,23 @@ export class UsersController {
     @ApiOperation({ summary: "Заблокировать или разблокировать пользователя, только ADMIN" })
     block(@Param("id") id: string, @Body() dto: BlockUserDto) {
         return this.usersService.block(id, dto);
+    }
+
+    @Post("admin/users/:id/message")
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Отправить пользователю сообщение, только ADMIN" })
+    messageByAdmin(@Param("id") id: string, @Body() dto: AdminMessageUserDto) {
+        return this.usersService.messageByAdmin(id, dto);
+    }
+
+    @Delete("admin/users/:id")
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "Удалить пользователя без заказов, только ADMIN" })
+    deleteByAdmin(@CurrentUser() user: RequestUser, @Param("id") id: string) {
+        return this.usersService.deleteByAdmin(id, user.id);
     }
 }

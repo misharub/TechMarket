@@ -1,5 +1,7 @@
 import { apiGet, apiPatch, apiPost } from "./api";
 import type { AuthUser } from "./auth-api";
+import type { OrderStatus } from "./orders-api";
+import type { Product } from "./products-api";
 
 export type UpdateProfilePayload = {
   firstName?: string;
@@ -31,8 +33,18 @@ export type CreateAddressPayload = {
 export type Order = {
   id: string;
   orderNumber: string | null;
-  status: string;
+  status: OrderStatus;
   totalPrice: string | number;
+  deliveryMethod: string;
+  deliveryMethodName: string | null;
+  deliveryPrice: string | number;
+  items: Array<{
+    id: string;
+    productId: string;
+    quantity: number;
+    price: string | number;
+    product: Product;
+  }>;
   createdAt: string;
 };
 

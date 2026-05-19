@@ -170,10 +170,93 @@
 .account_order,
 .account_address {
   display: grid;
-  gap: 5px;
+  gap: 14px;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
   padding: 16px;
+}
+
+.account_order_head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.account_order_status {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 4px 10px;
+  color: #334155;
+  background: #e2e8f0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.account_order_status_new,
+.account_order_status_processing,
+.account_order_status_confirmed,
+.account_order_status_shipped {
+  color: #0f766e;
+  background: #ccfbf1;
+}
+
+.account_order_status_completed {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.account_order_status_cancelled {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.account_order_meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.account_order_meta div {
+  display: grid;
+  gap: 4px;
+}
+
+.account_order_meta dt {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.account_order_meta dd {
+  margin: 0;
+  color: #0f172a;
+}
+
+.account_order_items {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 12px;
+}
+
+.account_order_items div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.account_order_items span {
+  color: #0f172a;
+}
+
+.account_order_items strong {
+  flex: 0 0 auto;
+  color: #334155;
 }
 
 .account_address em {
@@ -197,5 +280,15 @@
 
   .account_address_form {
     grid-template-columns: 1fr;
+  }
+
+  .account_order_meta {
+    grid-template-columns: 1fr;
+  }
+
+  .account_order_items div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
   }
 }

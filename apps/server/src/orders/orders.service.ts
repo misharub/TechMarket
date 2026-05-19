@@ -83,6 +83,9 @@ export class OrdersService {
                     pickupPointId: deliveryDestination.pickupPointId,
                     pickupPointName: deliveryDestination.pickupPointName,
                     pickupPointAddress: deliveryDestination.pickupPointAddress,
+                    recipientName: deliveryDestination.recipientName,
+                    pickupCity: deliveryDestination.pickupCity,
+                    pickupNumber: deliveryDestination.pickupNumber,
                     paymentMethod: paymentMethod.code,
                     paymentMethodName: paymentMethod.name,
                     comment: dto.comment,
@@ -278,7 +281,24 @@ export class OrdersService {
         const method =
             deliveryMethod ?? (await this.checkoutOptionsService.validateDeliveryMethod(dto.deliveryMethod, Number.POSITIVE_INFINITY));
 
-        if (method.scenario !== DeliveryScenario.COURIER) {
+        if (method.scenario === DeliveryScenario.PICKUP_POINT) {
+            if (!dto.recipientName || !dto.pickupCity || !dto.pickupNumber) {
+                throw new BadRequestException("Recipient name, pickup city and pickup number must be provided");
+            }
+
+            return {
+                city: dto.pickupCity,
+                deliveryAddress: this.formatEuropostPickupAddress(dto.pickupNumber),
+                pickupPointId: null,
+                pickupPointName: null,
+                pickupPointAddress: null,
+                recipientName: dto.recipientName,
+                pickupCity: dto.pickupCity,
+                pickupNumber: dto.pickupNumber,
+            };
+        }
+
+        if (method.scenario === DeliveryScenario.STORE_PICKUP) {
             if (!dto.pickupPointId) {
                 throw new BadRequestException("Pickup point must be provided");
             }
@@ -291,6 +311,9 @@ export class OrdersService {
                 pickupPointId: pickupPoint.id,
                 pickupPointName: pickupPoint.name,
                 pickupPointAddress: pickupPoint.address,
+                recipientName: null,
+                pickupCity: null,
+                pickupNumber: null,
             };
         }
 
@@ -312,6 +335,9 @@ export class OrdersService {
                 pickupPointId: null,
                 pickupPointName: null,
                 pickupPointAddress: null,
+                recipientName: null,
+                pickupCity: null,
+                pickupNumber: null,
             };
         }
 
@@ -325,7 +351,14 @@ export class OrdersService {
             pickupPointId: null,
             pickupPointName: null,
             pickupPointAddress: null,
+            recipientName: null,
+            pickupCity: null,
+            pickupNumber: null,
         };
+    }
+
+    private formatEuropostPickupAddress(pickupNumber: string) {
+        return `Отделение Европочты ${pickupNumber}`;
     }
 
     private formatAddress(address: {

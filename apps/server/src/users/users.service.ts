@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { NotificationType, Prisma } from "@prisma/client";
 import { AuthService } from "../auth/auth.service";
+import { NotificationsService } from "../notifications/notifications.service";
 import { PrismaService } from "../prisma/prisma.service";
+import { AdminMessageUserDto } from "./dto/admin-message-user.dto";
 import { AdminUpdateUserDto } from "./dto/admin-update-user.dto";
 import { BlockUserDto } from "./dto/block-user.dto";
 import { FindUsersDto } from "./dto/find-users.dto";
@@ -12,6 +14,7 @@ export class UsersService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly authService: AuthService,
+        private readonly notificationsService: NotificationsService,
     ) {}
 
     getMe(userId: string) {
@@ -64,6 +67,51 @@ export class UsersService {
         }
 
         return this.authService.toPublicUser(user);
+    }
+
+    async messageByAdmin(id: string, dto: AdminMessageUserDto) {
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+            select: { id: true, email: true, firstName: true, lastName: true },
+        });
+
+        if (!user) {
+            throw new NotFoundException("User not found");
+        }
+
+        return this.notificationsService.createUserNotification({
+            userId: user.id,
+            type: NotificationType.SYSTEM,
+            title: dto.title,
+            message: dto.message,
+            email: {
+                to: user.email,
+                subject: `TechMarket: ${dto.title}`,
+                body: dto.message,
+            },
+        });
+    }
+
+    async deleteByAdmin(id: string, adminId: string) {
+        if (id === adminId) {
+            throw new BadRequestException("Admin cannot delete own account");
+        }
+
+        await this.ensureUserExists(id);
+
+        const ordersCount = await this.prisma.order.count({
+            where: { userId: id },
+        });
+
+        if (ordersCount > 0) {
+            throw new BadRequestException("User with orders cannot be deleted");
+        }
+
+        await this.prisma.user.delete({
+            where: { id },
+        });
+
+        return { success: true };
     }
 
     private async findPublicUser(id: string) {

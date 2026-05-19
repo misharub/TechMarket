@@ -28,6 +28,27 @@ export class CheckoutOrderDto {
     @IsString()
     pickupPointId?: string;
 
+    @ApiPropertyOptional({ example: "Ivan Ivanov" })
+    @IsOptional()
+    @IsString()
+    @MinLength(2)
+    @MaxLength(100)
+    recipientName?: string;
+
+    @ApiPropertyOptional({ example: "Minsk" })
+    @IsOptional()
+    @IsString()
+    @MinLength(2)
+    @MaxLength(80)
+    pickupCity?: string;
+
+    @ApiPropertyOptional({ example: "67" })
+    @IsOptional()
+    @IsString()
+    @MinLength(1)
+    @MaxLength(30)
+    pickupNumber?: string;
+
     @ApiPropertyOptional({ example: "Минск" })
     @IsOptional()
     @IsString()

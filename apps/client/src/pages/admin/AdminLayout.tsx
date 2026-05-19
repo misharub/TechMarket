@@ -4,6 +4,8 @@ import "./Admin.css";
 import { AdminToastViewport } from "./AdminToastViewport";
 
 const links = [
+  { to: "/admin/orders", label: "Заказы" },
+  { to: "/admin/users", label: "Пользователи" },
   { to: "/admin", label: "Обзор" },
   { to: "/admin/categories", label: "Категории" },
   { to: "/admin/category-tree", label: "Дерево категорий" },

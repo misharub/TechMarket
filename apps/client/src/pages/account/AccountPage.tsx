@@ -5,6 +5,7 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { Heart, House, LogOut, Package, UserRound } from "lucide-react";
 import { createAddress, getAddresses, getOrders, updateProfile } from "../../lib/profile-api";
 import { useAuthStore } from "../../lib/auth-store";
+import { orderStatusLabels, type OrderStatus } from "../../lib/orders-api";
 import "./AccountPage.css";
 
 type AccountSection = "profile" | "orders" | "addresses" | "favorites";
@@ -152,14 +153,54 @@ function OrdersSection() {
         {!ordersQuery.isLoading && !ordersQuery.data?.length ? <p>Заказов пока нет.</p> : null}
         {ordersQuery.data?.map((order) => (
           <article key={order.id} className="account_order">
-            <strong>{order.orderNumber ?? order.id}</strong>
-            <span>{order.status}</span>
-            <span>{Number(order.totalPrice).toFixed(2)} BYN</span>
+            <div className="account_order_head">
+              <strong>{order.orderNumber ?? order.id}</strong>
+              <span className={`account_order_status account_order_status_${order.status.toLowerCase()}`}>
+                {orderStatusLabels[order.status as OrderStatus] ?? order.status}
+              </span>
+              <span>{formatOrderPrice(order.totalPrice)}</span>
+            </div>
+
+            <dl className="account_order_meta">
+              <div>
+                <dt>Доставка</dt>
+                <dd>{getDeliveryMethodLabel(order.deliveryMethod)}</dd>
+              </div>
+              <div>
+                <dt>Стоимость доставки</dt>
+                <dd>{formatOrderPrice(order.deliveryPrice)}</dd>
+              </div>
+            </dl>
+
+            <div className="account_order_items">
+              {order.items.map((item) => (
+                <div key={item.id}>
+                  <span>{item.product.title}</span>
+                  <strong>
+                    {item.quantity} x {formatOrderPrice(item.price)}
+                  </strong>
+                </div>
+              ))}
+            </div>
           </article>
         ))}
       </div>
     </>
   );
+}
+
+const deliveryMethodLabels: Record<string, string> = {
+  courier: "Доставка курьером",
+  pickup: "Самовывоз из магазина",
+  pickup_point: "Отделение Европочты",
+};
+
+function getDeliveryMethodLabel(code: string) {
+  return deliveryMethodLabels[code] ?? code;
+}
+
+function formatOrderPrice(value: string | number) {
+  return `${Number(value).toFixed(2)} BYN`;
 }
 
 function AddressesSection() {

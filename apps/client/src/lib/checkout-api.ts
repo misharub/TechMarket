@@ -50,6 +50,9 @@ export type CheckoutPayload = {
   city?: string;
   deliveryAddress?: string;
   pickupPointId?: string;
+  recipientName?: string;
+  pickupCity?: string;
+  pickupNumber?: string;
   promoCode?: string;
   comment?: string;
 };
@@ -73,4 +76,3 @@ export function validatePromoCode(code: string) {
 export function createOrder(payload: CheckoutPayload) {
   return apiPost<{ id: string; orderNumber: string | null }, CheckoutPayload>("/orders", payload);
 }
-

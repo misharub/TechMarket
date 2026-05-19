@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Check } from "lucide-react";
 import "./OrderSuccessPage.css";
@@ -6,6 +7,10 @@ export function OrderSuccessPage() {
   const location = useLocation();
   const state = (location.state as { id?: string; orderNumber?: string | null } | undefined) ?? {};
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
+
   return (
     <main className="checkout_state">
       <div>
@@ -13,7 +18,7 @@ export function OrderSuccessPage() {
           <Check />
         </div>
 
-        <h2 className="checkout_success_title">Заказ принят! 🎉</h2>
+        <h2 className="checkout_success_title">Заказ принят!</h2>
 
         <p className="checkout_success_message">
           Ожидайте звонка от наших менеджеров для уточнения деталей заказа.

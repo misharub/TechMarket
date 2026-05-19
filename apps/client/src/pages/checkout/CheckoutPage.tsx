@@ -234,14 +234,9 @@ export function CheckoutPage() {
         orderPayload.deliveryAddress = fullAddress;
       }
     } else if (activeDeliveryMethod.scenario === "PICKUP_POINT") {
-      // Для Европочты передаём номер отделения и сохраняем ФИО/город в comment (или расширяйте API)
-      orderPayload.pickupPointId = pickupNumber;
-      const europostData = {
-        recipientName,
-        pickupCity,
-        pickupNumber,
-      };
-      orderPayload.comment = JSON.stringify(europostData) + (comment ? `\n${comment}` : "");
+      orderPayload.recipientName = recipientName;
+      orderPayload.pickupCity = pickupCity;
+      orderPayload.pickupNumber = pickupNumber;
     } else {
       // STORE_PICKUP
       orderPayload.pickupPointId = pickupPointId;

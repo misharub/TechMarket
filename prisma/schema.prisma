@@ -447,6 +447,9 @@ model Order {
   pickupPointId      String?
   pickupPointName    String?
   pickupPointAddress String?
+  recipientName      String?
+  pickupCity         String?
+  pickupNumber       String?
   paymentMethod      String
   paymentMethodName  String?
   comment            String?

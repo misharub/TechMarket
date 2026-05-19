@@ -10,10 +10,12 @@ import { AdminCategoryFormPage } from "../pages/admin/AdminCategoryFormPage";
 import { AdminCategoryTreePage } from "../pages/admin/AdminCategoryTreePage";
 import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage";
 import { AdminLayout } from "../pages/admin/AdminLayout";
+import { AdminOrdersPage } from "../pages/admin/AdminOrdersPage";
 import { AdminProductFormPage } from "../pages/admin/AdminProductFormPage";
 import { AdminProductsPage } from "../pages/admin/AdminProductsPage";
 import { AdminSpecificationTemplateFormPage } from "../pages/admin/AdminSpecificationTemplateFormPage";
 import { AdminSpecificationTemplatesPage } from "../pages/admin/AdminSpecificationTemplatesPage";
+import { AdminUsersPage } from "../pages/admin/AdminUsersPage";
 import { CareersPage } from "../pages/careers/CareersPage";
 import { CartPage } from "../pages/cart/CartPage";
 import { CheckoutPage } from "../pages/checkout/CheckoutPage";
@@ -64,6 +66,14 @@ export const router = createBrowserRouter([
       {
         path: "products",
         element: <AdminProductsPage />,
+      },
+      {
+        path: "orders",
+        element: <AdminOrdersPage />,
+      },
+      {
+        path: "users",
+        element: <AdminUsersPage />,
       },
       {
         path: "products/new",
