@@ -32,6 +32,7 @@ export function OrderHelpPage() {
           <li><a href="#how_to_order">Как оформить заказ</a></li>
           <li><a href="#payment_and_delivery">Оплата и Доставка</a></li>
           <li><a href="#warranty_and_return">Гарантия и возврат</a></li>
+          <li><a href="#privacy_policy">Политика конфиденциальности</a></li>
         </ul>
       </nav>
 
@@ -141,6 +142,57 @@ export function OrderHelpPage() {
             <p>📞 Телефон: 8 (800) 123-45-67</p>
             <p>📧 Email: support@shop.ru</p>
           </div>
+        </div>
+      </section>
+
+      <section id="privacy_policy" className="help_section">
+        <h2 className="policy_title">Политика <span className="text_red">конфиденциальности</span></h2>
+        
+        <div className="accordion_container">
+          <details className="accordion_item">
+            <summary>Основные положения</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Основные понятия</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Оператор может обрабатывать следующие персональные данные Пользователя</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Цели обработки персональных данных</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Правовые основания обработки персональных данных</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Порядок сбора, хранения, передачи и других видов обработки персональных данных</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Трансграничная передача персональных данных</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Заключительные положения</summary>
+            <div className="accordion_content"></div>
+          </details>
+        </div>
+
+        <h2 className="policy_title" style={{ marginTop: '3rem' }}>Публичная <span className="text_red">оферта</span></h2>
+        <div className="accordion_container">
+          <details className="accordion_item">
+            <summary>Положение</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Введение</summary>
+            <div className="accordion_content"></div>
+          </details>
         </div>
       </section>
 

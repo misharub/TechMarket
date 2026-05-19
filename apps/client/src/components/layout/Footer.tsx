@@ -36,6 +36,7 @@ const customerLinks: FooterLink[] = [
   { label: "Как оформить заказ", href: "/help#how_to_order" },
   { label: "Оплата и Доставка", href: "/help#payment_and_delivery" },
   { label: "Гарантия и возврат", href: "/help#warranty_and_return" },
+  { label: "Политика конфиденциальности", href: "/help#privacy_policy" },
 ];
 
 const footerColumns: FooterColumn[] = [

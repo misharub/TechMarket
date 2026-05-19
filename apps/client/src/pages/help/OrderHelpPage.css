@@ -109,3 +109,65 @@ html {
   border-radius: 6px;
   margin-top: 1.5rem;
 }
+
+
+.policy_title {
+  border-bottom: 2px solid #0066cc; 
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.accordion_container {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-top: 1rem;
+  background-color: #fff;
+}
+
+.accordion_item {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.accordion_item:last-child {
+  border-bottom: none;
+}
+
+.accordion_item summary {
+  padding: 16px 20px;
+  cursor: pointer;
+  list-style: none; 
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.accordion_item summary:hover {
+  background-color: #fcfcfc;
+}
+
+.accordion_item summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion_item summary::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid #666;
+  border-bottom: 1px solid #666;
+  transform: rotate(45deg);
+  transition: transform 0.3s ease;
+  margin-left: 10px;
+}
+
+.accordion_item[open] summary::after {
+  transform: rotate(225deg);
+  margin-top: 4px;
+}
+
+.accordion_content {
+  padding: 0 20px 20px 20px;
+}
