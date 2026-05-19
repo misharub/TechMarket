@@ -4,6 +4,7 @@ import "./Admin.css";
 import { AdminToastViewport } from "./AdminToastViewport";
 
 const links = [
+  { to: "/admin/home-slider", label: "Главный слайдер" },
   { to: "/admin/orders", label: "Заказы" },
   { to: "/admin/users", label: "Пользователи" },
   { to: "/admin", label: "Обзор" },

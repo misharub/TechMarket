@@ -207,6 +207,13 @@
   color: #0f766e;
 }
 
+.product-card_compare--active,
+.product-card_compare--active:hover {
+  border-color: #0f766e;
+  color: #ffffff;
+  background: #0f766e;
+}
+
 .product-card_action-icon {
   width: 18px;
   height: 18px;

@@ -159,6 +159,8 @@ export class ProductsService {
                 ? await this.getCategoryAndDescendantIds(query.categorySlug, query.includeInactive)
                 : undefined;
         const collectionFilters = collection?.isActive ? await this.buildCollectionFilters(collection.conditions) : [];
+        const specFilters = this.buildPublicSpecFilters(query.specFilters);
+        const andFilters = [...collectionFilters, ...specFilters];
 
         return {
             ...(query.isActive !== undefined ? { isActive: query.isActive } : query.includeInactive ? {} : { isActive: true }),
@@ -184,8 +186,87 @@ export class ProductsService {
                       ],
                   }
                 : {}),
-            ...(collectionFilters.length ? { AND: collectionFilters } : {}),
+            ...(andFilters.length ? { AND: andFilters } : {}),
         };
+    }
+
+    private buildPublicSpecFilters(specFilters: string | undefined): Prisma.ProductWhereInput[] {
+        if (!specFilters) {
+            return [];
+        }
+
+        return specFilters
+            .split("|")
+            .map((filter) => {
+                const separatorIndex = filter.indexOf(":");
+
+                if (separatorIndex <= 0) {
+                    return null;
+                }
+
+                const key = filter.slice(0, separatorIndex).trim();
+                const rawValue = filter.slice(separatorIndex + 1).trim();
+
+                if (!key || !rawValue || !/^[A-Za-z0-9_-]+$/.test(key)) {
+                    return null;
+                }
+
+                return this.buildPublicSpecFilter(key, rawValue);
+            })
+            .filter((filter): filter is Prisma.ProductWhereInput => Boolean(filter));
+    }
+
+    private buildPublicSpecFilter(key: string, rawValue: string): Prisma.ProductWhereInput | null {
+        const rangeMatch = rawValue.match(/^(-?\d+(?:\.\d+)?)?\.\.(-?\d+(?:\.\d+)?)?$/);
+
+        if (rangeMatch) {
+            const min = rangeMatch[1] === undefined ? undefined : Number(rangeMatch[1]);
+            const max = rangeMatch[2] === undefined ? undefined : Number(rangeMatch[2]);
+
+            if ((min === undefined || Number.isFinite(min)) && (max === undefined || Number.isFinite(max))) {
+                return {
+                    specs: {
+                        path: [key],
+                        ...(min !== undefined ? { gte: min } : {}),
+                        ...(max !== undefined ? { lte: max } : {}),
+                    },
+                };
+            }
+        }
+
+        const values = rawValue
+            .split(",")
+            .map((value) => value.trim())
+            .filter(Boolean)
+            .map((value) => this.parsePublicSpecFilterValue(value));
+
+        if (!values.length) {
+            return null;
+        }
+
+        if (values.length === 1) {
+            return { specs: { path: [key], equals: values[0] } };
+        }
+
+        return {
+            OR: values.map((value) => ({
+                specs: { path: [key], equals: value },
+            })),
+        };
+    }
+
+    private parsePublicSpecFilterValue(value: string): Prisma.InputJsonValue {
+        if (value === "true") {
+            return true;
+        }
+
+        if (value === "false") {
+            return false;
+        }
+
+        const numericValue = Number(value);
+
+        return value.trim() !== "" && Number.isFinite(numericValue) ? numericValue : value;
     }
 
     private async buildCollectionFilters(conditions: Prisma.JsonValue): Promise<Prisma.ProductWhereInput[]> {

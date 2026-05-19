@@ -68,6 +68,7 @@ export type FindProductsParams = {
   categorySlug?: string;
   collectionSlug?: string;
   brandId?: string;
+  specFilters?: string;
   priceFrom?: number;
   priceTo?: number;
   inStock?: boolean;

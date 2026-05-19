@@ -427,6 +427,27 @@ model PaymentMethod {
   @@index([sortOrder])
 }
 
+model HomeSlider {
+  id               String   @id @default(cuid())
+  kicker           String
+  title            String
+  description      String
+  primaryText      String?
+  primaryLabel     String?
+  secondaryText    String?
+  secondaryLabel   String?
+  panelKicker      String
+  panelTitle       String
+  panelDescription String
+  imageUrl         String?
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([updatedAt])
+}
+
 model Order {
   id                 String      @id @default(cuid())
   orderNumber        String?     @unique

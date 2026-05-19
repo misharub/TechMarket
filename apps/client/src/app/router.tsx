@@ -9,6 +9,7 @@ import { AdminCategoriesPage } from "../pages/admin/AdminCategoriesPage";
 import { AdminCategoryFormPage } from "../pages/admin/AdminCategoryFormPage";
 import { AdminCategoryTreePage } from "../pages/admin/AdminCategoryTreePage";
 import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage";
+import { AdminHomeSliderPage } from "../pages/admin/AdminHomeSliderPage";
 import { AdminLayout } from "../pages/admin/AdminLayout";
 import { AdminOrdersPage } from "../pages/admin/AdminOrdersPage";
 import { AdminProductFormPage } from "../pages/admin/AdminProductFormPage";
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <AdminDashboardPage />,
+      },
+      {
+        path: "home-slider",
+        element: <AdminHomeSliderPage />,
       },
       {
         path: "categories",

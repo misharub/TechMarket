@@ -1,6 +1,62 @@
 ﻿import { ProductsService } from "./products.service";
 
 describe("ProductsService collection filters", () => {
+    it("builds filters from public specification query values", async () => {
+        const service = new ProductsService({
+            categoryCollection: {
+                findUnique: jest.fn().mockResolvedValue(null),
+            },
+            category: {
+                findMany: jest.fn().mockResolvedValue([{ id: "phones", parentId: null, slug: "smartphones" }]),
+            },
+        } as never);
+
+        await expect(
+            (service as any).buildWhere({
+                categorySlug: "smartphones",
+                specFilters: "os:Android|ramGb:8|wirelessCharging:true",
+            }),
+        ).resolves.toEqual({
+            isActive: true,
+            categoryId: { in: ["phones"] },
+            AND: [
+                { specs: { path: ["os"], equals: "Android" } },
+                { specs: { path: ["ramGb"], equals: 8 } },
+                { specs: { path: ["wirelessCharging"], equals: true } },
+            ],
+        });
+    });
+
+    it("supports multiple public specification values and numeric ranges", async () => {
+        const service = new ProductsService({
+            categoryCollection: {
+                findUnique: jest.fn().mockResolvedValue(null),
+            },
+            category: {
+                findMany: jest.fn().mockResolvedValue([{ id: "phones", parentId: null, slug: "smartphones" }]),
+            },
+        } as never);
+
+        await expect(
+            (service as any).buildWhere({
+                categorySlug: "smartphones",
+                specFilters: "os:Android,iOS|screenSize:6.1..6.29",
+            }),
+        ).resolves.toEqual({
+            isActive: true,
+            categoryId: { in: ["phones"] },
+            AND: [
+                {
+                    OR: [
+                        { specs: { path: ["os"], equals: "Android" } },
+                        { specs: { path: ["os"], equals: "iOS" } },
+                    ],
+                },
+                { specs: { path: ["screenSize"], gte: 6.1, lte: 6.29 } },
+            ],
+        });
+    });
+
     it("builds spec and brand filters from a collection", async () => {
         const service = new ProductsService({
             categoryCollection: {

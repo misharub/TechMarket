@@ -1,0 +1,20 @@
+<svg width="360" height="360" viewBox="0 0 360 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="360" height="360" rx="32" fill="#F8FAFC"/>
+  <rect x="114" y="34" width="132" height="292" rx="30" fill="#DDEAF7"/>
+  <rect x="124" y="44" width="112" height="272" rx="24" fill="url(#screen)"/>
+  <circle cx="146" cy="78" r="14" fill="#101827"/>
+  <circle cx="146" cy="116" r="14" fill="#101827"/>
+  <circle cx="146" cy="154" r="14" fill="#101827"/>
+  <circle cx="146" cy="78" r="7" fill="#475569"/>
+  <circle cx="146" cy="116" r="7" fill="#475569"/>
+  <circle cx="146" cy="154" r="7" fill="#475569"/>
+  <path d="M179 266C214 247 223 211 204 184C185 157 146 156 129 183C114 207 127 246 179 266Z" fill="#60A5FA" opacity=".58"/>
+  <path d="M155 230C186 226 211 204 219 174C224 221 198 265 155 286C141 279 129 269 119 257C128 243 140 234 155 230Z" fill="#0F766E" opacity=".45"/>
+  <defs>
+    <linearGradient id="screen" x1="124" y1="44" x2="244" y2="310" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EBF8FF"/>
+      <stop offset=".45" stop-color="#C7D2FE"/>
+      <stop offset="1" stop-color="#64748B"/>
+    </linearGradient>
+  </defs>
+</svg>

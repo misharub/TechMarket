@@ -35,6 +35,11 @@ export class FindProductsDto {
     @IsString()
     brandId?: string;
 
+    @ApiPropertyOptional({ example: "os:Android|ramGb:8|wirelessCharging:true" })
+    @IsOptional()
+    @IsString()
+    specFilters?: string;
+
     @ApiPropertyOptional({ example: 1000 })
     @IsOptional()
     @Type(() => Number)

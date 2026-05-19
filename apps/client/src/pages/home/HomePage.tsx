@@ -1,19 +1,38 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRight,
-  BadgePercent,
   CheckCircle2,
   CreditCard,
   PackageCheck,
   Sparkles,
-  TrendingDown,
   Truck,
 } from "lucide-react";
 import { useMemo } from "react";
-import { ProductCard, formatPrice, productHref, toNumber } from "../../components/product/ProductCard";
+import heroImage from "../../assets/hero.png";
+import { ProductCard, toNumber } from "../../components/product/ProductCard";
 import { getCategoryTree, type CategoryNode } from "../../lib/categories-api";
-import { getProducts, type Product, type ProductListResponse } from "../../lib/products-api";
+import { getHomeSlider, type HomeSlider } from "../../lib/home-slider-api";
+import { getProducts, resolveUploadUrl, type Product, type ProductListResponse } from "../../lib/products-api";
 import "./HomePage.css";
+
+const defaultHomeSlider: HomeSlider = {
+  id: "default",
+  kicker: "Умная витрина TechMarket",
+  title: "Техника для работы, учебы и дома без лишнего шума",
+  description:
+    "Главная собирает категории, новинки и скидки прямо из API. Видны наличие, цена, рейтинг и быстрый переход в каталог.",
+  primaryText: null,
+  primaryLabel: null,
+  secondaryText: null,
+  secondaryLabel: null,
+  panelKicker: "Price watch",
+  panelTitle: "Подборка товаров со старой ценой",
+  panelDescription: "Запустите API, чтобы увидеть актуальные товары и скидки.",
+  imageUrl: null,
+  isActive: true,
+  createdAt: "",
+  updatedAt: "",
+};
 
 function categoryHref(category: CategoryNode) {
   return `/catalog/${category.slug}`;
@@ -142,81 +161,22 @@ function QuickCategories({
   );
 }
 
-function SmartRail({ categories, product }: { categories: CategoryNode[]; product: Product | undefined }) {
-  return (
-    <div className="home_smart_rail" aria-label="Быстрые предложения">
-      <a className="home_smart_card home_smart_card__deal" href={product ? productHref(product) : "/catalog"}>
-        <span className="home_smart_icon">
-          <TrendingDown />
-        </span>
-        <span>
-          <strong>{product ? "Выгодно сейчас" : "Скидки недели"}</strong>
-          <small>{product ? `${formatPrice(product.price)} на актуальный товар` : "Подборка появится после загрузки API"}</small>
-        </span>
-      </a>
-      {categories.slice(0, 3).map((category) => (
-        <a className="home_smart_card" href={categoryHref(category)} key={category.id}>
-          <span>
-            <strong>{category.name}</strong>
-            <small>Открыть раздел</small>
-          </span>
-          <ArrowRight />
-        </a>
-      ))}
-    </div>
-  );
-}
+function HomeHero({ slider }: { slider: HomeSlider }) {
+  const resolvedImage = resolveUploadUrl(slider.imageUrl) ?? heroImage;
 
-function HomeHero({ categories, featuredProduct }: { categories: CategoryNode[]; featuredProduct: Product | undefined }) {
   return (
     <section className="home_hero">
-      <div className="home_hero_main">
+      <div className="home_hero_content">
         <span className="home_hero_kicker">
           <Sparkles className="home_hero_kicker_icon" />
-          Умная витрина TechMarket
+          {slider.kicker}
         </span>
-        <h1>Техника для работы, учебы и дома без лишнего шума</h1>
-        <p>
-          Главная собирает категории, новинки и скидки прямо из API. Видны наличие, цена, рейтинг и быстрый переход в каталог.
-        </p>
-        <div className="home_hero_actions">
-          <a className="home_hero_primary" href="/catalog">
-            Перейти в каталог
-            <ArrowRight className="home_hero_action_icon" />
-          </a>
-          {categories[0] ? (
-            <a className="home_hero_secondary" href={categoryHref(categories[0])}>
-              {categories[0].name}
-            </a>
-          ) : null}
-        </div>
-        <div className="home_hero_metrics" aria-label="Показатели витрины">
-          <span>
-            <strong>{categories.length || "API"}</strong>
-            разделов
-          </span>
-          <span>
-            <strong>{featuredProduct ? formatPrice(featuredProduct.price) : "BYN"}</strong>
-            выгодное предложение
-          </span>
-        </div>
+        <h1>{slider.title}</h1>
+        <p>{slider.description}</p>
       </div>
-
-      <aside className="home_hero_panel" aria-label="Акционное предложение">
-        <div className="home_hero_panel_top">
-          <BadgePercent className="home_hero_panel_icon" />
-          <span>Price watch</span>
-        </div>
-        <strong>{featuredProduct ? featuredProduct.title : "Подборка товаров со старой ценой"}</strong>
-        <p>
-          {featuredProduct
-            ? `${formatPrice(featuredProduct.price)} в наличии. Старая цена учитывается автоматически.`
-            : "Запустите API, чтобы увидеть актуальные товары и скидки."}
-        </p>
-        <a href={featuredProduct ? productHref(featuredProduct) : "/catalog"}>Смотреть предложение</a>
-      </aside>
-
-      <SmartRail categories={categories} product={featuredProduct} />
+      <div className="home_hero_media" aria-hidden="true">
+        <img src={resolvedImage} alt="" />
+      </div>
     </section>
   );
 }
@@ -277,12 +237,15 @@ export function HomePage() {
     [discountSourceQuery.data],
   );
 
-  const featuredProduct = discountProducts[0] ?? featuredQuery.data?.items[0];
+  const sliderQuery = useQuery({
+    queryKey: ["home-slider"],
+    queryFn: getHomeSlider,
+  });
 
   return (
     <main className="home">
       <div className="home_inner">
-        <HomeHero categories={categories} featuredProduct={featuredProduct} />
+        <HomeHero slider={sliderQuery.data ?? defaultHomeSlider} />
         <Benefits />
         <QuickCategories categories={categories} isLoading={categoriesLoading} isError={categoriesError} />
         <ProductSection

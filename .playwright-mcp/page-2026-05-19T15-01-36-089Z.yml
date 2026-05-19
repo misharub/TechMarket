@@ -1,0 +1,271 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - link "Перейти на главную страницу" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]:
+          - img [ref=e9]
+          - generic [ref=e10]: TechMarket
+      - generic [ref=e11]:
+        - link "Сравнение" [ref=e23] [cursor=pointer]:
+          - /url: /compare
+          - img [ref=e25]
+        - link "Корзина" [ref=e31] [cursor=pointer]:
+          - /url: /cart
+          - img [ref=e33]
+        - link "Админ-панель" [ref=e131] [cursor=pointer]:
+          - /url: /admin
+          - img [ref=e133]
+        - button "TechMarket Admin" [ref=e136] [cursor=pointer]:
+          - img [ref=e138]
+          - generic [ref=e141]: TechMarket Admin
+      - button "Открыть меню категорий" [ref=e143] [cursor=pointer]:
+        - img [ref=e144]
+      - generic [ref=e47]:
+        - searchbox "Поиск" [ref=e48]
+        - button "Найти" [ref=e49] [cursor=pointer]:
+          - img [ref=e50]
+    - navigation "Каталог товаров" [ref=e145]:
+      - generic:
+        - generic:
+          - generic: Каталог
+          - button:
+            - img
+        - generic:
+          - group:
+            - generic:
+              - generic: Ноутбуки и компьютеры
+              - img
+          - group:
+            - generic:
+              - generic: Аксессуары
+              - img
+          - group:
+            - generic:
+              - generic: Телефоны и умные часы
+              - img
+          - group:
+            - generic:
+              - generic: Бытовая техника
+              - img
+          - group:
+            - generic:
+              - generic: Телевизоры
+              - img
+          - group:
+            - generic:
+              - generic: Умный дом
+              - img
+          - group:
+            - generic:
+              - generic: Фото и Видео
+              - img
+  - main [ref=e54]:
+    - generic [ref=e55]:
+      - navigation "Навигация" [ref=e56]:
+        - link "Главная" [ref=e57] [cursor=pointer]:
+          - /url: /
+        - img [ref=e58]
+        - link "Каталог" [ref=e60] [cursor=pointer]:
+          - /url: /catalog
+        - generic [ref=e146]:
+          - img [ref=e147]
+          - link "Телефоны и умные часы" [ref=e149] [cursor=pointer]:
+            - /url: /catalog/phones-smartwatch
+        - generic [ref=e150]:
+          - img [ref=e151]
+          - link "Телефоны и смартфоны" [ref=e153] [cursor=pointer]:
+            - /url: /catalog/smartphones
+      - heading "Телефоны и смартфоны(2)" [level=1] [ref=e154]:
+        - text: Телефоны и смартфоны(
+        - strong [ref=e64]: "2"
+        - text: )
+      - region "Подборки категории" [ref=e155]:
+        - button "Прокрутить подборки влево" [ref=e156] [cursor=pointer]:
+          - img [ref=e157]
+        - generic [ref=e159]:
+          - link "Apple iPhone" [ref=e160] [cursor=pointer]:
+            - /url: /catalog/smartphones?collection=apple-iphone
+          - link "Samsung Galaxy" [ref=e161] [cursor=pointer]:
+            - /url: /catalog/smartphones?collection=samsung-galaxy
+          - link "Смартфоны Xiaomi" [ref=e162] [cursor=pointer]:
+            - /url: /catalog/smartphones?collection=xiaomi-smartphones
+        - button "Прокрутить подборки вправо" [ref=e163] [cursor=pointer]:
+          - img [ref=e164]
+      - generic [ref=e166]:
+        - complementary "Фильтры каталога" [ref=e167]:
+          - generic [ref=e168]:
+            - img [ref=e169]
+            - generic [ref=e171]: Фильтры
+          - generic [ref=e172]:
+            - searchbox "Поиск по товарам" [ref=e173]
+            - button "Искать" [ref=e174] [cursor=pointer]:
+              - img [ref=e175]
+          - generic [ref=e178]:
+            - heading "Бренд" [level=2] [ref=e179]
+            - combobox [ref=e180]:
+              - option "Все бренды" [selected]
+              - option "Apple"
+              - option "ASUS"
+              - option "Bosch"
+              - option "HP"
+              - option "Lenovo"
+              - option "LG"
+              - option "Samsung"
+              - option "Sony"
+              - option "Xiaomi"
+          - generic [ref=e181]:
+            - heading "Цена, BYN" [level=2] [ref=e182]
+            - generic [ref=e183]:
+              - spinbutton [ref=e184]
+              - spinbutton [ref=e185]
+            - button "Применить" [ref=e186] [cursor=pointer]
+          - generic [ref=e187]:
+            - heading "Характеристики" [level=2] [ref=e188]
+            - group "Встроенная память, ГБ" [ref=e189]:
+              - generic [ref=e190]:
+                - text: Встроенная память
+                - generic [ref=e191]: ", ГБ"
+              - generic [ref=e192]:
+                - generic [ref=e193]:
+                  - checkbox "128" [ref=e194]
+                  - generic [ref=e195]: "128"
+                - generic [ref=e196]:
+                  - checkbox "256" [ref=e197]
+                  - generic [ref=e198]: "256"
+                - generic [ref=e199]:
+                  - checkbox "512" [ref=e200]
+                  - generic [ref=e201]: "512"
+            - group "eSIM" [ref=e202]:
+              - generic [ref=e203]: eSIM
+              - generic [ref=e204]:
+                - checkbox "Да" [ref=e205]
+                - generic [ref=e206]: Да
+            - group "NFC" [ref=e207]:
+              - generic [ref=e208]: NFC
+              - generic [ref=e209]:
+                - checkbox "Да" [ref=e210]
+                - generic [ref=e211]: Да
+            - group "5G" [ref=e212]:
+              - generic [ref=e213]: 5G
+              - generic [ref=e214]:
+                - checkbox "Да" [ref=e215]
+                - generic [ref=e216]: Да
+            - group "4G" [ref=e217]:
+              - generic [ref=e218]: 4G
+              - generic [ref=e219]:
+                - checkbox "Да" [ref=e220]
+                - generic [ref=e221]: Да
+            - group "GPS" [ref=e222]:
+              - generic [ref=e223]: GPS
+              - generic [ref=e224]:
+                - checkbox "Да" [ref=e225]
+                - generic [ref=e226]: Да
+          - generic [ref=e227]:
+            - checkbox "Только в наличии" [ref=e228]
+            - generic [ref=e229]: Только в наличии
+          - button "Сбросить фильтры" [ref=e230] [cursor=pointer]:
+            - img [ref=e231]
+            - text: Сбросить фильтры
+        - region "Телефоны и смартфоны" [ref=e234]:
+          - generic [ref=e235]:
+            - generic [ref=e236]:
+              - heading "Телефоны и смартфоны" [level=2] [ref=e237]
+              - paragraph
+            - generic [ref=e238]:
+              - img [ref=e239]
+              - combobox [ref=e240]:
+                - option "Сначала новинки" [selected]
+                - option "Сначала дешевле"
+                - option "Сначала дороже"
+                - option "По названию"
+          - generic [ref=e241]:
+            - article [ref=e242]:
+              - link "Apple iPhone 17 256 ГБ" [ref=e243] [cursor=pointer]:
+                - /url: /product/apple-iphone-17-256gb
+                - img "Apple iPhone 17 256 ГБ" [ref=e244]
+              - generic [ref=e245]:
+                - generic [ref=e246]:
+                  - generic [ref=e247]: Apple
+                  - generic [ref=e248]: В наличии
+                - link "Apple iPhone 17 256 ГБ" [ref=e249] [cursor=pointer]:
+                  - /url: /product/apple-iphone-17-256gb
+                - generic "Рейтинг 0" [ref=e250]:
+                  - img [ref=e251]
+                  - generic [ref=e253]: Нет оценок
+                - strong [ref=e255]: 3 900 Br
+                - generic [ref=e256]:
+                  - button [ref=e257] [cursor=pointer]:
+                    - img [ref=e258]
+                  - button "Сравнить Apple iPhone 17 256 ГБ" [ref=e262] [cursor=pointer]:
+                    - img [ref=e263]
+            - article [ref=e267]:
+              - link "Apple iPhone 16 256 ГБ" [ref=e268] [cursor=pointer]:
+                - /url: /product/apple-iphone-16-256gb
+                - generic [ref=e269]: "-6%"
+                - img "Apple iPhone 16 256 ГБ" [ref=e270]
+              - generic [ref=e271]:
+                - generic [ref=e272]:
+                  - generic [ref=e273]: Apple
+                  - generic [ref=e274]: В наличии
+                - link "Apple iPhone 16 256 ГБ" [ref=e275] [cursor=pointer]:
+                  - /url: /product/apple-iphone-16-256gb
+                - generic "Рейтинг 0" [ref=e276]:
+                  - img [ref=e277]
+                  - generic [ref=e279]: Нет оценок
+                - generic [ref=e280]:
+                  - strong [ref=e281]: 3 300 Br
+                  - generic [ref=e282]: 3 500 Br
+                - generic [ref=e283]:
+                  - button [ref=e284] [cursor=pointer]:
+                    - img [ref=e285]
+                  - button "Сравнить Apple iPhone 16 256 ГБ" [ref=e289] [cursor=pointer]:
+                    - img [ref=e290]
+          - generic "Пагинация" [ref=e294]:
+            - button "Назад" [disabled] [ref=e295]:
+              - img [ref=e296]
+              - text: Назад
+            - generic [ref=e298]: 1 / 1
+            - button "Вперед" [disabled] [ref=e299]:
+              - text: Вперед
+              - img [ref=e300]
+  - contentinfo [ref=e76]:
+    - generic [ref=e77]:
+      - generic [ref=e302]:
+        - generic [ref=e303]:
+          - group [ref=e304]:
+            - generic "Компания" [ref=e305] [cursor=pointer]:
+              - generic [ref=e306]: Компания
+              - img [ref=e307]
+          - group [ref=e309]:
+            - generic "Покупателям" [ref=e310] [cursor=pointer]:
+              - generic [ref=e311]: Покупателям
+              - img [ref=e312]
+        - generic "Социальные сети" [ref=e314]:
+          - link "Telegram" [ref=e315] [cursor=pointer]:
+            - /url: https://t.me/
+            - img [ref=e316]
+          - link "Чат" [ref=e319] [cursor=pointer]:
+            - /url: /contacts
+            - img [ref=e320]
+          - link "Видео" [ref=e322] [cursor=pointer]:
+            - /url: https://youtube.com/
+            - img [ref=e323]
+        - navigation "Быстрые ссылки" [ref=e326]:
+          - link "Адреса магазинов" [ref=e327] [cursor=pointer]:
+            - /url: /stores
+            - generic [ref=e328]: Адреса магазинов
+            - img [ref=e329]
+          - link "Контакты" [ref=e331] [cursor=pointer]:
+            - /url: /contacts
+            - generic [ref=e332]: Контакты
+            - img [ref=e333]
+          - link "Вакансии" [ref=e335] [cursor=pointer]:
+            - /url: /careers
+            - generic [ref=e336]: Вакансии
+            - img [ref=e337]
+        - generic [ref=e339]:
+          - generic [ref=e340]: "Контактный номер телефона:"
+          - link "+375 12 345-67-89" [ref=e341] [cursor=pointer]:
+            - /url: tel:+375123456789
+      - paragraph [ref=e130]: 2024-2026 © TechMarket. Интернет-магазин техники для дипломного проекта.

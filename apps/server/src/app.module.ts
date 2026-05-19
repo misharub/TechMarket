@@ -23,6 +23,7 @@ import { SpecificationTemplatesModule } from "./specification-templates/specific
 import { UploadsModule } from "./uploads/uploads.module";
 import { UsersModule } from "./users/users.module";
 import { WishlistModule } from "./wishlist/wishlist.module";
+import { HomeSliderModule } from "./home-slider/home-slider.module";
 
 @Module({
     imports: [
@@ -42,6 +43,7 @@ import { WishlistModule } from "./wishlist/wishlist.module";
         CheckoutOptionsModule,
         OrdersModule,
         NotificationsModule,
+        HomeSliderModule,
         CategoriesModule,
         CategoryCollectionsModule,
         BrandsModule,

@@ -1,14 +1,15 @@
 ﻿import { useQuery } from "@tanstack/react-query";
 import {
-  ArrowRight,
   BatteryCharging,
   BookOpen,
   Briefcase,
   Cable,
   Camera,
   Cctv,
+  Check,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   Coffee,
   Cpu,
   Drone,
@@ -40,15 +41,35 @@ import {
   Watch,
 } from "lucide-react";
 import type { FormEvent, ReactNode } from "react";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ProductCard } from "../../components/product/ProductCard";
 import { getBrands } from "../../lib/brands-api";
 import { getCategoryTree, type CategoryNode } from "../../lib/categories-api";
-import { getProducts, type ProductSort } from "../../lib/products-api";
+import { getProducts, type Product, type ProductSort } from "../../lib/products-api";
+import {
+  getSpecificationTemplateByCategory,
+  type Specification,
+  type SpecificationTemplate,
+} from "../../lib/specification-templates-api";
 import "./CatalogPage.css";
 
 const catalogLimit = 12;
+const specFilterPrefix = "spec_";
+const facetSampleLimit = 48;
+const prioritySpecKeys = ["storage", "ram", "os", "screenSize"];
+
+type SpecFacetOption = {
+  value: string;
+  label: string;
+  count: number;
+};
+
+type CatalogSpecFilter = {
+  specification: Specification;
+  kind: "options" | "range" | "boolean";
+  options: SpecFacetOption[];
+};
 
 const sortLabels: Record<ProductSort, string> = {
   newest: "Сначала новинки",
@@ -206,6 +227,145 @@ function getPage(searchParams: URLSearchParams) {
   return Math.max(1, page);
 }
 
+function getSpecFilterEntries(searchParams: URLSearchParams) {
+  return Array.from(searchParams.entries())
+    .filter(([key, value]) => key.startsWith(specFilterPrefix) && value)
+    .map(([key, value]) => [key.slice(specFilterPrefix.length), value] as const);
+}
+
+function getSpecFilterParam(entries: Array<readonly [string, string]>) {
+  return entries.map(([key, value]) => `${key}:${value}`).join("|") || undefined;
+}
+
+function getSelectedSpecValues(searchParams: URLSearchParams, specification: Specification) {
+  const value = searchParams.get(`${specFilterPrefix}${specification.key}`) ?? "";
+
+  return value.split(",").filter(Boolean);
+}
+
+function getSpecUnit(specification: Specification) {
+  if (!specification.unit) {
+    return "";
+  }
+
+  return specification.unit === "дюйма" ? "дюйм" : specification.unit;
+}
+
+function formatSpecOptionLabel(specification: Specification, value: string) {
+  const unit = getSpecUnit(specification);
+
+  return unit && !value.toLowerCase().includes(unit.toLowerCase()) ? `${value} ${unit}` : value;
+}
+
+function normalizeSpecValue(value: unknown) {
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  return "";
+}
+
+function getSpecFacetOptions(specification: Specification, products: Product[]) {
+  const counts = new Map<string, number>();
+
+  products.forEach((product) => {
+    const value = normalizeSpecValue(product.specs?.[specification.key]);
+
+    if (value) {
+      counts.set(value, (counts.get(value) ?? 0) + 1);
+    }
+  });
+
+  const optionValues =
+    specification.type === "SELECT" && specification.options.length
+      ? specification.options.map((option) => option.value)
+      : Array.from(counts.keys());
+
+  return optionValues
+    .map((value) => ({
+      value,
+      label: formatSpecOptionLabel(specification, value),
+      count: counts.get(value) ?? 0,
+    }))
+    .filter((option) => option.count > 0 || specification.type === "SELECT")
+    .sort((left, right) => {
+      const leftNumber = Number(left.value);
+      const rightNumber = Number(right.value);
+
+      if (Number.isFinite(leftNumber) && Number.isFinite(rightNumber)) {
+        return leftNumber - rightNumber;
+      }
+
+      return left.label.localeCompare(right.label, "ru");
+    });
+}
+
+function getCatalogSpecFilters(template: SpecificationTemplate | null | undefined, products: Product[]) {
+  const specifications = template?.groups.flatMap((group) => group.specifications) ?? [];
+  const filters = specifications
+    .map((specification): CatalogSpecFilter | null => {
+      if (specification.type === "BOOLEAN") {
+        return { specification, kind: "boolean", options: [] };
+      }
+
+      if (specification.key === "screenSize") {
+        return { specification, kind: "range", options: buildScreenSizeRanges(specification, products) };
+      }
+
+      const options = getSpecFacetOptions(specification, products);
+
+      if (!options.length || (specification.type !== "SELECT" && !prioritySpecKeys.includes(specification.key))) {
+        return null;
+      }
+
+      return { specification, kind: "options", options };
+    })
+    .filter((filter): filter is CatalogSpecFilter => Boolean(filter));
+
+  return filters.sort((left, right) => {
+    const leftPriority = prioritySpecKeys.indexOf(left.specification.key);
+    const rightPriority = prioritySpecKeys.indexOf(right.specification.key);
+    const normalizedLeftPriority = leftPriority === -1 ? Number.MAX_SAFE_INTEGER : leftPriority;
+    const normalizedRightPriority = rightPriority === -1 ? Number.MAX_SAFE_INTEGER : rightPriority;
+
+    if (normalizedLeftPriority !== normalizedRightPriority) {
+      return normalizedLeftPriority - normalizedRightPriority;
+    }
+
+    if (left.kind === "boolean" && right.kind !== "boolean") return 1;
+    if (left.kind !== "boolean" && right.kind === "boolean") return -1;
+
+    return left.specification.sortOrder - right.specification.sortOrder;
+  });
+}
+
+function buildScreenSizeRanges(specification: Specification, products: Product[]): SpecFacetOption[] {
+  const ranges = [
+    { value: "..6.09", label: "6.09 и менее", min: undefined, max: 6.09 },
+    { value: "6.1..6.29", label: "6.1 - 6.29", min: 6.1, max: 6.29 },
+    { value: "6.3..6.49", label: "6.3 - 6.49", min: 6.3, max: 6.49 },
+    { value: "6.5..6.59", label: "6.5 - 6.59", min: 6.5, max: 6.59 },
+    { value: "6.6..6.79", label: "6.6 - 6.79", min: 6.6, max: 6.79 },
+    { value: "6.8..", label: "6.8 и более", min: 6.8, max: undefined },
+  ];
+  const values = products
+    .map((product) => Number(product.specs?.[specification.key]))
+    .filter((value) => Number.isFinite(value));
+
+  return ranges.map((range) => ({
+    value: range.value,
+    label: range.label,
+    count: values.filter((value) => (range.min === undefined || value >= range.min) && (range.max === undefined || value <= range.max)).length,
+  }));
+}
+
+function buildPageItems(currentPage: number, pages: number): Array<number | "ellipsis"> {
+  if (pages <= 7) return Array.from({ length: pages }, (_, index) => index + 1);
+  if (currentPage <= 4) return [1, 2, 3, 4, 5, "ellipsis", pages];
+  if (currentPage >= pages - 3) return [1, "ellipsis", pages - 4, pages - 3, pages - 2, pages - 1, pages];
+  return [1, "ellipsis", currentPage - 1, currentPage, currentPage + 1, "ellipsis", pages];
+}
+
 function getCategoryIcon(category: CategoryNode) {
   if (categoryIconBySlug[category.slug]) {
     return categoryIconBySlug[category.slug];
@@ -270,21 +430,56 @@ function CategoryTile({ category, kind = "catalog" }: { category: CategoryNode; 
   );
 }
 
-function CollectionTile({
+function CollectionStrip({
   category,
-  collection,
+  activeSlug,
 }: {
   category: CategoryNode;
-  collection: CategoryNode["collections"][number];
+  activeSlug: string;
 }) {
+  const stripRef = useRef<HTMLDivElement>(null);
+
+  function scrollCollections(direction: "left" | "right") {
+    stripRef.current?.scrollBy({
+      left: direction === "left" ? -360 : 360,
+      behavior: "smooth",
+    });
+  }
+
   return (
-    <a
-      className="catalog_page_category_card catalog_page_category_card__subcategory"
-      href={`/catalog/${category.slug}?collection=${collection.slug}`}
-    >
-      <CategoryVisual category={category} size="small" />
-      <span>{collection.name}</span>
-    </a>
+    <section className="catalog_page_collection_strip" aria-label="Подборки категории">
+      <button
+        className="catalog_page_collection_arrow"
+        type="button"
+        aria-label="Прокрутить подборки влево"
+        onClick={() => scrollCollections("left")}
+      >
+        <ChevronLeft />
+      </button>
+      <div className="catalog_page_collection_track" ref={stripRef}>
+        {category.collections.map((collection) => (
+          <a
+            className={
+              collection.slug === activeSlug
+                ? "catalog_page_collection_link catalog_page_collection_link__active"
+                : "catalog_page_collection_link"
+            }
+            href={`/catalog/${category.slug}?collection=${collection.slug}`}
+            key={collection.id}
+          >
+            {collection.name}
+          </a>
+        ))}
+      </div>
+      <button
+        className="catalog_page_collection_arrow"
+        type="button"
+        aria-label="Прокрутить подборки вправо"
+        onClick={() => scrollCollections("right")}
+      >
+        <ChevronRight />
+      </button>
+    </section>
   );
 }
 
@@ -292,6 +487,35 @@ function CategoryState({ children, tone = "neutral" }: { children: ReactNode; to
   return (
     <div className={`catalog_page_state ${tone === "error" ? "catalog_page_state__error" : ""}`} role="status">
       {children}
+    </div>
+  );
+}
+
+function CatalogPagination({ page, pages, onChange }: { page: number; pages: number; onChange: (page: number) => void }) {
+  return (
+    <div className="catalog_page_pagination" aria-label="Пагинация">
+      <button className="catalog_page_page_button" type="button" disabled={page <= 1} onClick={() => onChange(Math.max(1, page - 1))}>
+        {"<"}
+      </button>
+      {buildPageItems(page, pages).map((item, index) =>
+        item === "ellipsis" ? (
+          <span className="catalog_page_page_ellipsis" key={`ellipsis-${index}`}>
+            ...
+          </span>
+        ) : (
+          <button
+            className={`catalog_page_page_button ${item === page ? "catalog_page_page_button__active" : ""}`}
+            key={item}
+            type="button"
+            onClick={() => onChange(item)}
+          >
+            {item}
+          </button>
+        ),
+      )}
+      <button className="catalog_page_page_button" type="button" disabled={page >= pages} onClick={() => onChange(Math.min(pages, page + 1))}>
+        {">"}
+      </button>
     </div>
   );
 }
@@ -309,6 +533,8 @@ export function CatalogPage() {
   const inStock = searchParams.get("inStock") === "true";
   const sort = (searchParams.get("sort") as ProductSort | null) ?? "newest";
   const page = getPage(searchParams);
+  const specFilterEntries = getSpecFilterEntries(searchParams);
+  const specFilters = getSpecFilterParam(specFilterEntries);
 
   const categoriesQuery = useQuery({
     queryKey: ["categories", "tree", "catalog"],
@@ -331,12 +557,37 @@ export function CatalogPage() {
     enabled: isProductListing,
   });
 
+  const specificationTemplateQuery = useQuery({
+    queryKey: ["specification-template", "catalog", activeCategory?.id],
+    queryFn: () => getSpecificationTemplateByCategory(activeCategory!.id),
+    enabled: isProductListing && Boolean(activeCategory?.id),
+  });
+
   const brands = brandsQuery.data ?? [];
   const selectedBrand = brands.find((brand) => brand.slug === brandSlug);
   const brandId = brandSlug ? selectedBrand?.id ?? "__missing_brand__" : undefined;
 
   const productsQuery = useQuery({
-    queryKey: ["products", "catalog", categorySlug, collectionSlug, q, brandId, priceFrom, priceTo, inStock, sort, page],
+    queryKey: ["products", "catalog", categorySlug, collectionSlug, q, brandId, priceFrom, priceTo, inStock, specFilters, sort, page],
+    queryFn: () =>
+      getProducts({
+        search: q || undefined,
+        categorySlug,
+        collectionSlug: collectionSlug || undefined,
+        brandId,
+        specFilters,
+        priceFrom,
+        priceTo,
+        inStock: inStock || undefined,
+        sort,
+        page,
+        limit: catalogLimit,
+    }),
+    enabled: isProductListing && (!brandSlug || !brandsQuery.isLoading),
+  });
+
+  const facetProductsQuery = useQuery({
+    queryKey: ["products", "catalog-facets", categorySlug, collectionSlug, q, brandId, priceFrom, priceTo, inStock],
     queryFn: () =>
       getProducts({
         search: q || undefined,
@@ -346,9 +597,9 @@ export function CatalogPage() {
         priceFrom,
         priceTo,
         inStock: inStock || undefined,
-        sort,
-        page,
-        limit: catalogLimit,
+        sort: "newest",
+        page: 1,
+        limit: facetSampleLimit,
       }),
     enabled: isProductListing && (!brandSlug || !brandsQuery.isLoading),
   });
@@ -390,10 +641,41 @@ export function CatalogPage() {
     });
   };
 
+  const updateSpecFilter = (specification: Specification, value: string, checked = true, multi = true) => {
+    const paramKey = `${specFilterPrefix}${specification.key}`;
+    const currentValues = getSelectedSpecValues(searchParams, specification);
+    const nextValues = multi
+      ? checked
+        ? Array.from(new Set([...currentValues, value]))
+        : currentValues.filter((item) => item !== value)
+      : checked
+        ? [value]
+        : [];
+
+    updateParams({ [paramKey]: nextValues.join(",") || undefined });
+  };
+
+  const updateAllSpecOptions = (specification: Specification, options: SpecFacetOption[], checked: boolean) => {
+    updateParams({
+      [`${specFilterPrefix}${specification.key}`]: checked ? options.map((option) => option.value).join(",") : undefined,
+    });
+  };
+
+  const handleRangeSubmit = (event: FormEvent<HTMLFormElement>, specification: Specification) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const from = String(formData.get("rangeFrom") ?? "").trim();
+    const to = String(formData.get("rangeTo") ?? "").trim();
+
+    updateParams({ [`${specFilterPrefix}${specification.key}`]: from || to ? `${from}..${to}` : undefined });
+  };
+
   const total = productsQuery.data?.total ?? 0;
   const pages = productsQuery.data?.pages ?? 1;
   const products = productsQuery.data?.items ?? [];
-  const activeFiltersCount = [q, brandSlug, priceFrom, priceTo, inStock].filter(Boolean).length;
+  const facetProducts = facetProductsQuery.data?.items ?? products;
+  const filterableSpecs = getCatalogSpecFilters(specificationTemplateQuery.data, facetProducts);
+  const activeFiltersCount = [q, brandSlug, priceFrom, priceTo, inStock, ...specFilterEntries.map(([, value]) => value)].filter(Boolean).length;
   const title = activeCollection?.name ?? activeCategory?.name ?? "Каталог";
   return (
     <main className="catalog_page">
@@ -478,19 +760,8 @@ export function CatalogPage() {
         {!categoriesQuery.isLoading &&
         !categoriesQuery.isError &&
         isProductListing &&
-        activeCategory?.collections.length &&
-        !activeCollection ? (
-          <section className="catalog_page_subcategories">
-            <div className="catalog_page_section_title">
-              <h2>Подборки</h2>
-              <span>{activeCategory.collections.length}</span>
-            </div>
-            <div className="catalog_page_subcategory_grid">
-              {activeCategory.collections.map((collection) => (
-                <CollectionTile category={activeCategory} collection={collection} key={collection.id} />
-              ))}
-            </div>
-          </section>
+        activeCategory?.collections.length ? (
+          <CollectionStrip category={activeCategory} activeSlug={collectionSlug} />
         ) : null}
 
         {!categoriesQuery.isLoading && !categoriesQuery.isError && isProductListing ? (
@@ -532,7 +803,104 @@ export function CatalogPage() {
                 </button>
               </form>
 
-              <label className="catalog_page_check">
+              {filterableSpecs.length ? (
+                <div className="catalog_page_filter_block catalog_page_spec_filters">
+                  <h2>Характеристики</h2>
+                  {filterableSpecs.map(({ specification, kind, options }) => {
+                    const currentValue = searchParams.get(`${specFilterPrefix}${specification.key}`) ?? "";
+                    const selectedValues = getSelectedSpecValues(searchParams, specification);
+                    const selectedOptionsCount = options.filter((option) => selectedValues.includes(option.value)).length;
+                    const allOptionsSelected = options.length > 0 && selectedOptionsCount === options.length;
+                    const [rangeFrom = "", rangeTo = ""] = kind === "range" && currentValue.includes("..") ? currentValue.split("..") : ["", ""];
+
+                    return (
+                      <details className="catalog_page_spec_group" key={specification.id} open>
+                        <summary>
+                          <ChevronUp />
+                          <span>
+                            {specification.name}
+                            {specification.unit ? ` (${getSpecUnit(specification)})` : ""}
+                          </span>
+                        </summary>
+
+                        {kind === "options" ? (
+                          <div className="catalog_page_spec_options">
+                            {options.length > 1 ? (
+                              <label className="catalog_page_check catalog_page_check__compact">
+                                <input
+                                  type="checkbox"
+                                  checked={allOptionsSelected}
+                                  onChange={(event) => updateAllSpecOptions(specification, options, event.target.checked)}
+                                />
+                                <span>Выбрать все</span>
+                              </label>
+                            ) : null}
+                            {options.map((option) => (
+                              <label className="catalog_page_check catalog_page_check__compact" key={option.value}>
+                                <input
+                                  type="checkbox"
+                                  value={option.value}
+                                  checked={selectedValues.includes(option.value)}
+                                  onChange={(event) => updateSpecFilter(specification, option.value, event.target.checked)}
+                                />
+                                <span>{option.label}</span>
+                                <small>{option.count}</small>
+                              </label>
+                            ))}
+                          </div>
+                        ) : null}
+
+                        {kind === "range" ? (
+                          <>
+                            <form className="catalog_page_range_form" onSubmit={(event) => handleRangeSubmit(event, specification)}>
+                              <input name="rangeFrom" type="number" step="0.01" placeholder="от 5.45" defaultValue={rangeFrom} />
+                              <input name="rangeTo" type="number" step="0.01" placeholder="до 10.2" defaultValue={rangeTo} />
+                              <button type="submit" aria-label={`Применить ${specification.name}`}>
+                                <Check />
+                              </button>
+                            </form>
+                            <div className="catalog_page_range_options">
+                              <label className="catalog_page_radio">
+                                <input
+                                  type="radio"
+                                  checked={!currentValue}
+                                  onChange={() => updateParams({ [`${specFilterPrefix}${specification.key}`]: undefined })}
+                                />
+                                <span>Все</span>
+                              </label>
+                              {options.map((option) => (
+                                <label className="catalog_page_radio" key={option.value}>
+                                  <input
+                                    type="radio"
+                                    value={option.value}
+                                    checked={currentValue === option.value}
+                                    onChange={(event) => updateSpecFilter(specification, option.value, event.target.checked, false)}
+                                  />
+                                  <span>{option.label}</span>
+                                  <small>{option.count}</small>
+                                </label>
+                              ))}
+                            </div>
+                          </>
+                        ) : null}
+
+                        {kind === "boolean" ? (
+                          <label className="catalog_page_check catalog_page_check__compact">
+                            <input
+                              type="checkbox"
+                              checked={currentValue === "true"}
+                              onChange={(event) => updateSpecFilter(specification, "true", event.target.checked, false)}
+                            />
+                            <span>Да</span>
+                          </label>
+                        ) : null}
+                      </details>
+                    );
+                  })}
+                </div>
+              ) : null}
+
+              <label className="catalog_page_check catalog_page_check__availability">
                 <input
                   type="checkbox"
                   checked={inStock}
@@ -589,19 +957,7 @@ export function CatalogPage() {
                     ))}
                   </div>
 
-                  <div className="catalog_page_pagination" aria-label="Пагинация">
-                    <button type="button" disabled={page <= 1} onClick={() => updateParams({ page: page - 1 }, false)}>
-                      <ChevronLeft />
-                      Назад
-                    </button>
-                    <span>
-                      {page} / {pages}
-                    </span>
-                    <button type="button" disabled={page >= pages} onClick={() => updateParams({ page: page + 1 }, false)}>
-                      Вперед
-                      <ArrowRight />
-                    </button>
-                  </div>
+                  <CatalogPagination page={page} pages={pages} onChange={(nextPage) => updateParams({ page: nextPage }, false)} />
                 </>
               ) : null}
             </section>

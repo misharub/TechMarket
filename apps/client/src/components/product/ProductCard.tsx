@@ -1,6 +1,7 @@
 import { Scale, ShoppingCart, Star } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAddToCart } from "../../lib/cart-hooks";
+import { addCompareProductId, getCompareProductIds, removeCompareProductId, subscribeCompareProducts } from "../../lib/compare-store";
 import { resolveUploadUrl, type Product } from "../../lib/products-api";
 import "./ProductCard.css";
 
@@ -66,6 +67,12 @@ export function ProductCard({ product, view = "grid" }: { product: Product; view
   const discountPercent = getDiscountPercent(product);
   const hasRating = product.rating.count > 0;
   const { addProduct, isPending } = useAddToCart();
+  const [isCompared, setIsCompared] = useState(() => getCompareProductIds().includes(product.id));
+
+  useEffect(
+    () => subscribeCompareProducts((productIds) => setIsCompared(productIds.includes(product.id))),
+    [product.id],
+  );
 
   return (
     <article className={`product-card product-card--${view}`}>
@@ -107,7 +114,22 @@ export function ProductCard({ product, view = "grid" }: { product: Product; view
             <ShoppingCart className="product-card_action-icon" />
             <span>{isPending ? "Добавляем..." : "В корзину"}</span>
           </button>
-          <button className="product-card_compare" type="button" aria-label={`Сравнить ${product.title}`}>
+          <button
+            className={isCompared ? "product-card_compare product-card_compare--active" : "product-card_compare"}
+            type="button"
+            aria-label={`Сравнить ${product.title}`}
+            aria-pressed={isCompared}
+            onClick={() => {
+              if (isCompared) {
+                removeCompareProductId(product.id);
+                setIsCompared(false);
+                return;
+              }
+
+              addCompareProductId(product.id);
+              setIsCompared(true);
+            }}
+          >
             <Scale className="product-card_action-icon" />
           </button>
         </div>

@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import techMarketMark from "../../assets/techmarket-mark.svg";
 import { useAuthStore } from "../../lib/auth-store";
 import { useCartSummary } from "../../lib/cart-hooks";
+import { getCompareProductIds, subscribeCompareProducts } from "../../lib/compare-store";
 import { CatalogNavigation } from "./CatalogNavigation";
 import "./Header.css";
 
@@ -88,7 +89,11 @@ function HeaderActions() {
   const user = useAuthStore((state) => state.user);
   const signOut = useAuthStore((state) => state.signOut);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [compareProductIds, setCompareProductIds] = useState<string[]>(() => getCompareProductIds());
   const cartSummary = useCartSummary();
+
+  useEffect(() => subscribeCompareProducts(setCompareProductIds), []);
+
   const actions: HeaderAction[] = [
     ...baseHeaderActions,
     ...(user?.role === "ADMIN"
@@ -114,7 +119,12 @@ function HeaderActions() {
   return (
     <div className="header_actions" data-name="headerActions">
       {actions.map((action) =>
-        action.label === "Корзина" ? (
+        action.href === "/compare" ? (
+          <div className="header_compare-action" key={action.label}>
+            <HeaderActionButton action={action} />
+            {compareProductIds.length ? <span>{compareProductIds.length}</span> : null}
+          </div>
+        ) : action.href === "/cart" ? (
           <div className="header_cart-action" key={action.label}>
             <HeaderActionButton action={action} />
             {cartSummary?.totalQuantity ? <span>{cartSummary.totalQuantity}</span> : null}

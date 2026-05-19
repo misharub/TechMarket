@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { BadgeCheck, Heart, Scale, ShoppingCart, Star, Store, Truck } from "lucide-react";
+import { BadgeCheck, ChevronLeft, ChevronRight, Heart, Scale, ShoppingCart, Star, Store, Truck } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAddToCart } from "../../lib/cart-hooks";
@@ -81,7 +81,15 @@ export function ProductPage() {
   }
 
   const images = product.images.map(resolveUploadUrl).filter((image): image is string => Boolean(image));
-  const activeImage = images[activeImageIndex] ?? null;
+  const activeImage = images[activeImageIndex] ?? images[0] ?? null;
+  const showGalleryArrows = images.length > 1;
+  const showPreviousImage = () => {
+    setActiveImageIndex((current) => (current - 1 + images.length) % images.length);
+  };
+  const showNextImage = () => {
+    setActiveImageIndex((current) => (current + 1) % images.length);
+  };
+
   return (
     <main className="product_page">
       <div className="product_page_inner">
@@ -96,7 +104,27 @@ export function ProductPage() {
         <section className="product_page_hero">
           <div className="product_page_gallery">
             <div className="product_page_media">
+              {showGalleryArrows ? (
+                <button
+                  className="product_page_gallery_arrow product_page_gallery_arrow__prev"
+                  type="button"
+                  aria-label="Предыдущее фото"
+                  onClick={showPreviousImage}
+                >
+                  <ChevronLeft />
+                </button>
+              ) : null}
               {activeImage ? <img src={activeImage} alt={product.title} /> : <span>{product.brand.name.slice(0, 2).toUpperCase()}</span>}
+              {showGalleryArrows ? (
+                <button
+                  className="product_page_gallery_arrow product_page_gallery_arrow__next"
+                  type="button"
+                  aria-label="Следующее фото"
+                  onClick={showNextImage}
+                >
+                  <ChevronRight />
+                </button>
+              ) : null}
             </div>
             {images.length > 1 ? (
               <div className="product_page_thumbnails" aria-label="Изображения товара">

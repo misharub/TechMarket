@@ -232,9 +232,9 @@ function ProductRow({ product, selected, onToggle }: { product: Product; selecte
       <td>{formatDate(product.updatedAt)}</td>
       <td>
         <Link
-          aria-label="????????????? ?????"
+          aria-label="Редактировать товар"
           className="admin_icon_button"
-          title="????????????? ?????"
+          title="Редактировать товар"
           to={`/admin/products/${product.id}/edit`}
         >
           <Pencil size={16} />

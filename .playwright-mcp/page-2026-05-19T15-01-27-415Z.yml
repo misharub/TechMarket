@@ -1,0 +1,100 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - link "Перейти на главную страницу" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]:
+          - img [ref=e9]
+          - generic [ref=e10]: TechMarket
+      - generic [ref=e11]:
+        - link "Контакты" [ref=e12] [cursor=pointer]:
+          - /url: /contacts
+          - img [ref=e14]
+          - generic [ref=e16]: Контакты
+        - link "Найти салон" [ref=e17] [cursor=pointer]:
+          - /url: /stores
+          - img [ref=e19]
+          - generic [ref=e22]: Найти салон
+        - link "Сравнение" [ref=e23] [cursor=pointer]:
+          - /url: /compare
+          - img [ref=e25]
+          - generic [ref=e29]: Сравнение
+        - link "Корзина" [ref=e31] [cursor=pointer]:
+          - /url: /cart
+          - img [ref=e33]
+          - generic [ref=e39]: Корзина
+        - link "Войти" [ref=e40] [cursor=pointer]:
+          - /url: /login
+          - img [ref=e42]
+          - generic [ref=e45]: Войти
+      - generic [ref=e47]:
+        - searchbox "Поиск" [ref=e48]
+        - button "Найти" [ref=e49] [cursor=pointer]:
+          - img [ref=e50]
+  - main [ref=e54]:
+    - generic [ref=e55]:
+      - navigation "Навигация" [ref=e56]:
+        - link "Главная" [ref=e57] [cursor=pointer]:
+          - /url: /
+        - img [ref=e58]
+        - link "Каталог" [ref=e60] [cursor=pointer]:
+          - /url: /catalog
+      - heading "Каталог(0)" [level=1] [ref=e63]:
+        - text: Каталог(
+        - strong [ref=e64]: "0"
+        - text: )
+  - contentinfo [ref=e76]:
+    - generic [ref=e77]:
+      - generic [ref=e79]:
+        - navigation "Компания" [ref=e80]:
+          - heading "Компания" [level=2] [ref=e81]
+          - list [ref=e82]:
+            - listitem [ref=e83]:
+              - link "О компании" [ref=e84] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e85]:
+              - link "Контакты" [ref=e86] [cursor=pointer]:
+                - /url: /contacts
+            - listitem [ref=e87]:
+              - link "Вакансии" [ref=e88] [cursor=pointer]:
+                - /url: /careers
+        - navigation "Покупателям" [ref=e89]:
+          - heading "Покупателям" [level=2] [ref=e90]
+          - list [ref=e91]:
+            - listitem [ref=e92]:
+              - link "Как оформить заказ" [ref=e93] [cursor=pointer]:
+                - /url: /help#how_to_order
+            - listitem [ref=e94]:
+              - link "Оплата и Доставка" [ref=e95] [cursor=pointer]:
+                - /url: /help#payment_and_delivery
+            - listitem [ref=e96]:
+              - link "Гарантия и возврат" [ref=e97] [cursor=pointer]:
+                - /url: /help#warranty_and_return
+            - listitem [ref=e98]:
+              - link "Политика конфиденциальности" [ref=e99] [cursor=pointer]:
+                - /url: /help#privacy_policy
+        - region "Связь" [ref=e100]:
+          - heading "Связь" [level=2] [ref=e101]
+          - generic "Социальные сети" [ref=e102]:
+            - link "Telegram" [ref=e103] [cursor=pointer]:
+              - /url: https://t.me/
+              - img [ref=e104]
+            - link "Чат" [ref=e107] [cursor=pointer]:
+              - /url: /contacts
+              - img [ref=e108]
+            - link "Видео" [ref=e110] [cursor=pointer]:
+              - /url: https://youtube.com/
+              - img [ref=e111]
+          - list [ref=e114]:
+            - listitem [ref=e115]:
+              - img [ref=e116]
+              - link "+375 12 345-67-89" [ref=e118] [cursor=pointer]:
+                - /url: tel:+375123456789
+            - listitem [ref=e119]:
+              - img [ref=e120]
+              - generic [ref=e123]: Минск
+            - listitem [ref=e124]:
+              - img [ref=e125]
+              - link "support@techmarket.by" [ref=e128] [cursor=pointer]:
+                - /url: mailto:support@techmarket.by
+      - paragraph [ref=e130]: 2024-2026 © TechMarket. Интернет-магазин техники для дипломного проекта.
