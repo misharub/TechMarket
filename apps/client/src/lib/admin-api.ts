@@ -7,6 +7,85 @@ export type CatalogStats = {
   brandsCount: number;
 };
 
+export type AdminOrderStatus = "NEW" | "PROCESSING" | "CONFIRMED" | "SHIPPED" | "COMPLETED" | "CANCELLED";
+
+export type AdminStatsProductSummary = {
+  id: string;
+  title: string;
+  sku: string;
+  images: string[];
+};
+
+export type AdminStatsLowStockProduct = AdminStatsProductSummary & {
+  stock: number;
+  slug: string;
+  price: string | number;
+  oldPrice: string | number | null;
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  brand: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+};
+
+export type AdminStatsTopProduct = {
+  product: AdminStatsProductSummary;
+  totalQuantity: number;
+  totalRevenue: number;
+};
+
+export type AdminStatsOrderItem = {
+  id: string;
+  quantity: number;
+  price: string | number;
+  product: AdminStatsProductSummary;
+};
+
+export type AdminStatsOrder = {
+  id: string;
+  orderNumber: string | null;
+  status: AdminOrderStatus;
+  totalPrice: string | number;
+  createdAt: string;
+  customerName: string;
+  customerEmail: string;
+  user: Pick<AuthUser, "id" | "email" | "firstName" | "lastName">;
+  items: AdminStatsOrderItem[];
+};
+
+export type AdminDashboardStats = {
+  products: {
+    total: number;
+    active: number;
+    inactive: number;
+    lowStock: number;
+    lowStockItems: AdminStatsLowStockProduct[];
+  };
+  orders: {
+    total: number;
+    new: number;
+    byStatus: Record<AdminOrderStatus, number>;
+    latest: AdminStatsOrder[];
+  };
+  users: {
+    total: number;
+    blocked: number;
+  };
+  catalog: {
+    brands: number;
+    categories: number;
+  };
+  sales: {
+    totalRevenue: number;
+    topProducts: AdminStatsTopProduct[];
+  };
+};
+
 export type UploadedImage = {
   url: string;
   filename: string;
@@ -17,6 +96,10 @@ export type UploadedImage = {
 
 export function getCatalogStats() {
   return apiGet<CatalogStats>("/admin/stats/catalog");
+}
+
+export function getAdminDashboardStats() {
+  return apiGet<AdminDashboardStats>("/admin/stats");
 }
 
 export type AdminUser = AuthUser;

@@ -586,6 +586,18 @@ export function CatalogPage() {
     enabled: isProductListing && (!brandSlug || !brandsQuery.isLoading),
   });
 
+  const catalogLandingCountQuery = useQuery({
+    queryKey: ["products", "catalog-landing-count", isCatalogRoot ? "root" : activeCategory?.slug],
+    queryFn: () =>
+      getProducts({
+        categorySlug: isCatalogRoot ? undefined : activeCategory?.slug,
+        page: 1,
+        limit: 1,
+        sort: "newest",
+      }),
+    enabled: isCatalogRoot || isRootCategoryLanding,
+  });
+
   const facetProductsQuery = useQuery({
     queryKey: ["products", "catalog-facets", categorySlug, collectionSlug, q, brandId, priceFrom, priceTo, inStock],
     queryFn: () =>
@@ -670,7 +682,8 @@ export function CatalogPage() {
     updateParams({ [`${specFilterPrefix}${specification.key}`]: from || to ? `${from}..${to}` : undefined });
   };
 
-  const total = productsQuery.data?.total ?? 0;
+  const total = isProductListing ? (productsQuery.data?.total ?? 0) : (catalogLandingCountQuery.data?.total ?? 0);
+  const isTotalLoading = isProductListing ? productsQuery.isLoading : catalogLandingCountQuery.isLoading;
   const pages = productsQuery.data?.pages ?? 1;
   const products = productsQuery.data?.items ?? [];
   const facetProducts = facetProductsQuery.data?.items ?? products;
@@ -694,7 +707,7 @@ export function CatalogPage() {
 
         <section className="catalog_page_header">
           <div>
-            <h1>{title}(<strong className="max_h_1">{productsQuery.isLoading ? "..." : total}</strong>)</h1>
+            <h1>{title}(<strong className="max_h_1">{isTotalLoading ? "..." : total}</strong>)</h1>
           </div>
         </section>
 

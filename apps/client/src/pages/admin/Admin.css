@@ -95,15 +95,227 @@
   gap: 16px;
 }
 
+.admin_dashboard_header {
+  align-items: flex-start;
+}
+
+.admin_eyebrow {
+  margin: 0 0 4px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .admin_stat {
+  display: grid;
+  gap: 6px;
   padding: 18px;
+}
+
+.admin_stat span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #475569;
+  font-weight: 700;
+}
+
+.admin_stat svg {
+  width: 20px;
+  height: 20px;
+  color: #0f766e;
+}
+
+.admin_stat small {
+  color: #64748b;
+  line-height: 1.35;
+}
+
+.admin_stat_primary {
+  border-color: #99f6e4;
+  background: linear-gradient(135deg, #ecfeff 0%, #ffffff 62%);
 }
 
 .admin_stat_value {
   display: block;
-  margin-top: 8px;
   font-size: 28px;
   font-weight: 700;
+}
+
+.admin_stats_dashboard {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.admin_dashboard_grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.75fr);
+  gap: 16px;
+}
+
+.admin_dashboard_panel {
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.admin_dashboard_panel .admin_panel_title a {
+  color: #0f766e;
+  font-size: 13px;
+}
+
+.admin_status_rows,
+.admin_ranked_list,
+.admin_stock_list {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.admin_status_row {
+  display: grid;
+  grid-template-columns: 138px minmax(0, 1fr) 42px;
+  gap: 10px;
+  align-items: center;
+  color: #334155;
+}
+
+.admin_status_row div {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.admin_status_row i {
+  display: block;
+  height: 100%;
+  min-width: 4px;
+  border-radius: inherit;
+  background: #0f766e;
+}
+
+.admin_status_row strong,
+.admin_ranked_item b,
+.admin_stock_item strong {
+  color: #0f172a;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin_ranked_item {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 10px;
+}
+
+.admin_ranked_item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.admin_ranked_item b {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #f1f5f9;
+}
+
+.admin_ranked_item div {
+  display: grid;
+  gap: 3px;
+}
+
+.admin_ranked_item strong,
+.admin_stock_item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin_ranked_item span,
+.admin_muted {
+  color: #64748b;
+}
+
+.admin_dashboard_table {
+  width: 100%;
+  min-width: 720px;
+}
+
+.admin_order_status {
+  width: max-content;
+}
+
+.admin_order_status_new {
+  color: #0f766e;
+  background: #ccfbf1;
+}
+
+.admin_order_status_processing,
+.admin_order_status_confirmed {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.admin_order_status_shipped {
+  color: #7c3aed;
+  background: #ede9fe;
+}
+
+.admin_order_status_completed {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.admin_order_status_cancelled {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.admin_stock_item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 11px;
+  color: #0f172a;
+  background: #f8fafc;
+}
+
+.admin_stock_item:hover {
+  border-color: #0f766e;
+}
+
+.admin_dashboard_skeleton {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin_dashboard_skeleton span {
+  height: 106px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #e2e8f0 0%, #f8fafc 50%, #e2e8f0 100%);
+  background-size: 200% 100%;
+  animation: admin_skeleton_shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes admin_skeleton_shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
 }
 
 .admin_table_wrap {
@@ -1354,9 +1566,16 @@
   }
 
   .admin_stats,
+  .admin_stats_dashboard,
+  .admin_dashboard_grid,
+  .admin_dashboard_skeleton,
   .admin_form_grid,
   .admin_option_row,
   .admin_product_commerce_grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin_status_row {
     grid-template-columns: 1fr;
   }
 
