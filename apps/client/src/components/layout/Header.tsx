@@ -10,7 +10,7 @@ import {
   User,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import techMarketMark from "../../assets/techmarket-mark.svg";
 import { useAuthStore } from "../../lib/auth-store";
@@ -234,17 +234,30 @@ export function Header() {
   const [mobileCatalogOpen, setMobileCatalogOpen] = useState(false);
   const [compactCatalogMode, setCompactCatalogMode] = useState(false);
   const [desktopCatalogMode, setDesktopCatalogMode] = useState(false);
+  const compactCatalogModeRef = useRef(false);
   const hoverCatalogMode = compactCatalogMode && desktopCatalogMode;
 
   useEffect(() => {
     const updateCompactMode = () => {
-      setCompactCatalogMode((isCompact) => {
-        if (isCompact) {
-          return window.scrollY > 36;
-        }
+      const scrollY = window.scrollY;
+      const shouldBeCompact = compactCatalogModeRef.current ? scrollY > 4 : scrollY > 132;
 
-        return window.scrollY > 132;
-      });
+      if (shouldBeCompact === compactCatalogModeRef.current) {
+        return;
+      }
+
+      compactCatalogModeRef.current = shouldBeCompact;
+      setCompactCatalogMode(shouldBeCompact);
+
+      if (!shouldBeCompact && scrollY <= 4) {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            if (window.scrollY < 80) {
+              window.scrollTo({ top: 0, behavior: "auto" });
+            }
+          });
+        });
+      }
     };
 
     updateCompactMode();

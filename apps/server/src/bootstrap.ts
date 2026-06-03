@@ -1,9 +1,11 @@
-import { ValidationPipe } from "@nestjs/common";
+import { BadRequestException, ValidationPipe } from "@nestjs/common";
 import type { INestApplication } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import cookieParser from "cookie-parser";
 import express from "express";
 import { join } from "node:path";
+import { LocalizedExceptionFilter } from "./common/errors/localized-exception.filter";
+import { localizeValidationErrors } from "./common/errors/error-localization";
 import { createRateLimitMiddleware, securityHeaders } from "./security/security.middleware";
 
 export function configureApp(app: INestApplication) {
@@ -21,6 +23,7 @@ export function configureApp(app: INestApplication) {
         credentials: true,
     });
     app.getHttpAdapter().getInstance().disable("x-powered-by");
+    app.useGlobalFilters(new LocalizedExceptionFilter());
 
     app.use(securityHeaders);
     app.use(["/api/auth/login", "/api/auth/register", "/api/auth/refresh"], createRateLimitMiddleware({
@@ -37,6 +40,7 @@ export function configureApp(app: INestApplication) {
             whitelist: true,
             forbidNonWhitelisted: true,
             transform: true,
+            exceptionFactory: (errors) => new BadRequestException(localizeValidationErrors(errors)),
         }),
     );
 

@@ -36,8 +36,8 @@ export function createRateLimitMiddleware(options: { windowMs: number; max: numb
         if (current.count > options.max) {
             response.status(429).json({
                 statusCode: 429,
-                message: "Too many requests, please try again later",
-                error: "Too Many Requests",
+                message: "Слишком много запросов. Попробуйте позже",
+                error: "Слишком много запросов",
             });
             return;
         }

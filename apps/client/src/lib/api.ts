@@ -14,24 +14,30 @@ type ApiRequestOptions = Omit<RequestInit, "body"> & {
 
 async function apiRequest<TResponse>(path: string, options: ApiRequestOptions = {}): Promise<TResponse> {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const response = await fetch(`${apiBaseUrl}${normalizedPath}`, {
-    ...options,
-    credentials: "include",
-    headers: {
-      ...(options.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-      ...options.headers,
-    },
-    body:
-      options.body === undefined
-        ? undefined
-        : options.body instanceof FormData
-          ? options.body
-          : JSON.stringify(options.body),
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${apiBaseUrl}${normalizedPath}`, {
+      ...options,
+      credentials: "include",
+      headers: {
+        ...(options.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        ...options.headers,
+      },
+      body:
+        options.body === undefined
+          ? undefined
+          : options.body instanceof FormData
+            ? options.body
+            : JSON.stringify(options.body),
+    });
+  } catch {
+    throw new Error("Не удалось подключиться к серверу. Проверьте, что backend запущен.");
+  }
 
   if (!response.ok) {
-    let message = `API request failed: ${response.status} ${response.statusText}`;
+    let message = `Ошибка запроса: ${response.status} ${response.statusText || "сервер вернул ошибку"}`;
 
     try {
       const payload = (await response.json()) as { message?: string | string[] };

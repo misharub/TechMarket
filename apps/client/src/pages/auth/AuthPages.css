@@ -2,9 +2,9 @@
   position: relative;
   min-height: calc(100vh - 96px);
   display: grid;
-  place-items: center;
+  place-items: start center;
   overflow: hidden;
-  padding: 40px 20px;
+  padding: 28px 20px 72px;
   background:
     radial-gradient(circle at top left, rgba(15, 118, 110, 0.16), transparent 34%),
     linear-gradient(135deg, #f8fbfb 0%, #ffffff 54%, #eef7f5 100%);
@@ -27,12 +27,13 @@
   width: min(1040px, 100%);
   grid-template-columns: minmax(280px, 1fr) minmax(360px, 440px);
   gap: 40px;
-  align-items: center;
+  align-items: start;
 }
 
 .auth_intro {
   display: grid;
   gap: 18px;
+  padding-top: clamp(56px, 12vh, 128px);
 }
 
 .auth_brand {
@@ -199,6 +200,23 @@
   box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
 }
 
+.auth_field input[aria-invalid="true"] {
+  border-color: #dc2626;
+  background: #fff7f7;
+}
+
+.auth_field input[aria-invalid="true"]:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
+}
+
+.auth_field-error {
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
 .auth_error {
   margin: 0;
   color: #b91c1c;
@@ -258,6 +276,7 @@
   .auth_intro {
     text-align: center;
     justify-items: center;
+    padding-top: 0;
   }
 
   .auth_intro p {

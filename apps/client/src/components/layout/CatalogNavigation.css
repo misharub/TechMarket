@@ -67,10 +67,8 @@
   background: transparent;
   z-index: 2;
   opacity: 0;
-  transform: translateY(-8px);
-  transition:
-    opacity 200ms ease,
-    transform 200ms ease;
+  transform: translateY(0);
+  transition: opacity 160ms ease;
   pointer-events: none;
 }
 
@@ -324,7 +322,6 @@
 
   .catalog--open .catalog_mega {
     opacity: 1;
-    transform: translateY(0);
     pointer-events: none;
   }
 
@@ -349,6 +346,7 @@
     border-radius: 0 0 12px 12px;
     background: #111827;
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
     transform: translateY(0);
     box-shadow: 0 22px 52px rgba(15, 23, 42, 0.32);
@@ -360,10 +358,11 @@
     left: max(32px, calc((100% - 1536px) / 2 + 32px));
     display: block;
     width: 360px;
-    border: 1px solid #1f2937;
+    border: 0 solid transparent;
     border-radius: 0 0 12px 12px;
     background: #111827;
-    box-shadow: 0 22px 52px rgba(15, 23, 42, 0.32);
+    box-shadow: none;
+    visibility: hidden;
   }
 
   .catalog--compact .catalog_mobile-header {
