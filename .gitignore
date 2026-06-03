@@ -7,6 +7,31 @@ docs/tmp
 /uploads/
 apps/*/node_modules
 apps/*/dist
+
+# Local browser/test artifacts
+.playwright-mcp/
+playwright-report/
+test-results/
+*-screenshot.png
+*-preview.png
+*-check.png
+*-fixed.png
+
+# Local document/export scratch files
+_citation_work/
+_tmp_*
+lo_profile*/
+pdf_pages/
+diploma-assets/
+*.pdf
+*.docx
+
+# Local logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # Keep environment variables out of version control
 .env
 
