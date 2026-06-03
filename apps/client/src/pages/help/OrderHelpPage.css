@@ -1,10 +1,10 @@
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 90px;
+  scroll-padding-top: 180px;
 }
 
 .help_section {
-  scroll-margin-top: 90px; /* Компенсация для фиксированного хедера */
+  scroll-margin-top: 180px;
 }
 
 #order_help_page_title {
@@ -22,10 +22,14 @@ html {
 }
 
 .help_navigation {
+  position: sticky;
+  top: 0;
+  z-index: 30;
   background: #f5f5f5;
   padding: 1.5rem;
   border-radius: 8px;
   margin-bottom: 2rem;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
 .help_navigation ul {
@@ -170,4 +174,45 @@ html {
 
 .accordion_content {
   padding: 0 20px 20px 20px;
+}
+
+@media (min-width: 1024px) {
+  .help_navigation {
+    top: 88px;
+  }
+}
+
+@media (min-width: 1280px) {
+  html {
+    scroll-padding-top: 170px;
+  }
+
+  .help_section {
+    scroll-margin-top: 170px;
+  }
+
+  .help_navigation {
+    top: 78px;
+  }
+}
+
+@media (max-width: 640px) {
+  html {
+    scroll-padding-top: 120px;
+  }
+
+  .help_section {
+    scroll-margin-top: 120px;
+  }
+
+  .help_navigation {
+    padding: 1rem;
+    margin-right: -10px;
+    margin-left: -10px;
+    border-radius: 0;
+  }
+
+  .help_navigation ul {
+    gap: 1rem;
+  }
 }

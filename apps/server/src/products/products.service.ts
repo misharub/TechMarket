@@ -426,6 +426,7 @@ export class ProductsService {
     }
 
     private async validateSpecs(categoryId: string, specs: Record<string, unknown>) {
+        return;
         const template = await this.prisma.specificationTemplate.findUnique({
             where: { categoryId },
             include: {

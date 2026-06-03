@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="2450" viewBox="0 0 1500 2450">
+  <defs>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 12 7 L 0 14" fill="none" stroke="#111111" stroke-width="1.2" stroke-linecap="butt" stroke-linejoin="miter"/>
+    </marker>
+    <style>
+      .text { font-family: "Times New Roman", serif; font-size: 27px; fill: #111111; dominant-baseline: middle; }
+      .small { font-family: "Times New Roman", serif; font-size: 24px; fill: #111111; dominant-baseline: middle; }
+      .shape { fill: #ffffff; stroke: #111111; stroke-width: 1.8; }
+      .line { stroke: #111111; stroke-width: 1.6; fill: none; marker-end: url(#arrow); stroke-linecap: butt; stroke-linejoin: miter; }
+      .caption-bg { fill: #ffffff; stroke: none; }
+    </style>
+  </defs>
+
+  <!-- Terminator -->
+  <rect x="570" y="60" width="360" height="80" rx="40" ry="40" class="shape"/>
+  <text x="750" y="100" text-anchor="middle" class="text">Начало</text>
+
+  <!-- Process -->
+  <rect x="560" y="200" width="380" height="90" class="shape"/>
+  <text x="750" y="245" text-anchor="middle" class="text">Переход в каталог</text>
+
+  <rect x="560" y="350" width="380" height="90" class="shape"/>
+  <text x="750" y="379" text-anchor="middle" class="text">Выбор категории</text>
+  <text x="750" y="411" text-anchor="middle" class="text">или поиск товара</text>
+
+  <rect x="560" y="500" width="380" height="90" class="shape"/>
+  <text x="750" y="545" text-anchor="middle" class="text">Просмотр карточки товара</text>
+
+  <!-- Decision -->
+  <path d="M 750 660 L 980 745 L 750 830 L 520 745 Z" class="shape"/>
+  <text x="750" y="729" text-anchor="middle" class="text">Товар доступен</text>
+  <text x="750" y="761" text-anchor="middle" class="text">для заказа?</text>
+
+  <!-- Process -->
+  <rect x="560" y="900" width="380" height="90" class="shape"/>
+  <text x="750" y="945" text-anchor="middle" class="text">Добавление в корзину</text>
+
+  <!-- Decision -->
+  <path d="M 750 1060 L 980 1145 L 750 1230 L 520 1145 Z" class="shape"/>
+  <text x="750" y="1145" text-anchor="middle" class="text">Оформить заказ?</text>
+
+  <!-- Manual input / data symbol -->
+  <path d="M 610 1300 L 960 1300 L 890 1390 L 540 1390 Z" class="shape"/>
+  <text x="750" y="1329" text-anchor="middle" class="text">Ввод контактных</text>
+  <text x="750" y="1361" text-anchor="middle" class="text">данных</text>
+
+  <path d="M 610 1450 L 960 1450 L 890 1540 L 540 1540 Z" class="shape"/>
+  <text x="750" y="1479" text-anchor="middle" class="text">Выбор доставки</text>
+  <text x="750" y="1511" text-anchor="middle" class="text">и оплаты</text>
+
+  <!-- Decision -->
+  <path d="M 750 1610 L 980 1695 L 750 1780 L 520 1695 Z" class="shape"/>
+  <text x="750" y="1695" text-anchor="middle" class="text">Данные корректны?</text>
+
+  <!-- Process -->
+  <rect x="1080" y="1650" width="330" height="90" class="shape"/>
+  <text x="1245" y="1679" text-anchor="middle" class="text">Исправление</text>
+  <text x="1245" y="1711" text-anchor="middle" class="text">данных</text>
+
+  <rect x="1080" y="700" width="330" height="90" class="shape"/>
+  <text x="1245" y="729" text-anchor="middle" class="text">Возврат</text>
+  <text x="1245" y="761" text-anchor="middle" class="text">к каталогу</text>
+
+  <rect x="90" y="1100" width="330" height="90" class="shape"/>
+  <text x="255" y="1129" text-anchor="middle" class="text">Продолжение</text>
+  <text x="255" y="1161" text-anchor="middle" class="text">покупок</text>
+
+  <rect x="560" y="1850" width="380" height="90" class="shape"/>
+  <text x="750" y="1879" text-anchor="middle" class="text">Создание заказа</text>
+  <text x="750" y="1911" text-anchor="middle" class="text">в системе</text>
+
+  <!-- Stored data -->
+  <path d="M 560 2000 C 560 1975 940 1975 940 2000 L 940 2090 C 940 2115 560 2115 560 2090 Z" class="shape"/>
+  <path d="M 560 2000 C 560 2025 940 2025 940 2000" class="shape"/>
+  <text x="750" y="2040" text-anchor="middle" class="text">Сохранение заказа</text>
+  <text x="750" y="2072" text-anchor="middle" class="text">в базе данных</text>
+
+  <rect x="560" y="2150" width="380" height="90" class="shape"/>
+  <text x="750" y="2179" text-anchor="middle" class="text">Обработка заказа</text>
+  <text x="750" y="2211" text-anchor="middle" class="text">администратором</text>
+
+  <rect x="570" y="2300" width="360" height="80" rx="40" ry="40" class="shape"/>
+  <text x="750" y="2340" text-anchor="middle" class="text">Конец</text>
+
+  <!-- Main flow -->
+  <path d="M 750 140 L 750 200" class="line"/>
+  <path d="M 750 290 L 750 350" class="line"/>
+  <path d="M 750 440 L 750 500" class="line"/>
+  <path d="M 750 590 L 750 660" class="line"/>
+  <path d="M 750 830 L 750 900" class="line"/>
+  <path d="M 750 990 L 750 1060" class="line"/>
+  <path d="M 750 1230 L 750 1300" class="line"/>
+  <path d="M 750 1390 L 750 1450" class="line"/>
+  <path d="M 750 1540 L 750 1610" class="line"/>
+  <path d="M 750 1780 L 750 1850" class="line"/>
+  <path d="M 750 1940 L 750 1975" class="line"/>
+  <path d="M 750 2115 L 750 2150" class="line"/>
+  <path d="M 750 2240 L 750 2300" class="line"/>
+
+  <!-- Branches -->
+  <path d="M 980 745 L 1080 745" class="line"/>
+  <rect x="1010" y="710" width="50" height="30" class="caption-bg"/>
+  <text x="1035" y="735" text-anchor="middle" class="small">Нет</text>
+  <path d="M 1245 700 L 1245 395 L 940 395" class="line"/>
+
+  <rect x="780" y="850" width="40" height="30" class="caption-bg"/>
+  <text x="800" y="875" text-anchor="middle" class="small">Да</text>
+
+  <path d="M 520 1145 L 420 1145" class="line"/>
+  <rect x="450" y="1110" width="50" height="30" class="caption-bg"/>
+  <text x="475" y="1135" text-anchor="middle" class="small">Нет</text>
+  <path d="M 255 1100 L 255 395 L 560 395" class="line"/>
+
+  <rect x="780" y="1248" width="40" height="30" class="caption-bg"/>
+  <text x="800" y="1273" text-anchor="middle" class="small">Да</text>
+
+  <path d="M 980 1695 L 1080 1695" class="line"/>
+  <rect x="1010" y="1660" width="50" height="30" class="caption-bg"/>
+  <text x="1035" y="1685" text-anchor="middle" class="small">Нет</text>
+  <path d="M 1245 1650 L 1245 1345 L 960 1345" class="line"/>
+
+  <rect x="780" y="1800" width="40" height="30" class="caption-bg"/>
+  <text x="800" y="1825" text-anchor="middle" class="small">Да</text>
+</svg>

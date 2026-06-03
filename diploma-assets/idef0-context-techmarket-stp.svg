@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1000" viewBox="0 0 1700 1000">
+  <defs>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 12 7 L 0 14" fill="none" stroke="#111111" stroke-width="1.2" stroke-linecap="butt" stroke-linejoin="miter"/>
+    </marker>
+    <style>
+      .group { font-family: "Times New Roman", serif; font-size: 32px; fill: #111111; }
+      .label { font-family: "Times New Roman", serif; font-size: 26px; fill: #111111; }
+      .box-text { font-family: "Times New Roman", serif; font-size: 36px; font-weight: 700; fill: #111111; }
+      .node-id { font-family: "Times New Roman", serif; font-size: 28px; font-weight: 700; fill: #111111; }
+      .line { stroke: #111111; stroke-width: 1.6; fill: none; marker-end: url(#arrow); stroke-linecap: butt; stroke-linejoin: miter; }
+      .box { fill: #ffffff; stroke: #111111; stroke-width: 3; }
+    </style>
+  </defs>
+
+  <!-- Central function block -->
+  <rect x="560" y="360" width="590" height="250" class="box"/>
+  <text x="855" y="440" text-anchor="middle" class="box-text">Продажа бытовой техники</text>
+  <text x="855" y="492" text-anchor="middle" class="box-text">через интернет-магазин</text>
+  <text x="1112" y="580" text-anchor="end" class="node-id">A-0</text>
+
+  <!-- Inputs -->
+  <text x="85" y="345" class="group">Входы</text>
+  <text x="110" y="405" class="label">Данные о товарах</text>
+  <path d="M 80 430 L 560 430" class="line"/>
+  <text x="110" y="480" class="label">Данные пользователя</text>
+  <path d="M 80 505 L 560 505" class="line"/>
+  <text x="110" y="555" class="label">Выбранные товары и параметры заказа</text>
+  <path d="M 80 580 L 560 580" class="line"/>
+
+  <!-- Controls -->
+  <text x="850" y="70" text-anchor="middle" class="group">Управление</text>
+
+  <text x="625" y="125" text-anchor="middle" class="label">Правила оформления</text>
+  <text x="625" y="156" text-anchor="middle" class="label">заказа</text>
+  <path d="M 625 178 L 625 360" class="line"/>
+
+  <text x="780" y="205" text-anchor="middle" class="label">Права доступа</text>
+  <path d="M 780 228 L 780 360" class="line"/>
+
+  <text x="955" y="125" text-anchor="middle" class="label">Условия доставки</text>
+  <text x="955" y="156" text-anchor="middle" class="label">и оплаты</text>
+  <path d="M 955 178 L 955 360" class="line"/>
+
+  <text x="1110" y="205" text-anchor="middle" class="label">Правила применения</text>
+  <text x="1110" y="236" text-anchor="middle" class="label">промокодов</text>
+  <path d="M 1110 258 L 1110 360" class="line"/>
+
+  <!-- Outputs -->
+  <text x="1450" y="345" class="group">Выходы</text>
+  <text x="1200" y="405" class="label">Оформленный заказ</text>
+  <path d="M 1150 430 L 1620 430" class="line"/>
+  <text x="1200" y="480" class="label">Сведения о заказе</text>
+  <path d="M 1150 505 L 1620 505" class="line"/>
+  <text x="1200" y="555" class="label">Обновленные данные каталога и заказов</text>
+  <path d="M 1150 580 L 1620 580" class="line"/>
+
+  <!-- Mechanisms -->
+  <path d="M 645 860 L 645 610" class="line"/>
+  <path d="M 790 800 L 790 610" class="line"/>
+  <path d="M 935 860 L 935 610" class="line"/>
+  <path d="M 1080 800 L 1080 610" class="line"/>
+
+  <text x="645" y="910" text-anchor="middle" class="label">Покупатель</text>
+  <text x="790" y="850" text-anchor="middle" class="label">Администратор</text>
+  <text x="935" y="910" text-anchor="middle" class="label">Веб-приложение</text>
+  <text x="1080" y="850" text-anchor="middle" class="label">База данных</text>
+</svg>

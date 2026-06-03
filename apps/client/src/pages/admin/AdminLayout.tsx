@@ -4,16 +4,18 @@ import "./Admin.css";
 import { AdminToastViewport } from "./AdminToastViewport";
 
 const links = [
-  { to: "/admin/home-slider", label: "Главный слайдер" },
+  { to: "/admin", label: "Обзор" },
   { to: "/admin/orders", label: "Заказы" },
   { to: "/admin/users", label: "Пользователи" },
-  { to: "/admin", label: "Обзор" },
   { to: "/admin/categories", label: "Категории" },
   { to: "/admin/category-tree", label: "Дерево категорий" },
   { to: "/admin/products", label: "Товары" },
   { to: "/admin/specification-templates", label: "Шаблоны характеристик" },
   { to: "/admin/brands", label: "Бренды" },
+  { to: "/admin/home-slider", label: "Главный слайдер" },
 ];
+
+const inactiveLinks = ["Отзывы", "Раздел \"Покупателям\"", "Промокоды"];
 
 export function AdminLayout() {
   const signOut = useAuthStore((state) => state.signOut);
@@ -30,6 +32,11 @@ export function AdminLayout() {
             <NavLink key={link.to} to={link.to} end={link.to === "/admin"} className="admin_nav_link">
               {link.label}
             </NavLink>
+          ))}
+          {inactiveLinks.map((label) => (
+            <button key={label} className="admin_nav_link admin_nav_button" type="button">
+              {label}
+            </button>
           ))}
         </nav>
 

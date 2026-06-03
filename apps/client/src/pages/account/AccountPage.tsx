@@ -1,11 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
-import { Heart, House, LogOut, Package, UserRound } from "lucide-react";
+import { Heart, House, LogOut, Package, Trash2, UserRound } from "lucide-react";
+import { ProductCard } from "../../components/product/ProductCard";
 import { createAddress, getAddresses, getOrders, updateProfile } from "../../lib/profile-api";
 import { useAuthStore } from "../../lib/auth-store";
 import { orderStatusLabels, type OrderStatus } from "../../lib/orders-api";
+import { getWishlist, removeWishlistItem } from "../../lib/wishlist-api";
 import "./AccountPage.css";
 
 type AccountSection = "profile" | "orders" | "addresses" | "favorites";
@@ -327,11 +329,39 @@ function formatBelarusPhone(digits: string) {
 }
 
 function FavoritesSection() {
+  const queryClient = useQueryClient();
+  const wishlistQuery = useQuery({ queryKey: ["wishlist"], queryFn: getWishlist });
+  const removeMutation = useMutation({
+    mutationFn: removeWishlistItem,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["wishlist"] }),
+  });
+  const items = wishlistQuery.data?.items ?? [];
+
   return (
     <>
       <h1>Избранное</h1>
       <div className="account_panel">
-        <p>Избранные товары появятся здесь.</p>
+        {wishlistQuery.isLoading ? <p>Загружаем избранное...</p> : null}
+        {wishlistQuery.isError ? <p className="account_error">Не удалось загрузить избранное.</p> : null}
+        {!wishlistQuery.isLoading && !wishlistQuery.isError && !items.length ? <p>Избранные товары появятся здесь.</p> : null}
+        {items.length ? (
+          <div className="account_favorites_grid">
+            {items.map((item) => (
+              <article className="account_favorite_item" key={item.id}>
+                <ProductCard product={item.product} view="compact" />
+                <button
+                  className="account_favorite_remove"
+                  type="button"
+                  disabled={removeMutation.isPending}
+                  onClick={() => removeMutation.mutate(item.productId)}
+                >
+                  <Trash2 />
+                  Убрать из избранного
+                </button>
+              </article>
+            ))}
+          </div>
+        ) : null}
       </div>
     </>
   );

@@ -1,0 +1,161 @@
+- generic [ref=e4]:
+  - complementary [ref=e5]:
+    - link "TechMarket" [ref=e6] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e7]:
+      - link "Главный слайдер" [ref=e8] [cursor=pointer]:
+        - /url: /admin/home-slider
+      - link "Заказы" [ref=e9] [cursor=pointer]:
+        - /url: /admin/orders
+      - link "Пользователи" [ref=e10] [cursor=pointer]:
+        - /url: /admin/users
+      - link "Обзор" [ref=e11] [cursor=pointer]:
+        - /url: /admin
+      - link "Категории" [ref=e12] [cursor=pointer]:
+        - /url: /admin/categories
+      - link "Дерево категорий" [ref=e13] [cursor=pointer]:
+        - /url: /admin/category-tree
+      - link "Товары" [ref=e14] [cursor=pointer]:
+        - /url: /admin/products
+      - link "Шаблоны характеристик" [ref=e15] [cursor=pointer]:
+        - /url: /admin/specification-templates
+      - link "Бренды" [ref=e16] [cursor=pointer]:
+        - /url: /admin/brands
+    - link "На сайт" [ref=e17] [cursor=pointer]:
+      - /url: /
+    - button "Выйти" [ref=e18] [cursor=pointer]
+  - main [ref=e19]:
+    - generic [ref=e20]:
+      - heading "Редактировать товар" [level=1] [ref=e21]
+      - link "Назад" [ref=e22] [cursor=pointer]:
+        - /url: /admin/products
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - heading "Основная информация" [level=2] [ref=e26]
+          - paragraph [ref=e27]: Название, код товара и место в каталоге.
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - generic [ref=e30]: Название
+            - textbox "Название" [ref=e31]: Samsung Bespoke RB38C7B6AS9
+          - generic [ref=e32]:
+            - generic [ref=e33]: Адрес страницы
+            - paragraph [ref=e34]: Латинские буквы, цифры и дефисы без пробелов.
+            - textbox "Адрес страницы Латинские буквы, цифры и дефисы без пробелов." [ref=e35]: samsung-bespoke-rb38c7b6as9
+          - generic [ref=e36]:
+            - generic [ref=e37]: Код товара
+            - paragraph [ref=e38]: Уникальный код товара. Он не должен повторяться у других товаров.
+            - textbox "Код товара Уникальный код товара. Он не должен повторяться у других товаров." [ref=e39]: REF-SAM-RB38C7B6AS9
+          - generic [ref=e40]:
+            - generic [ref=e41]: Родительская категория
+            - combobox "Родительская категория" [ref=e42]:
+              - option "Ноутбуки и компьютеры"
+              - option "Аксессуары"
+              - option "Телефоны и умные часы"
+              - option "Бытовая техника" [selected]
+              - option "Телевизоры"
+              - option "Умный дом"
+              - option "Фото и Видео"
+          - generic [ref=e43]:
+            - generic [ref=e44]: Подкатегория
+            - combobox "Подкатегория" [ref=e45]:
+              - option "Техника для кухни" [selected]
+              - option "Техника для дома"
+              - option "Уход и гигиена"
+              - option "Кофе"
+              - option "Аксессуары для бытовой техники"
+          - generic [ref=e46]:
+            - generic [ref=e47]: Категория товара
+            - combobox "Категория товара" [ref=e48]:
+              - option "Холодильники" [selected]
+              - option "Посудомоечные машины"
+              - option "Микроволновые печи"
+              - option "Блендеры"
+              - option "Электрочайники"
+              - option "Аэрогрили и фритюрницы"
+          - generic [ref=e49]:
+            - generic [ref=e50]: Бренд
+            - combobox "Бренд" [ref=e51]:
+              - option "Apple"
+              - option "ASUS"
+              - option "Bosch"
+              - option "HP"
+              - option "Lenovo"
+              - option "LG"
+              - option "Samsung" [selected]
+              - option "Sony"
+              - option "Xiaomi"
+          - generic [ref=e52]:
+            - generic [ref=e53]: Краткое описание
+            - paragraph [ref=e54]: "Короткая строка для верхнего блока карточки: например, «6 ядер, 8 ГБ, 1 SIM, OLED, NFC»."
+            - 'textbox "Краткое описание Короткая строка для верхнего блока карточки: например, «6 ядер, 8 ГБ, 1 SIM, OLED, NFC»." [ref=e55]': Двухкамерный холодильник 387 л, класс A, No Frost, SpaceMax, SmartThings AI Energy, 203 см
+          - generic [ref=e56]:
+            - generic [ref=e57]: Описание
+            - textbox "Описание" [ref=e58]: "Samsung Bespoke RB38C7B6AS9 — высокий отдельностоящий холодильник с нижней морозильной камерой, тонкими стенками SpaceMax и системой No Frost. Модель рассчитана на большую семью: полезный объем 387 литров помогает хранить недельный запас продуктов, а режим SmartThings AI Energy помогает следить за энергопотреблением. Серебристый корпус подходит для современной кухни, а тихая работа до 35 дБ делает холодильник комфортным для квартиры-студии."
+      - generic [ref=e59]:
+        - generic [ref=e60]:
+          - heading "Цена и остатки" [level=2] [ref=e61]
+          - paragraph [ref=e62]: Коммерческие данные, которые видит покупатель и использует магазин.
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]: Цена
+            - spinbutton "Цена" [ref=e66]: "3299.99"
+          - generic [ref=e67]:
+            - generic [ref=e68]: Старая цена
+            - spinbutton "Старая цена" [ref=e69]: "3599.99"
+          - generic [ref=e70]:
+            - generic [ref=e71]: Остаток
+            - spinbutton "Остаток" [ref=e72]: "6"
+      - generic [ref=e73]:
+        - generic [ref=e74]:
+          - heading "Публикация" [level=2] [ref=e75]
+          - paragraph [ref=e76]: Изображения и доступность товара в каталоге.
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - generic [ref=e79]: Изображения
+            - generic [ref=e80] [cursor=pointer]:
+              - img [ref=e81]
+              - generic [ref=e85]: Добавить изображения
+            - button "Убрать изображение" [ref=e88] [cursor=pointer]:
+              - img [ref=e89]
+          - generic [ref=e92]:
+            - checkbox "Товар активен" [checked] [ref=e93]
+            - text: Товар активен
+      - paragraph [ref=e94]: У выбранной подкатегории пока нет шаблона характеристик.
+      - generic [ref=e95]:
+        - generic [ref=e96]:
+          - heading "Дополнительные характеристики" [level=2] [ref=e97]
+          - paragraph [ref=e98]: Добавляй только то, что не покрыто основным шаблоном.
+        - generic [ref=e99]:
+          - generic [ref=e100]: "Общий полезный объем: 387 л"
+          - button "Убрать" [ref=e101] [cursor=pointer]
+        - generic [ref=e102]:
+          - generic [ref=e103]: "Класс энергоэффективности: A"
+          - button "Убрать" [ref=e104] [cursor=pointer]
+        - generic [ref=e105]:
+          - generic [ref=e106]: "Годовое энергопотребление: 108 кВт·ч"
+          - button "Убрать" [ref=e107] [cursor=pointer]
+        - generic [ref=e108]:
+          - generic [ref=e109]: "Уровень шума: 35 дБ"
+          - button "Убрать" [ref=e110] [cursor=pointer]
+        - generic [ref=e111]:
+          - generic [ref=e112]: "Система охлаждения: No Frost, SpaceMax"
+          - button "Убрать" [ref=e113] [cursor=pointer]
+        - generic [ref=e114]:
+          - generic [ref=e115]: "Управление: Электронное, поддержка SmartThings AI Energy"
+          - button "Убрать" [ref=e116] [cursor=pointer]
+        - generic [ref=e117]:
+          - generic [ref=e118]: "Габариты: 2030 x 595 x 658 мм"
+          - button "Убрать" [ref=e119] [cursor=pointer]
+        - generic [ref=e120]:
+          - generic [ref=e121]: "Питание: 220-240 В, 50 Гц"
+          - button "Убрать" [ref=e122] [cursor=pointer]
+        - generic [ref=e123]:
+          - generic [ref=e124]:
+            - generic [ref=e125]: Название
+            - textbox "Название" [ref=e126]
+          - generic [ref=e127]:
+            - generic [ref=e128]: Значение
+            - textbox "Значение" [ref=e129]
+        - button "Добавить характеристику" [ref=e131] [cursor=pointer]
+      - button "Сохранить" [ref=e133] [cursor=pointer]

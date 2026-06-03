@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1080" viewBox="0 0 1700 1080">
+  <defs>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 14 7 L 0 14 z" fill="#111111"/>
+    </marker>
+    <style>
+      .title { font-family: "Times New Roman", serif; font-size: 32px; font-weight: 700; fill: #111111; }
+      .group { font-family: "Times New Roman", serif; font-size: 30px; fill: #111111; }
+      .label { font-family: "Times New Roman", serif; font-size: 25px; fill: #111111; }
+      .box-text { font-family: "Times New Roman", serif; font-size: 34px; font-weight: 700; fill: #111111; }
+      .node-id { font-family: "Times New Roman", serif; font-size: 28px; font-weight: 700; fill: #111111; }
+      .line { stroke: #111111; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .box { fill: #ffffff; stroke: #111111; stroke-width: 3; }
+    </style>
+  </defs>
+
+  <text x="850" y="62" text-anchor="middle" class="title">
+    Контекстная IDEF0-модель процесса продажи бытовой техники через интернет-магазин
+  </text>
+
+  <!-- Central function block -->
+  <rect x="560" y="390" width="590" height="250" class="box"/>
+  <text x="855" y="470" text-anchor="middle" class="box-text">Продажа бытовой техники</text>
+  <text x="855" y="520" text-anchor="middle" class="box-text">через интернет-магазин</text>
+  <text x="1112" y="610" text-anchor="end" class="node-id">A-0</text>
+
+  <!-- Inputs -->
+  <text x="85" y="370" class="group">Входы</text>
+  <text x="110" y="430" class="label">Данные о товарах</text>
+  <path d="M 80 455 L 560 455" class="line"/>
+  <text x="110" y="505" class="label">Данные пользователя</text>
+  <path d="M 80 530 L 560 530" class="line"/>
+  <text x="110" y="580" class="label">Выбранные товары и параметры заказа</text>
+  <path d="M 80 605 L 560 605" class="line"/>
+
+  <!-- Controls -->
+  <text x="850" y="112" text-anchor="middle" class="group">Управление</text>
+
+  <text x="625" y="155" text-anchor="middle" class="label">Правила оформления</text>
+  <text x="625" y="185" text-anchor="middle" class="label">заказа</text>
+  <path d="M 625 205 L 625 390" class="line"/>
+
+  <text x="780" y="230" text-anchor="middle" class="label">Права доступа</text>
+  <path d="M 780 250 L 780 390" class="line"/>
+
+  <text x="955" y="155" text-anchor="middle" class="label">Условия доставки</text>
+  <text x="955" y="185" text-anchor="middle" class="label">и оплаты</text>
+  <path d="M 955 205 L 955 390" class="line"/>
+
+  <text x="1110" y="230" text-anchor="middle" class="label">Правила применения</text>
+  <text x="1110" y="260" text-anchor="middle" class="label">промокодов</text>
+  <path d="M 1110 280 L 1110 390" class="line"/>
+
+  <!-- Outputs -->
+  <text x="1450" y="370" class="group">Выходы</text>
+  <text x="1200" y="430" class="label">Оформленный заказ</text>
+  <path d="M 1150 455 L 1620 455" class="line"/>
+  <text x="1200" y="505" class="label">Сведения о заказе</text>
+  <path d="M 1150 530 L 1620 530" class="line"/>
+  <text x="1200" y="580" class="label">Обновленные данные каталога и заказов</text>
+  <path d="M 1150 605 L 1620 605" class="line"/>
+
+  <!-- Mechanisms -->
+  <path d="M 645 900 L 645 640" class="line"/>
+  <path d="M 790 840 L 790 640" class="line"/>
+  <path d="M 935 900 L 935 640" class="line"/>
+  <path d="M 1080 840 L 1080 640" class="line"/>
+
+  <text x="645" y="950" text-anchor="middle" class="label">Покупатель</text>
+  <text x="790" y="890" text-anchor="middle" class="label">Администратор</text>
+  <text x="935" y="950" text-anchor="middle" class="label">Веб-приложение</text>
+  <text x="1080" y="890" text-anchor="middle" class="label">База данных</text>
+  <text x="850" y="1035" text-anchor="middle" class="group">Механизмы</text>
+</svg>

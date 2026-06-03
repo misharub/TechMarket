@@ -1,0 +1,348 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1980" height="1810" viewBox="0 0 1980 1810">
+  <defs>
+    <style>      .title { font-family: "Times New Roman", serif; font-size: 34px; font-weight: 700; fill: #111111; }
+      .section { display: none; }
+      .head { font-family: "Times New Roman", serif; font-size: 18px; font-weight: 700; fill: #ffffff; }
+      .field { font-family: "Times New Roman", serif; font-size: 15px; fill: #4e4e4e; }
+      .key { font-weight: 700; fill: #333333; }
+      .box { fill: #f1f1f1; stroke: #e3e3e3; stroke-width: 1.2; filter: url(#card-shadow); }
+      .card-head { fill: #2f6f9f; stroke: #2f6f9f; stroke-width: 1.2; }
+      .line { stroke: #9ea4aa; stroke-width: 1.7; fill: none; }
+      .label { font-family: "Times New Roman", serif; font-size: 14px; fill: #666666; }
+      .note { font-family: "Times New Roman", serif; font-size: 13px; fill: #555555; }</style>
+  <filter id="card-shadow" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.12" /></filter></defs>
+
+  <rect x="0" y="0" width="1980" height="1810" fill="#f8f8f8" />
+  <text x="990" y="48" text-anchor="middle" class="title">ER-диаграмма базы данных интернет-магазина TechMarket</text>
+
+  
+  
+  
+  
+
+  <!-- Relationships are drawn behind entities. -->
+  <path class="line" d="M410 305 C615 305 735 615 940 615" />
+  <text x="675" y="438" class="label">User 1:N CartItem</text>
+  <path class="line" d="M410 320 C615 320 735 775 940 775" />
+  <text x="670" y="538" class="label">User 1:N WishlistItem</text>
+  <path class="line" d="M410 335 C620 335 735 970 940 970" />
+  <text x="668" y="658" class="label">User 1:N Review</text>
+  <path class="line" d="M410 350 C775 350 1085 335 1450 335" />
+  <text x="866" y="318" class="label">User 1:N Order</text>
+
+  <path class="line" d="M225 430 L225 470" />
+  <text x="236" y="456" class="label">1:N</text>
+  <path class="line" d="M225 430 C225 575 225 575 225 680" />
+  <text x="236" y="606" class="label">1:N</text>
+  <path class="line" d="M225 430 C225 760 225 760 225 880" />
+  <text x="236" y="814" class="label">1:N</text>
+  <path class="line" d="M225 430 C225 1010 225 1010 225 1110" />
+  <text x="236" y="1032" class="label">1:N</text>
+
+  <path class="line" d="M880 300 C905 300 915 315 940 315" />
+  <text x="888" y="290" class="label">1:N</text>
+  <path class="line" d="M880 1510 C910 1510 910 315 940 315" />
+  <text x="890" y="1500" class="label">1:N</text>
+  <path class="line" d="M675 410 L675 470" />
+  <text x="686" y="448" class="label">1:0..1</text>
+  <path class="line" d="M675 600 L675 640" />
+  <text x="686" y="630" class="label">1:N</text>
+  <path class="line" d="M675 770 L675 810" />
+  <text x="686" y="800" class="label">1:N</text>
+  <path class="line" d="M675 1010 L675 1060" />
+  <text x="686" y="1042" class="label">1:N</text>
+  <path class="line" d="M675 410 C675 1145 675 1145 675 1220" />
+  <text x="686" y="1170" class="label">1:N</text>
+  <path class="line" d="M515 235 C485 210 485 330 515 305" />
+  <text x="486" y="278" class="label">self 1:N</text>
+
+  <path class="line" d="M1155 460 L1155 550" />
+  <text x="1166" y="518" class="label">Product 1:N CartItem</text>
+  <path class="line" d="M1175 460 C1175 610 1175 650 1175 730" />
+  <text x="1186" y="686" class="label">1:N WishlistItem</text>
+  <path class="line" d="M1195 460 C1195 720 1195 800 1195 900" />
+  <text x="1206" y="856" class="label">1:N Review</text>
+  <path class="line" d="M1370 315 C1400 315 1420 610 1450 610" />
+  <text x="1382" y="456" class="label">Product 1:N OrderItem</text>
+
+  <path class="line" d="M1370 1198 C1410 1198 1410 335 1450 335" />
+  <text x="1378" y="1162" class="label">PromoCode 0..1:N Order</text>
+  <path class="line" d="M1675 480 L1675 540" />
+  <text x="1686" y="516" class="label">1:N</text>
+  <path class="line" d="M1675 480 C1675 670 1675 670 1675 730" />
+  <text x="1686" y="690" class="label">1:N</text>
+
+  <!-- Users and auth -->
+  <g transform="translate(50,150)">
+    <rect class="box" width="360" height="280" rx="5" ry="5" /><rect class="card-head" width="360" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">User</text>
+    <line class="line" x1="0" y1="42" x2="360" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">UQ email : String</text>
+    <text x="16" y="120" class="field">passwordHash : String?</text>
+    <text x="16" y="145" class="field">firstName : String</text>
+    <text x="16" y="170" class="field">lastName : String?</text>
+    <text x="16" y="195" class="field">phone : String?</text>
+    <text x="16" y="220" class="field">role : Role</text>
+    <text x="16" y="245" class="field">isBlocked : Boolean</text>
+  </g>
+
+  <g transform="translate(50,470)">
+    <rect class="box" width="360" height="160" rx="5" ry="5" /><rect class="card-head" width="360" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">OAuthAccount</text>
+    <line class="line" x1="0" y1="42" x2="360" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK userId : String</text>
+    <text x="16" y="120" class="field">provider : OAuthProvider</text>
+    <text x="16" y="145" class="field">providerUserId : String</text>
+  </g>
+
+  <g transform="translate(50,680)">
+    <rect class="box" width="360" height="150" rx="5" ry="5" /><rect class="card-head" width="360" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">RefreshSession</text>
+    <line class="line" x1="0" y1="42" x2="360" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK userId : String</text>
+    <text x="16" y="120" class="field">tokenHash : String</text>
+    <text x="16" y="145" class="field">expiresAt : DateTime</text>
+  </g>
+
+  <g transform="translate(50,880)">
+    <rect class="box" width="360" height="180" rx="5" ry="5" /><rect class="card-head" width="360" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">Address</text>
+    <line class="line" x1="0" y1="42" x2="360" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK userId : String</text>
+    <text x="16" y="120" class="field">city, street, house : String</text>
+    <text x="16" y="145" class="field">apartment, zipCode : String?</text>
+    <text x="16" y="170" class="field">isDefault : Boolean</text>
+  </g>
+
+  <g transform="translate(50,1110)">
+    <rect class="box" width="360" height="180" rx="5" ry="5" /><rect class="card-head" width="360" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">Notification</text>
+    <line class="line" x1="0" y1="42" x2="360" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK userId : String</text>
+    <text x="16" y="120" class="field">type : NotificationType</text>
+    <text x="16" y="145" class="field">title, message : String</text>
+    <text x="16" y="170" class="field">isRead : Boolean</text>
+  </g>
+
+  <!-- Catalog -->
+  <g transform="translate(470,150)">
+    <rect class="box" width="410" height="260" rx="5" ry="5" /><rect class="card-head" width="410" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">Category</text>
+    <line class="line" x1="0" y1="42" x2="410" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK parentId : String?</text>
+    <text x="16" y="120" class="field">name : String</text>
+    <text x="16" y="145" class="field key">UQ slug : String</text>
+    <text x="16" y="170" class="field">description : String?</text>
+    <text x="16" y="195" class="field">image : String?</text>
+    <text x="16" y="220" class="field">sortOrder : Int</text>
+    <text x="16" y="245" class="field">isActive : Boolean</text>
+  </g>
+
+  <g transform="translate(470,470)">
+    <rect class="box" width="410" height="130" rx="5" ry="5" /><rect class="card-head" width="410" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">SpecificationTemplate</text>
+    <line class="line" x1="0" y1="42" x2="410" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK/UQ categoryId : String</text>
+    <text x="16" y="120" class="field">name : String</text>
+  </g>
+
+  <g transform="translate(470,640)">
+    <rect class="box" width="410" height="130" rx="5" ry="5" /><rect class="card-head" width="410" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">SpecificationGroup</text>
+    <line class="line" x1="0" y1="42" x2="410" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK templateId : String</text>
+    <text x="16" y="120" class="field">name, sortOrder</text>
+  </g>
+
+  <g transform="translate(470,810)">
+    <rect class="box" width="410" height="200" rx="5" ry="5" /><rect class="card-head" width="410" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">Specification</text>
+    <line class="line" x1="0" y1="42" x2="410" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK groupId : String</text>
+    <text x="16" y="120" class="field">key, name : String</text>
+    <text x="16" y="145" class="field">type : SpecValueType</text>
+    <text x="16" y="170" class="field">unit : String?</text>
+    <text x="16" y="195" class="field">isRequired, sortOrder</text>
+  </g>
+
+  <g transform="translate(470,1060)">
+    <rect class="box" width="410" height="130" rx="5" ry="5" /><rect class="card-head" width="410" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">SpecificationOption</text>
+    <line class="line" x1="0" y1="42" x2="410" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK specificationId : String</text>
+    <text x="16" y="120" class="field">value, sortOrder</text>
+  </g>
+
+  <g transform="translate(470,1220)">
+    <rect class="box" width="410" height="170" rx="5" ry="5" /><rect class="card-head" width="410" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">CategoryCollection</text>
+    <line class="line" x1="0" y1="42" x2="410" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK categoryId : String</text>
+    <text x="16" y="120" class="field key">UQ slug : String</text>
+    <text x="16" y="145" class="field">conditions : Json</text>
+    <text x="16" y="170" class="field">isActive, sortOrder</text>
+  </g>
+
+  <g transform="translate(470,1430)">
+    <rect class="box" width="410" height="160" rx="5" ry="5" /><rect class="card-head" width="410" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">Brand</text>
+    <line class="line" x1="0" y1="42" x2="410" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field">name : String</text>
+    <text x="16" y="120" class="field key">UQ slug : String</text>
+    <text x="16" y="145" class="field">description, logo, isActive</text>
+  </g>
+
+  <!-- Shopping -->
+  <g transform="translate(940,150)">
+    <rect class="box" width="430" height="310" rx="5" ry="5" /><rect class="card-head" width="430" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">Product</text>
+    <line class="line" x1="0" y1="42" x2="430" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK categoryId : String</text>
+    <text x="16" y="120" class="field key">FK brandId : String</text>
+    <text x="16" y="145" class="field">title : String</text>
+    <text x="16" y="170" class="field key">UQ slug, sku : String</text>
+    <text x="16" y="195" class="field">description : String</text>
+    <text x="16" y="220" class="field">price, oldPrice : Decimal</text>
+    <text x="16" y="245" class="field">stock : Int</text>
+    <text x="16" y="270" class="field">images : String[]</text>
+    <text x="16" y="295" class="field">specs, additionalSpecs : Json</text>
+  </g>
+
+  <g transform="translate(940,550)">
+    <rect class="box" width="430" height="150" rx="5" ry="5" /><rect class="card-head" width="430" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">CartItem</text>
+    <line class="line" x1="0" y1="42" x2="430" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK userId : String</text>
+    <text x="16" y="120" class="field key">FK productId : String</text>
+    <text x="16" y="145" class="field">quantity, isSelected</text>
+  </g>
+
+  <g transform="translate(940,730)">
+    <rect class="box" width="430" height="120" rx="5" ry="5" /><rect class="card-head" width="430" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">WishlistItem</text>
+    <line class="line" x1="0" y1="42" x2="430" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK userId, productId : String</text>
+    <text x="16" y="118" class="field">UQ userId + productId</text>
+  </g>
+
+  <g transform="translate(940,900)">
+    <rect class="box" width="430" height="160" rx="5" ry="5" /><rect class="card-head" width="430" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">Review</text>
+    <line class="line" x1="0" y1="42" x2="430" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK userId, productId : String</text>
+    <text x="16" y="120" class="field">rating : Int</text>
+    <text x="16" y="145" class="field">comment : String?</text>
+    <text x="16" y="158" class="note">UQ userId + productId</text>
+  </g>
+
+  <g transform="translate(940,1080)">
+    <rect class="box" width="430" height="250" rx="5" ry="5" /><rect class="card-head" width="430" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">PromoCode</text>
+    <line class="line" x1="0" y1="42" x2="430" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">UQ code : String</text>
+    <text x="16" y="120" class="field">discountType : DiscountType</text>
+    <text x="16" y="145" class="field">value : Decimal</text>
+    <text x="16" y="170" class="field">maxDiscount : Decimal?</text>
+    <text x="16" y="195" class="field">minOrderTotal : Decimal?</text>
+    <text x="16" y="220" class="field">usageLimit, usedCount</text>
+    <text x="16" y="245" class="field">startsAt, endsAt, isActive</text>
+  </g>
+
+  <!-- Orders and references -->
+  <g transform="translate(1450,150)">
+    <rect class="box" width="450" height="330" rx="5" ry="5" /><rect class="card-head" width="450" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">Order</text>
+    <line class="line" x1="0" y1="42" x2="450" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">UQ orderNumber : String?</text>
+    <text x="16" y="120" class="field key">FK userId : String</text>
+    <text x="16" y="145" class="field key">FK promoCodeId : String?</text>
+    <text x="16" y="170" class="field">status : OrderStatus</text>
+    <text x="16" y="195" class="field">totalPrice, discountAmount</text>
+    <text x="16" y="220" class="field">customerName, phone, email</text>
+    <text x="16" y="245" class="field">city, deliveryAddress</text>
+    <text x="16" y="270" class="field">deliveryMethod, deliveryPrice</text>
+    <text x="16" y="295" class="field">paymentMethod</text>
+    <text x="16" y="320" class="field">comment, adminComment</text>
+  </g>
+
+  <g transform="translate(1450,540)">
+    <rect class="box" width="450" height="140" rx="5" ry="5" /><rect class="card-head" width="450" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">OrderItem</text>
+    <line class="line" x1="0" y1="42" x2="450" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK orderId : String</text>
+    <text x="16" y="120" class="field key">FK productId : String</text>
+    <text x="16" y="138" class="field">quantity, price</text>
+  </g>
+
+  <g transform="translate(1450,730)">
+    <rect class="box" width="450" height="150" rx="5" ry="5" /><rect class="card-head" width="450" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">OrderStatusHistory</text>
+    <line class="line" x1="0" y1="42" x2="450" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">FK orderId : String</text>
+    <text x="16" y="120" class="field">fromStatus, toStatus</text>
+    <text x="16" y="145" class="field">adminComment, createdAt</text>
+  </g>
+
+  <g transform="translate(1450,950)">
+    <rect class="box" width="450" height="180" rx="5" ry="5" /><rect class="card-head" width="450" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">DeliveryMethod</text>
+    <line class="line" x1="0" y1="42" x2="450" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">UQ code : String</text>
+    <text x="16" y="120" class="field">name, description</text>
+    <text x="16" y="145" class="field">scenario : DeliveryScenario</text>
+    <text x="16" y="170" class="field">price, minOrderTotal, isActive</text>
+  </g>
+
+  <g transform="translate(1450,1170)">
+    <rect class="box" width="450" height="170" rx="5" ry="5" /><rect class="card-head" width="450" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">PickupPoint</text>
+    <line class="line" x1="0" y1="42" x2="450" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">UQ code : String</text>
+    <text x="16" y="120" class="field">name, city, address</text>
+    <text x="16" y="145" class="field">type : PickupPointType</text>
+    <text x="16" y="165" class="field">isActive, sortOrder</text>
+  </g>
+
+  <g transform="translate(1450,1380)">
+    <rect class="box" width="450" height="150" rx="5" ry="5" /><rect class="card-head" width="450" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">PaymentMethod</text>
+    <line class="line" x1="0" y1="42" x2="450" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field key">UQ code : String</text>
+    <text x="16" y="120" class="field">name, description</text>
+    <text x="16" y="145" class="field">isActive, sortOrder</text>
+  </g>
+
+  <g transform="translate(1450,1570)">
+    <rect class="box" width="450" height="170" rx="5" ry="5" /><rect class="card-head" width="450" height="42" rx="5" ry="5" />
+    <text x="14" y="27" text-anchor="start" class="head">HomeSlider</text>
+    <line class="line" x1="0" y1="42" x2="450" y2="42" />
+    <text x="16" y="70" class="field key">PK id : String</text>
+    <text x="16" y="95" class="field">kicker, title, description</text>
+    <text x="16" y="120" class="field">primaryText, primaryLabel</text>
+    <text x="16" y="145" class="field">imageUrl : String?</text>
+    <text x="16" y="165" class="field">isActive : Boolean</text>
+  </g>
+</svg>

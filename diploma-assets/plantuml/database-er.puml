@@ -1,0 +1,340 @@
+@startuml
+' ER-диаграмма базы данных интернет-магазина TechMarket.
+' Стиль приближен к табличным ER-схемам: синие заголовки, компактные поля, PK/FK/UQ/NN.
+' Источник структуры: prisma/schema.prisma.
+
+skinparam backgroundColor #F7F7F7
+skinparam shadowing true
+skinparam dpi 180
+skinparam linetype ortho
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 15
+skinparam titleFontName "Times New Roman"
+skinparam titleFontSize 30
+skinparam ArrowColor #9EA4AA
+skinparam ArrowThickness 1.4
+skinparam ArrowFontColor #555555
+skinparam ArrowMessageAlignment center
+skinparam classAttributeIconSize 0
+skinparam roundCorner 5
+skinparam class {
+  BackgroundColor #F0F0F0
+  HeaderBackgroundColor #2F6F9F
+  BorderColor #E2E2E2
+  HeaderFontColor #FFFFFF
+  FontColor #333333
+  AttributeFontColor #555555
+  StereotypeFontColor #FFFFFF
+}
+hide circle
+hide stereotype
+
+title ER-диаграмма базы данных интернет-магазина TechMarket
+
+left to right direction
+
+class "users" as users {
+  PK id : uuid
+  --
+  UQ NN email : varchar
+  password_hash : varchar?
+  NN first_name : varchar
+  last_name : varchar?
+  phone : varchar?
+  NN role : Role
+  NN is_blocked : boolean
+}
+
+class "oauth_accounts" as oauth_accounts {
+  PK id : uuid
+  --
+  FK NN user_id : uuid
+  NN provider : OAuthProvider
+  NN provider_user_id : varchar
+  email : varchar?
+}
+
+class "refresh_sessions" as refresh_sessions {
+  PK id : uuid
+  --
+  FK NN user_id : uuid
+  NN token_hash : varchar
+  NN expires_at : timestamp
+  revoked_at : timestamp?
+}
+
+class "addresses" as addresses {
+  PK id : uuid
+  --
+  FK NN user_id : uuid
+  label : varchar?
+  NN city : varchar
+  NN street : varchar
+  NN house : varchar
+  apartment : varchar?
+  zip_code : varchar?
+  NN is_default : boolean
+}
+
+class "notifications" as notifications {
+  PK id : uuid
+  --
+  FK NN user_id : uuid
+  NN type : NotificationType
+  NN title : varchar
+  NN message : text
+  NN is_read : boolean
+  email_mock_payload : json?
+}
+
+class "categories" as categories {
+  PK id : uuid
+  --
+  FK parent_id : uuid?
+  NN name : varchar
+  UQ NN slug : varchar
+  description : text?
+  image : varchar?
+  NN sort_order : int
+  NN is_active : boolean
+}
+
+class "specification_templates" as specification_templates {
+  PK id : uuid
+  --
+  FK UQ NN category_id : uuid
+  NN name : varchar
+}
+
+class "specification_groups" as specification_groups {
+  PK id : uuid
+  --
+  FK NN template_id : uuid
+  NN name : varchar
+  NN sort_order : int
+}
+
+class "specifications" as specifications {
+  PK id : uuid
+  --
+  FK NN group_id : uuid
+  NN key : varchar
+  NN name : varchar
+  NN type : SpecValueType
+  unit : varchar?
+  NN is_required : boolean
+  NN sort_order : int
+}
+
+class "specification_options" as specification_options {
+  PK id : uuid
+  --
+  FK NN specification_id : uuid
+  NN value : varchar
+  NN sort_order : int
+}
+
+class "category_collections" as category_collections {
+  PK id : uuid
+  --
+  FK NN category_id : uuid
+  NN name : varchar
+  UQ NN slug : varchar
+  NN conditions : json
+  NN sort_order : int
+  NN is_active : boolean
+}
+
+class "brands" as brands {
+  PK id : uuid
+  --
+  NN name : varchar
+  UQ NN slug : varchar
+  description : text?
+  logo : varchar?
+  NN is_active : boolean
+}
+
+class "products" as products {
+  PK id : uuid
+  --
+  FK NN category_id : uuid
+  FK NN brand_id : uuid
+  NN title : varchar
+  UQ NN slug : varchar
+  UQ NN sku : varchar
+  NN description : text
+  NN price : decimal
+  old_price : decimal?
+  NN stock : int
+  NN images : varchar[]
+  NN specs : json
+  NN is_active : boolean
+}
+
+class "cart_items" as cart_items {
+  PK id : uuid
+  --
+  FK NN user_id : uuid
+  FK NN product_id : uuid
+  NN quantity : int
+  NN is_selected : boolean
+  UQ user_id + product_id
+}
+
+class "wishlist_items" as wishlist_items {
+  PK id : uuid
+  --
+  FK NN user_id : uuid
+  FK NN product_id : uuid
+  UQ user_id + product_id
+}
+
+class "reviews" as reviews {
+  PK id : uuid
+  --
+  FK NN user_id : uuid
+  FK NN product_id : uuid
+  NN rating : int
+  comment : text?
+  NN is_active : boolean
+  UQ user_id + product_id
+}
+
+class "promo_codes" as promo_codes {
+  PK id : uuid
+  --
+  UQ NN code : varchar
+  NN discount_type : DiscountType
+  NN value : decimal
+  max_discount : decimal?
+  min_order_total : decimal?
+  usage_limit : int?
+  NN used_count : int
+  NN is_active : boolean
+}
+
+class "orders" as orders {
+  PK id : uuid
+  --
+  UQ order_number : varchar?
+  FK NN user_id : uuid
+  FK promo_code_id : uuid?
+  NN status : OrderStatus
+  NN total_price : decimal
+  NN discount_amount : decimal
+  NN customer_name : varchar
+  NN customer_phone : varchar
+  NN customer_email : varchar
+  NN delivery_address : text
+  NN delivery_method : varchar
+  NN payment_method : varchar
+}
+
+class "order_items" as order_items {
+  PK id : uuid
+  --
+  FK NN order_id : uuid
+  FK NN product_id : uuid
+  NN quantity : int
+  NN price : decimal
+}
+
+class "order_status_history" as order_status_history {
+  PK id : uuid
+  --
+  FK NN order_id : uuid
+  from_status : OrderStatus?
+  NN to_status : OrderStatus
+  admin_comment : text?
+  NN created_at : timestamp
+}
+
+class "delivery_methods" as delivery_methods {
+  PK id : uuid
+  --
+  UQ NN code : varchar
+  NN name : varchar
+  description : text?
+  NN scenario : DeliveryScenario
+  NN price : decimal
+  min_order_total : decimal?
+  NN is_active : boolean
+  NN sort_order : int
+}
+
+class "pickup_points" as pickup_points {
+  PK id : uuid
+  --
+  UQ NN code : varchar
+  NN name : varchar
+  NN city : varchar
+  NN address : text
+  NN type : PickupPointType
+  NN is_active : boolean
+  NN sort_order : int
+}
+
+class "payment_methods" as payment_methods {
+  PK id : uuid
+  --
+  UQ NN code : varchar
+  NN name : varchar
+  description : text?
+  NN is_active : boolean
+  NN sort_order : int
+}
+
+class "home_sliders" as home_sliders {
+  PK id : uuid
+  --
+  NN kicker : varchar
+  NN title : varchar
+  NN description : text
+  primary_text : varchar?
+  primary_label : varchar?
+  image_url : varchar?
+  NN is_active : boolean
+}
+
+users "1" -- "0..*" oauth_accounts : user_id
+users "1" -- "0..*" refresh_sessions : user_id
+users "1" -- "0..*" addresses : user_id
+users "1" -- "0..*" notifications : user_id
+users "1" -- "0..*" cart_items : user_id
+users "1" -- "0..*" wishlist_items : user_id
+users "1" -- "0..*" reviews : user_id
+users "1" -- "0..*" orders : user_id
+
+categories "0..1" -- "0..*" categories : parent_id
+categories "1" -- "0..1" specification_templates : category_id
+specification_templates "1" -- "0..*" specification_groups : template_id
+specification_groups "1" -- "0..*" specifications : group_id
+specifications "1" -- "0..*" specification_options : specification_id
+categories "1" -- "0..*" category_collections : category_id
+categories "1" -- "0..*" products : category_id
+brands "1" -- "0..*" products : brand_id
+
+products "1" -- "0..*" cart_items : product_id
+products "1" -- "0..*" wishlist_items : product_id
+products "1" -- "0..*" reviews : product_id
+products "1" -- "0..*" order_items : product_id
+
+promo_codes "0..1" -- "0..*" orders : promo_code_id
+orders "1" -- "1..*" order_items : order_id
+orders "1" -- "0..*" order_status_history : order_id
+
+' Layout hints keep the diagram close to the reference layout.
+categories -[hidden]down- brands
+brands -[hidden]right- products
+products -[hidden]right- cart_items
+cart_items -[hidden]down- wishlist_items
+wishlist_items -[hidden]down- reviews
+users -[hidden]right- orders
+orders -[hidden]down- order_items
+order_items -[hidden]down- order_status_history
+delivery_methods -[hidden]down- pickup_points
+pickup_points -[hidden]down- payment_methods
+payment_methods -[hidden]down- home_sliders
+
+@enduml

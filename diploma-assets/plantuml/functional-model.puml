@@ -1,0 +1,72 @@
+@startuml
+' Функциональная модель процесса продажи бытовой техники через интернет-магазин.
+' Чистый PlantUML используется вместо DOT, чтобы корректно сохранить кириллицу.
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundCorner 0
+skinparam dpi 180
+skinparam linetype ortho
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 22
+skinparam titleFontName "Times New Roman"
+skinparam titleFontSize 30
+skinparam ArrowColor #000000
+skinparam ArrowThickness 2
+skinparam rectangle {
+  BorderColor #000000
+  BorderThickness 2
+  BackgroundColor #FFFFFF
+  FontColor #000000
+}
+
+title Функциональная модель процесса продажи бытовой техники через интернет-магазин
+
+top to bottom direction
+
+rectangle "Контекстная модель процесса" as Context #FFFFFF {
+  rectangle "<b>Управляющие воздействия</b>\n\n- правила оформления заказа\n- права доступа\n- условия доставки и оплаты\n- правила применения промокодов" as Controls #FFFFFF
+
+  rectangle "<b>Входные данные</b>\n\n- данные о товарах\n- данные пользователя\n- выбранные товары\n- параметры заказа" as Inputs #FFFFFF
+
+  rectangle "<b>A0</b>\nПродажа бытовой техники\nчерез интернет-магазин" as A0 #FFFFFF
+
+  rectangle "<b>Выходные данные</b>\n\n- оформленный заказ\n- сведения о заказе\n- обновленные данные каталога\n- обновленные данные заказов" as Outputs #FFFFFF
+
+  rectangle "<b>Механизмы</b>\n\n- покупатель\n- администратор\n- веб-приложение\n- база данных" as Mechanisms #FFFFFF
+
+  Controls -down-> A0
+  Inputs -right-> A0
+  A0 -right-> Outputs
+  Mechanisms -up-> A0
+}
+
+rectangle "Декомпозиция процесса продажи бытовой техники" as FunctionalDecomposition #FFFFFF {
+  rectangle "<b>A1</b>\nПросмотр каталога\nи выбор товара\n\nКатегории, карточки товаров,\nпоиск, фильтрация, сортировка" as A1 #FFFFFF
+
+  rectangle "<b>A2</b>\nФормирование корзины\n\nДобавление товаров,\nизменение количества,\nрасчет предварительной стоимости" as A2 #FFFFFF
+
+  rectangle "<b>A3</b>\nОформление заказа\n\nКонтактные данные,\nдоставка, оплата,\nпромокод, подтверждение" as A3 #FFFFFF
+
+  rectangle "<b>A4</b>\nОбработка заказа\n\nПросмотр заказа,\nпроверка состава,\nизменение статуса" as A4 #FFFFFF
+
+  rectangle "<b>A5</b>\nУправление каталогом\n\nТовары, категории,\nбренды, характеристики,\nцены и наличие" as A5 #FFFFFF
+
+  A1 -right-> A2
+  A2 -right-> A3
+  A3 -right-> A4
+
+  A5 -up-> A1
+  A5 -up-> A3
+  A4 -down-> A5
+}
+
+Context -[hidden]down-> FunctionalDecomposition
+
+legend bottom
+  <b>Условные обозначения:</b>
+  A0 - контекстный уровень процесса; A1-A5 - основные функции процесса.
+  Стрелки показывают движение входных данных, управляющих воздействий, механизмов и результатов.
+endlegend
+
+@enduml

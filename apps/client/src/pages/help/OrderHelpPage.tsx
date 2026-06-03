@@ -29,12 +29,44 @@ export function OrderHelpPage() {
 
         <nav className="help_navigation">
         <ul>
+          <li><a href="#faq">Часто задаваемые вопросы</a></li>
           <li><a href="#how_to_order">Как оформить заказ</a></li>
           <li><a href="#payment_and_delivery">Оплата и Доставка</a></li>
           <li><a href="#warranty_and_return">Гарантия и возврат</a></li>
           <li><a href="#privacy_policy">Политика конфиденциальности</a></li>
         </ul>
       </nav>
+
+      <section id="faq" className="help_section">
+        <h2 className="policy_title">Часто задаваемые <span className="text_red">вопросы</span></h2>
+
+        <div className="accordion_container">
+          <details className="accordion_item">
+            <summary>Как узнать статус заказа?</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Можно ли изменить состав заказа после оформления?</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Какие способы оплаты доступны?</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Можно ли оформить самовывоз?</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Как вернуть товар?</summary>
+            <div className="accordion_content"></div>
+          </details>
+          <details className="accordion_item">
+            <summary>Что делать, если товар оказался неисправен?</summary>
+            <div className="accordion_content"></div>
+          </details>
+        </div>
+      </section>
 
       {/* Раздел: Как оформить заказ */}
       <section id="how_to_order" className="help_section">

@@ -1,4 +1,5 @@
 import {
+  ArrowUpRight,
   LogOut,
   MapPin,
   Menu,
@@ -8,14 +9,19 @@ import {
   Shield,
   ShoppingBasket,
   User,
+  X,
 } from "lucide-react";
-import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import type { FormEvent, KeyboardEvent, ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import techMarketMark from "../../assets/techmarket-mark.svg";
 import { useAuthStore } from "../../lib/auth-store";
 import { useCartSummary } from "../../lib/cart-hooks";
 import { getCompareProductIds, subscribeCompareProducts } from "../../lib/compare-store";
+import { getBrands } from "../../lib/brands-api";
+import { getCategoryTree, type CategoryNode } from "../../lib/categories-api";
+import { getProducts } from "../../lib/products-api";
 import { CatalogNavigation } from "./CatalogNavigation";
 import "./Header.css";
 
@@ -28,6 +34,16 @@ type HeaderAction = {
 };
 
 const iconClassName = "header_action-svg";
+
+function flattenCategories(categories: CategoryNode[]): CategoryNode[] {
+  return categories.flatMap((category) => [category, ...flattenCategories(category.children)]);
+}
+
+function normalizeSearchTerm(value: string) {
+  return value.trim().toLowerCase();
+}
+
+type SearchCategorySuggestion = Pick<CategoryNode, "id" | "name" | "slug">;
 
 const baseHeaderActions: HeaderAction[] = [
   {
@@ -208,23 +224,173 @@ function MobileCatalogButton({
 }
 
 function SearchComponent() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const trimmedQuery = query.trim();
+  const normalizedQuery = normalizeSearchTerm(debouncedQuery);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => setDebouncedQuery(trimmedQuery), 180);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [trimmedQuery]);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const urlQuery = searchParams.get("q") ?? "";
+
+    setQuery(urlQuery);
+    setDebouncedQuery(urlQuery);
+  }, [location.search]);
+
+  const productsQuery = useQuery({
+    queryKey: ["header-search", "products", normalizedQuery],
+    queryFn: () => getProducts({ search: normalizedQuery, page: 1, limit: 6 }),
+    enabled: normalizedQuery.length >= 2,
+  });
+  const brandsQuery = useQuery({
+    queryKey: ["header-search", "brands", normalizedQuery],
+    queryFn: () => getBrands({ search: normalizedQuery }),
+    enabled: normalizedQuery.length >= 2,
+  });
+  const categoriesQuery = useQuery({
+    queryKey: ["categories", "tree", "header-search"],
+    queryFn: getCategoryTree,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const products = productsQuery.data?.items ?? [];
+  const categories = useMemo(() => flattenCategories(categoriesQuery.data ?? []), [categoriesQuery.data]);
+  const categorySuggestions = useMemo(() => {
+    const bySlug = new Map<string, SearchCategorySuggestion>();
+
+    products.forEach((product) => bySlug.set(product.category.slug, product.category));
+    categories
+      .filter((category) => normalizeSearchTerm(`${category.name} ${category.slug}`).includes(normalizedQuery))
+      .forEach((category) => bySlug.set(category.slug, category));
+
+    return Array.from(bySlug.values()).slice(0, 3);
+  }, [categories, normalizedQuery, products]);
+  const quickTerms = useMemo(() => {
+    const terms = [
+      ...(brandsQuery.data ?? []).map((brand) => brand.name),
+      ...products.map((product) => product.brand.name),
+    ];
+
+    return Array.from(new Set(terms.map((term) => normalizeSearchTerm(term)).filter(Boolean))).slice(0, 4);
+  }, [brandsQuery.data, products]);
+  const categorySearchTerm = quickTerms[0] ?? trimmedQuery;
+  const productSuggestions = products.slice(0, Math.max(2, 7 - categorySuggestions.length));
+  const showSuggestions = isFocused && trimmedQuery.length >= 2;
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    goToSearch(trimmedQuery);
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      goToSearch(trimmedQuery);
+    }
+  }
+
+  function goToSearch(value: string) {
+    const nextQuery = value.trim();
+
+    setQuery(nextQuery);
+    setDebouncedQuery(nextQuery);
+    navigate(nextQuery ? `/catalog?q=${encodeURIComponent(nextQuery)}` : "/catalog");
+    setIsFocused(false);
+  }
+
+  function goToCategory(category: SearchCategorySuggestion) {
+    navigate(`/catalog/${category.slug}?q=${encodeURIComponent(categorySearchTerm)}`);
+    setIsFocused(false);
+  }
+
+  function clearSearch() {
+    setQuery("");
+    setDebouncedQuery("");
+    setIsFocused(true);
+  }
+
   return (
-    <form className="presearch" data-role="searchComponent">
+    <form className={`presearch${showSuggestions ? " presearch--active" : ""}`} data-role="searchComponent" onSubmit={handleSubmit}>
       <div className="presearch_wrapper">
         <input
           className="presearch_input"
           name="q"
           type="search"
+          value={query}
           enterKeyHint="search"
           placeholder="Поиск по каталогу"
           autoComplete="off"
           maxLength={100}
           aria-label="Поиск"
+          onBlur={() => window.setTimeout(() => setIsFocused(false), 120)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setIsFocused(true);
+          }}
+          onFocus={() => setIsFocused(true)}
+          onKeyDown={handleKeyDown}
         />
+
+        {query ? (
+          <button type="button" className="presearch_clear" aria-label="Очистить поиск" onClick={clearSearch}>
+            <X />
+          </button>
+        ) : null}
 
         <button type="submit" className="presearch_submit" title="search-button" aria-label="Найти">
           <Search className="presearch_submit-icon" />
         </button>
+
+        {showSuggestions ? (
+          <div className="presearch_suggestions" onMouseDown={(event) => event.preventDefault()}>
+            {quickTerms.length ? (
+              <div className="presearch_chips">
+                {quickTerms.map((term) => (
+                  <button className="presearch_chip" type="button" key={term} onClick={() => goToSearch(term)}>
+                    {term}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
+            <div className="presearch_suggestion-list">
+              <button className="presearch_suggestion" type="button" onClick={() => goToSearch(trimmedQuery)}>
+                <Search />
+                <span>{trimmedQuery}</span>
+                <ArrowUpRight />
+              </button>
+
+              {categorySuggestions.map((category) => (
+                <button className="presearch_suggestion" type="button" key={category.id} onClick={() => goToCategory(category)}>
+                  <Search />
+                  <span>
+                    <strong>{categorySearchTerm}</strong>
+                    <span className="presearch_suggestion-category"> - {category.name}</span>
+                  </span>
+                  <ArrowUpRight />
+                </button>
+              ))}
+
+              {productSuggestions.map((product) => (
+                <button className="presearch_suggestion" type="button" key={product.id} onClick={() => goToSearch(product.title)}>
+                  <Search />
+                  <span>{product.title}</span>
+                  <ArrowUpRight />
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     </form>
   );

@@ -1,0 +1,120 @@
+- generic [ref=e159]:
+  - complementary [ref=e160]:
+    - link "TechMarket" [ref=e161] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e162]:
+      - link "Главный слайдер" [ref=e163] [cursor=pointer]:
+        - /url: /admin/home-slider
+      - link "Заказы" [ref=e164] [cursor=pointer]:
+        - /url: /admin/orders
+      - link "Пользователи" [ref=e165] [cursor=pointer]:
+        - /url: /admin/users
+      - link "Обзор" [ref=e166] [cursor=pointer]:
+        - /url: /admin
+      - link "Категории" [ref=e167] [cursor=pointer]:
+        - /url: /admin/categories
+      - link "Дерево категорий" [ref=e168] [cursor=pointer]:
+        - /url: /admin/category-tree
+      - link "Товары" [ref=e169] [cursor=pointer]:
+        - /url: /admin/products
+      - link "Шаблоны характеристик" [ref=e170] [cursor=pointer]:
+        - /url: /admin/specification-templates
+      - link "Бренды" [ref=e171] [cursor=pointer]:
+        - /url: /admin/brands
+    - link "На сайт" [ref=e172] [cursor=pointer]:
+      - /url: /
+    - button "Выйти" [ref=e173] [cursor=pointer]
+  - main [ref=e174]:
+    - generic [ref=e175]:
+      - heading "Новый товар" [level=1] [ref=e176]
+      - link "Назад" [ref=e177] [cursor=pointer]:
+        - /url: /admin/products
+    - generic [ref=e178]:
+      - generic [ref=e179]:
+        - generic [ref=e180]:
+          - heading "Основная информация" [level=2] [ref=e181]
+          - paragraph [ref=e182]: Название, код товара и место в каталоге.
+        - generic [ref=e183]:
+          - generic [ref=e184]:
+            - generic [ref=e185]: Название
+            - textbox "Название" [ref=e186]
+          - generic [ref=e187]:
+            - generic [ref=e188]: Адрес страницы
+            - paragraph [ref=e189]: Латинские буквы, цифры и дефисы без пробелов.
+            - textbox "Адрес страницы Латинские буквы, цифры и дефисы без пробелов." [ref=e190]
+          - generic [ref=e191]:
+            - generic [ref=e192]: Код товара
+            - paragraph [ref=e193]: Уникальный код товара. Он не должен повторяться у других товаров.
+            - textbox "Код товара Уникальный код товара. Он не должен повторяться у других товаров." [ref=e194]
+          - generic [ref=e195]:
+            - generic [ref=e196]: Родительская категория
+            - combobox "Родительская категория" [ref=e197]:
+              - option "Ноутбуки и компьютеры"
+              - option "Аксессуары"
+              - option "Телефоны и умные часы"
+              - option "Бытовая техника"
+              - option "Телевизоры"
+              - option "Умный дом"
+              - option "Фото и Видео"
+          - generic [ref=e198]:
+            - generic [ref=e199]: Подкатегория
+            - combobox "Подкатегория" [disabled] [ref=e200]
+          - generic [ref=e201]:
+            - generic [ref=e202]: Бренд
+            - combobox "Бренд" [ref=e203]:
+              - option "Apple"
+              - option "ASUS"
+              - option "Bosch"
+              - option "HP"
+              - option "Lenovo"
+              - option "LG"
+              - option "Samsung"
+              - option "Sony"
+              - option "Xiaomi"
+          - generic [ref=e204]:
+            - generic [ref=e205]: Краткое описание
+            - paragraph [ref=e206]: "Короткая строка для верхнего блока карточки: например, «6 ядер, 8 ГБ, 1 SIM, OLED, NFC»."
+            - 'textbox "Краткое описание Короткая строка для верхнего блока карточки: например, «6 ядер, 8 ГБ, 1 SIM, OLED, NFC»." [ref=e207]'
+          - generic [ref=e208]:
+            - generic [ref=e209]: Описание
+            - textbox "Описание" [ref=e210]
+      - generic [ref=e211]:
+        - generic [ref=e212]:
+          - heading "Цена и остатки" [level=2] [ref=e213]
+          - paragraph [ref=e214]: Коммерческие данные, которые видит покупатель и использует магазин.
+        - generic [ref=e215]:
+          - generic [ref=e216]:
+            - generic [ref=e217]: Цена
+            - spinbutton "Цена" [ref=e218]: "0"
+          - generic [ref=e219]:
+            - generic [ref=e220]: Старая цена
+            - spinbutton "Старая цена" [ref=e221]
+          - generic [ref=e222]:
+            - generic [ref=e223]: Остаток
+            - spinbutton "Остаток" [ref=e224]: "0"
+      - generic [ref=e225]:
+        - generic [ref=e226]:
+          - heading "Публикация" [level=2] [ref=e227]
+          - paragraph [ref=e228]: Изображения и доступность товара в каталоге.
+        - generic [ref=e229]:
+          - generic [ref=e230]:
+            - generic [ref=e231]: Изображения
+            - generic [ref=e232] [cursor=pointer]:
+              - img [ref=e233]
+              - generic [ref=e237]: Добавить изображения
+          - generic [ref=e238]:
+            - checkbox "Товар активен" [checked] [ref=e239]
+            - text: Товар активен
+      - generic [ref=e240]:
+        - generic [ref=e241]:
+          - heading "Дополнительные характеристики" [level=2] [ref=e242]
+          - paragraph [ref=e243]: Добавляй только то, что не покрыто основным шаблоном.
+        - generic [ref=e244]:
+          - generic [ref=e245]:
+            - generic [ref=e246]: Название
+            - textbox "Название" [ref=e247]
+          - generic [ref=e248]:
+            - generic [ref=e249]: Значение
+            - textbox "Значение" [ref=e250]
+        - button "Добавить характеристику" [ref=e252] [cursor=pointer]
+      - button "Сохранить" [ref=e254] [cursor=pointer]

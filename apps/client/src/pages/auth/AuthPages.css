@@ -12,9 +12,9 @@
 
 .auth_backdrop {
   position: absolute;
-  inset: auto -120px -180px auto;
-  width: 420px;
-  height: 420px;
+  inset: auto 0 -180px auto;
+  width: min(420px, calc(100vw - 32px));
+  height: min(420px, calc(100vw - 32px));
   border-radius: 999px;
   background: rgba(15, 118, 110, 0.08);
   filter: blur(8px);

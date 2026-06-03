@@ -1,0 +1,94 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - link "Перейти на главную страницу" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]:
+          - img [ref=e9]
+          - generic [ref=e10]: TechMarket
+      - generic [ref=e11]:
+        - link "Контакты" [ref=e12] [cursor=pointer]:
+          - /url: /contacts
+          - img [ref=e14]
+          - generic [ref=e16]: Контакты
+        - link "Найти салон" [ref=e17] [cursor=pointer]:
+          - /url: /stores
+          - img [ref=e19]
+          - generic [ref=e22]: Найти салон
+        - link "Сравнение" [ref=e24] [cursor=pointer]:
+          - /url: /compare
+          - img [ref=e26]
+          - generic [ref=e30]: Сравнение
+        - link "Корзина" [ref=e32] [cursor=pointer]:
+          - /url: /cart
+          - img [ref=e34]
+          - generic [ref=e40]: Корзина
+        - link "Войти" [ref=e41] [cursor=pointer]:
+          - /url: /login
+          - img [ref=e43]
+          - generic [ref=e46]: Войти
+      - generic [ref=e48]:
+        - searchbox "Поиск" [ref=e49]
+        - button "Найти" [ref=e50] [cursor=pointer]:
+          - img [ref=e51]
+  - main [ref=e55]:
+    - generic [ref=e56]:
+      - img [ref=e57]
+      - strong [ref=e63]: Корзина пока пуста
+      - generic [ref=e64]: Добавьте товары из каталога — они появятся здесь.
+      - button "Перейти в каталог" [ref=e65] [cursor=pointer]
+  - contentinfo [ref=e66]:
+    - generic [ref=e67]:
+      - generic [ref=e69]:
+        - navigation "Компания" [ref=e70]:
+          - heading "Компания" [level=2] [ref=e71]
+          - list [ref=e72]:
+            - listitem [ref=e73]:
+              - link "О компании" [ref=e74] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e75]:
+              - link "Контакты" [ref=e76] [cursor=pointer]:
+                - /url: /contacts
+            - listitem [ref=e77]:
+              - link "Вакансии" [ref=e78] [cursor=pointer]:
+                - /url: /careers
+        - navigation "Покупателям" [ref=e79]:
+          - heading "Покупателям" [level=2] [ref=e80]
+          - list [ref=e81]:
+            - listitem [ref=e82]:
+              - link "Как оформить заказ" [ref=e83] [cursor=pointer]:
+                - /url: /help#how_to_order
+            - listitem [ref=e84]:
+              - link "Оплата и Доставка" [ref=e85] [cursor=pointer]:
+                - /url: /help#payment_and_delivery
+            - listitem [ref=e86]:
+              - link "Гарантия и возврат" [ref=e87] [cursor=pointer]:
+                - /url: /help#warranty_and_return
+            - listitem [ref=e88]:
+              - link "Политика конфиденциальности" [ref=e89] [cursor=pointer]:
+                - /url: /help#privacy_policy
+        - region "Связь" [ref=e90]:
+          - heading "Связь" [level=2] [ref=e91]
+          - generic "Социальные сети" [ref=e92]:
+            - link "Telegram" [ref=e93] [cursor=pointer]:
+              - /url: https://t.me/
+              - img [ref=e94]
+            - link "Чат" [ref=e97] [cursor=pointer]:
+              - /url: /contacts
+              - img [ref=e98]
+            - link "Видео" [ref=e100] [cursor=pointer]:
+              - /url: https://youtube.com/
+              - img [ref=e101]
+          - list [ref=e104]:
+            - listitem [ref=e105]:
+              - img [ref=e106]
+              - link "+375 12 345-67-89" [ref=e108] [cursor=pointer]:
+                - /url: tel:+375123456789
+            - listitem [ref=e109]:
+              - img [ref=e110]
+              - generic [ref=e113]: Минск
+            - listitem [ref=e114]:
+              - img [ref=e115]
+              - link "support@techmarket.by" [ref=e118] [cursor=pointer]:
+                - /url: mailto:support@techmarket.by
+      - paragraph [ref=e120]: 2024-2026 © TechMarket. Интернет-магазин техники для дипломного проекта.

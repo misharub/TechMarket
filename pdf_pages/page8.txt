@@ -1,0 +1,54 @@
+ПЕРЕЧЕНЬ УСЛОВНЫХ ОБОЗНАЧЕНИЙ, СИМВОЛОВ И
+                                 ТЕРМИНОВ
+
+API    – Application Programming Interface – программный интерфейс
+HSTS      приложения
+HTTP
+       – HTTP Strict Transport Security – строгая транспортная
+          безопасность HTTP
+
+       – HyperText Transfer Protocol – протокол передачи гипертекста
+
+HTTPS  – HyperText Transfer Protocol Secure – защищённый протокол
+          передачи гипертекста
+IDE
+       – Integrated Development Environment – интегрированная среда
+JSON      разработки
+JWT
+       – JavaScript Object Notation – текстовый формат обмена данными
+REST
+       – JSON Web Token – открытый стандарт защищённой передачи
+SQL       данных
+TLS
+       – Representational State Transfer – архитектурный стиль
+UI        программных интерфейсов
+
+       – Structured Query Language – язык структурированных запросов
+
+       – Transport Layer Security – протокол защиты транспортного
+          уровня
+
+       – User Interface – пользовательский интерфейс
+
+URL – Uniform Resource Locator – единый указатель ресурса
+
+1 HTML – Hyper Text Markup Language (язык гипертекстовой разметки)
+2 HTTP – Hyper Text Transfer Protocol (протокол передачи гипертекста)
+3 CSS – Cascading Style Sheets (каскадные таблицы стилей)
+4 JS – JavaScript (интерпретируемый язык программирования)
+5 SQL – Structured Query Language (язык структурированных запросов)
+6 API – Application Programming Interface (интерфейс программирования
+
+          приложений)
+7 XML – Extensible Markup Language (расширяемый язык разметки)
+8 JSON – JavaScript Object Notation (текстовый формат обмена данными)
+9 URL – Uniform Resource Locator (унифицированный указатель ресурса)
+10 FTP – File Transfer Protocol (протокол передачи файлов)
+11 CSP – Content Security Policy (политика безопасности контента)
+12 IDEF0 – нотация функционального моделирования
+13 Стек – совокупность программных средств, языков, фреймворков,
+библиотек и баз данных, используемых для разработки программного
+приложения.
+
+                                                                                                   7
+

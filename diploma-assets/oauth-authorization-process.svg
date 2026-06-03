@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="900" viewBox="0 0 2200 900">
+  <defs>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 12 7 L 0 14" fill="none" stroke="#111111" stroke-width="1.2" stroke-linecap="butt" stroke-linejoin="miter"/>
+    </marker>
+    <style>
+      .lane { fill: #ffffff; stroke: #111111; stroke-width: 2; }
+      .lane-title { font-family: "Times New Roman", serif; font-size: 25px; font-weight: 700; fill: #111111; }
+      .text { font-family: "Times New Roman", serif; font-size: 23px; fill: #111111; }
+      .small { font-family: "Times New Roman", serif; font-size: 20px; fill: #111111; }
+      .step { fill: #ffffff; stroke: #111111; stroke-width: 2; }
+      .success { fill: #c8f07a; stroke: #111111; stroke-width: 2; }
+      .error { fill: #f06f85; stroke: #111111; stroke-width: 2; }
+      .line { stroke: #111111; stroke-width: 1.8; fill: none; marker-end: url(#arrow); stroke-linecap: butt; stroke-linejoin: miter; }
+      .plain { stroke: #111111; stroke-width: 1.4; fill: none; stroke-linecap: butt; stroke-linejoin: miter; }
+      .dash { stroke: #b0b0b0; stroke-width: 1.5; fill: none; stroke-dasharray: 8 8; }
+    </style>
+  </defs>
+
+  <!-- Frame and lanes -->
+  <rect x="40" y="40" width="2120" height="800" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <line x1="40" y1="300" x2="2160" y2="300" class="plain"/>
+  <line x1="40" y1="560" x2="2160" y2="560" class="plain"/>
+  <line x1="90" y1="40" x2="90" y2="840" class="plain"/>
+  <line x1="1510" y1="40" x2="1510" y2="840" class="dash"/>
+  <line x1="40" y1="430" x2="2160" y2="430" class="dash"/>
+
+  <g transform="translate(68 710) rotate(-90)">
+    <text text-anchor="middle" class="lane-title">Пользователь</text>
+  </g>
+  <g transform="translate(68 430) rotate(-90)">
+    <text text-anchor="middle" class="lane-title">Веб-сервер</text>
+  </g>
+  <g transform="translate(68 170) rotate(-90)">
+    <text text-anchor="middle" class="lane-title">Сторонний сервис</text>
+  </g>
+
+  <!-- User lane -->
+  <rect x="120" y="690" width="230" height="90" rx="6" class="step"/>
+  <text x="235" y="720" text-anchor="middle" class="text">Нажатие кнопки</text>
+  <text x="235" y="748" text-anchor="middle" class="text">входа через</text>
+  <text x="235" y="776" text-anchor="middle" class="text">Google или VK</text>
+
+  <rect x="455" y="690" width="250" height="90" rx="6" class="step"/>
+  <text x="580" y="720" text-anchor="middle" class="text">Ввод данных</text>
+  <text x="580" y="748" text-anchor="middle" class="text">и подтверждение</text>
+  <text x="580" y="776" text-anchor="middle" class="text">доступа</text>
+
+  <rect x="990" y="690" width="250" height="90" rx="6" class="step"/>
+  <text x="1115" y="720" text-anchor="middle" class="text">Получение</text>
+  <text x="1115" y="748" text-anchor="middle" class="text">результата</text>
+  <text x="1115" y="776" text-anchor="middle" class="text">авторизации</text>
+
+  <!-- Server lane -->
+  <rect x="120" y="360" width="250" height="90" rx="6" class="step"/>
+  <text x="245" y="392" text-anchor="middle" class="text">Получение запроса</text>
+  <text x="245" y="420" text-anchor="middle" class="text">на авторизацию</text>
+
+  <rect x="430" y="360" width="270" height="90" rx="6" class="step"/>
+  <text x="565" y="392" text-anchor="middle" class="text">Перенаправление</text>
+  <text x="565" y="420" text-anchor="middle" class="text">на сторонний</text>
+  <text x="565" y="448" text-anchor="middle" class="text">сервис</text>
+
+  <rect x="780" y="360" width="240" height="90" rx="6" class="step"/>
+  <text x="900" y="392" text-anchor="middle" class="text">Получение кода</text>
+  <text x="900" y="420" text-anchor="middle" class="text">авторизации</text>
+
+  <path d="M 1190 330 L 1340 405 L 1190 480 L 1040 405 Z" class="step"/>
+  <text x="1190" y="392" text-anchor="middle" class="text">Данные</text>
+  <text x="1190" y="420" text-anchor="middle" class="text">корректны?</text>
+
+  <rect x="1365" y="360" width="230" height="90" rx="6" class="step"/>
+  <text x="1480" y="392" text-anchor="middle" class="text">Проверка</text>
+  <text x="1480" y="420" text-anchor="middle" class="text">учетной записи</text>
+
+  <path d="M 1760 330 L 1905 405 L 1760 480 L 1615 405 Z" class="step"/>
+  <text x="1760" y="392" text-anchor="middle" class="text">Пользователь</text>
+  <text x="1760" y="420" text-anchor="middle" class="text">зарегистрирован?</text>
+
+  <rect x="1825" y="505" width="220" height="80" rx="6" class="step"/>
+  <text x="1935" y="535" text-anchor="middle" class="text">Регистрация</text>
+  <text x="1935" y="563" text-anchor="middle" class="text">пользователя</text>
+
+  <rect x="1930" y="360" width="210" height="90" rx="6" class="step"/>
+  <text x="2035" y="392" text-anchor="middle" class="text">Создание JWT</text>
+  <text x="2035" y="420" text-anchor="middle" class="text">и refresh token</text>
+
+  <rect x="1905" y="105" width="230" height="90" rx="6" class="success"/>
+  <text x="2020" y="137" text-anchor="middle" class="text">Авторизация</text>
+  <text x="2020" y="165" text-anchor="middle" class="text">пользователя</text>
+
+  <rect x="1040" y="505" width="300" height="80" rx="6" class="error"/>
+  <text x="1190" y="535" text-anchor="middle" class="text">Уведомление</text>
+  <text x="1190" y="563" text-anchor="middle" class="text">о невозможности входа</text>
+
+  <!-- External service lane -->
+  <rect x="250" y="105" width="285" height="90" rx="6" class="step"/>
+  <text x="392" y="137" text-anchor="middle" class="text">Получение запроса</text>
+  <text x="392" y="165" text-anchor="middle" class="text">на авторизацию</text>
+
+  <path d="M 720 75 L 900 150 L 720 225 L 540 150 Z" class="step"/>
+  <text x="720" y="137" text-anchor="middle" class="text">Возможно</text>
+  <text x="720" y="165" text-anchor="middle" class="text">выполнить вход?</text>
+
+  <rect x="970" y="105" width="285" height="90" rx="6" class="step"/>
+  <text x="1112" y="137" text-anchor="middle" class="text">Проверка данных</text>
+  <text x="1112" y="165" text-anchor="middle" class="text">пользователя</text>
+
+  <rect x="1330" y="105" width="285" height="90" rx="6" class="step"/>
+  <text x="1472" y="137" text-anchor="middle" class="text">Передача кода</text>
+  <text x="1472" y="165" text-anchor="middle" class="text">авторизации</text>
+
+  <rect x="560" y="245" width="300" height="80" rx="6" class="error"/>
+  <text x="710" y="275" text-anchor="middle" class="text">Уведомление</text>
+  <text x="710" y="303" text-anchor="middle" class="text">о невозможности входа</text>
+
+  <!-- Arrows -->
+  <path d="M 235 690 L 235 450" class="line"/>
+  <path d="M 370 405 L 430 405" class="line"/>
+  <path d="M 565 360 L 565 225 L 392 225 L 392 195" class="line"/>
+  <path d="M 535 150 L 540 150" class="line"/>
+  <path d="M 900 150 L 970 150" class="line"/>
+  <path d="M 720 225 L 720 245" class="line"/>
+  <path d="M 710 325 L 710 690" class="line"/>
+  <path d="M 580 690 L 580 610 L 1112 610 L 1112 195" class="line"/>
+  <path d="M 1255 150 L 1330 150" class="line"/>
+  <path d="M 1472 195 L 1472 260 L 900 260 L 900 360" class="line"/>
+  <path d="M 1020 405 L 1040 405" class="line"/>
+  <path d="M 1340 405 L 1365 405" class="line"/>
+  <path d="M 1190 480 L 1190 505" class="line"/>
+  <path d="M 1595 405 L 1615 405" class="line"/>
+  <path d="M 1905 405 L 1930 405" class="line"/>
+  <path d="M 1760 480 L 1760 545 L 1825 545" class="line"/>
+  <path d="M 2045 545 L 2160 545 L 2160 405 L 2140 405" class="line"/>
+  <path d="M 2035 360 L 2035 195" class="line"/>
+  <path d="M 2020 195 L 2020 690 L 1240 690" class="line"/>
+
+  <!-- Labels -->
+  <text x="920" y="130" text-anchor="middle" class="small">Да</text>
+  <text x="735" y="246" text-anchor="start" class="small">Нет</text>
+  <text x="1352" y="390" text-anchor="middle" class="small">Да</text>
+  <text x="1210" y="500" text-anchor="start" class="small">Нет</text>
+  <text x="1915" y="390" text-anchor="middle" class="small">Да</text>
+  <text x="1778" y="505" text-anchor="start" class="small">Нет</text>
+</svg>

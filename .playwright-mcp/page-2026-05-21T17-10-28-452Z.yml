@@ -1,0 +1,134 @@
+- generic [ref=e4]:
+  - complementary [ref=e5]:
+    - link "TechMarket" [ref=e6] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=e7]:
+      - link "Главный слайдер" [ref=e8] [cursor=pointer]:
+        - /url: /admin/home-slider
+      - link "Заказы" [ref=e9] [cursor=pointer]:
+        - /url: /admin/orders
+      - link "Пользователи" [ref=e10] [cursor=pointer]:
+        - /url: /admin/users
+      - link "Обзор" [ref=e11] [cursor=pointer]:
+        - /url: /admin
+      - link "Категории" [ref=e12] [cursor=pointer]:
+        - /url: /admin/categories
+      - link "Дерево категорий" [ref=e13] [cursor=pointer]:
+        - /url: /admin/category-tree
+      - link "Товары" [ref=e14] [cursor=pointer]:
+        - /url: /admin/products
+      - link "Шаблоны характеристик" [ref=e15] [cursor=pointer]:
+        - /url: /admin/specification-templates
+      - link "Бренды" [ref=e16] [cursor=pointer]:
+        - /url: /admin/brands
+    - link "На сайт" [ref=e17] [cursor=pointer]:
+      - /url: /
+    - button "Выйти" [ref=e18] [cursor=pointer]
+  - main [ref=e19]:
+    - generic [ref=e20]:
+      - heading "Новый товар" [level=1] [ref=e21]
+      - link "Назад" [ref=e22] [cursor=pointer]:
+        - /url: /admin/products
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - heading "Основная информация" [level=2] [ref=e26]
+          - paragraph [ref=e27]: Название, код товара и место в каталоге.
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - generic [ref=e30]: Название
+            - textbox "Название" [ref=e31]
+          - generic [ref=e32]:
+            - generic [ref=e33]: Адрес страницы
+            - paragraph [ref=e34]: Латинские буквы, цифры и дефисы без пробелов.
+            - textbox "Адрес страницы Латинские буквы, цифры и дефисы без пробелов." [ref=e35]
+          - generic [ref=e36]:
+            - generic [ref=e37]: Код товара
+            - paragraph [ref=e38]: Уникальный код товара. Он не должен повторяться у других товаров.
+            - textbox "Код товара Уникальный код товара. Он не должен повторяться у других товаров." [ref=e39]
+          - generic [ref=e40]:
+            - generic [ref=e41]: Родительская категория
+            - combobox "Родительская категория" [ref=e42]:
+              - option "Ноутбуки и компьютеры"
+              - option "Аксессуары"
+              - option "Телефоны и умные часы"
+              - option "Бытовая техника" [selected]
+              - option "Телевизоры"
+              - option "Умный дом"
+              - option "Фото и Видео"
+          - generic [ref=e43]:
+            - generic [ref=e44]: Подкатегория
+            - combobox "Подкатегория" [ref=e45]:
+              - option "Техника для кухни" [selected]
+              - option "Техника для дома"
+              - option "Уход и гигиена"
+              - option "Кофе"
+              - option "Аксессуары для бытовой техники"
+          - generic [ref=e100]:
+            - generic [ref=e101]: Категория товара
+            - combobox "Категория товара" [ref=e102]:
+              - option "Холодильники"
+              - option "Посудомоечные машины"
+              - option "Микроволновые печи"
+              - option "Блендеры"
+              - option "Электрочайники"
+              - option "Аэрогрили и фритюрницы"
+          - generic [ref=e46]:
+            - generic [ref=e47]: Бренд
+            - combobox "Бренд" [ref=e48]:
+              - option "Apple"
+              - option "ASUS"
+              - option "Bosch"
+              - option "HP"
+              - option "Lenovo"
+              - option "LG"
+              - option "Samsung"
+              - option "Sony"
+              - option "Xiaomi"
+          - generic [ref=e49]:
+            - generic [ref=e50]: Краткое описание
+            - paragraph [ref=e51]: "Короткая строка для верхнего блока карточки: например, «6 ядер, 8 ГБ, 1 SIM, OLED, NFC»."
+            - 'textbox "Краткое описание Короткая строка для верхнего блока карточки: например, «6 ядер, 8 ГБ, 1 SIM, OLED, NFC»." [ref=e52]'
+          - generic [ref=e53]:
+            - generic [ref=e54]: Описание
+            - textbox "Описание" [ref=e55]
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - heading "Цена и остатки" [level=2] [ref=e58]
+          - paragraph [ref=e59]: Коммерческие данные, которые видит покупатель и использует магазин.
+        - generic [ref=e60]:
+          - generic [ref=e61]:
+            - generic [ref=e62]: Цена
+            - spinbutton "Цена" [ref=e63]: "0"
+          - generic [ref=e64]:
+            - generic [ref=e65]: Старая цена
+            - spinbutton "Старая цена" [ref=e66]
+          - generic [ref=e67]:
+            - generic [ref=e68]: Остаток
+            - spinbutton "Остаток" [ref=e69]: "0"
+      - generic [ref=e70]:
+        - generic [ref=e71]:
+          - heading "Публикация" [level=2] [ref=e72]
+          - paragraph [ref=e73]: Изображения и доступность товара в каталоге.
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - generic [ref=e76]: Изображения
+            - generic [ref=e77] [cursor=pointer]:
+              - img [ref=e78]
+              - generic [ref=e82]: Добавить изображения
+          - generic [ref=e83]:
+            - checkbox "Товар активен" [checked] [ref=e84]
+            - text: Товар активен
+      - generic [ref=e85]:
+        - generic [ref=e86]:
+          - heading "Дополнительные характеристики" [level=2] [ref=e87]
+          - paragraph [ref=e88]: Добавляй только то, что не покрыто основным шаблоном.
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - generic [ref=e91]: Название
+            - textbox "Название" [ref=e92]
+          - generic [ref=e93]:
+            - generic [ref=e94]: Значение
+            - textbox "Значение" [ref=e95]
+        - button "Добавить характеристику" [ref=e97] [cursor=pointer]
+      - button "Сохранить" [ref=e99] [cursor=pointer]

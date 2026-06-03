@@ -549,7 +549,8 @@ export function CatalogPage() {
   const isCatalogRoot = !categorySlug;
   const isKnownCategory = !categorySlug || Boolean(activeCategory);
   const isRootCategoryLanding = Boolean(activeCategory && activePath.length === 1 && activeCategory.children.length > 0);
-  const isProductListing = Boolean(activeCategory && !isRootCategoryLanding);
+  const isRootSearchListing = isCatalogRoot && Boolean(q.trim());
+  const isProductListing = Boolean((activeCategory && !isRootCategoryLanding) || isRootSearchListing);
 
   const brandsQuery = useQuery({
     queryKey: ["brands", "catalog"],
@@ -689,7 +690,7 @@ export function CatalogPage() {
   const facetProducts = facetProductsQuery.data?.items ?? products;
   const filterableSpecs = getCatalogSpecFilters(specificationTemplateQuery.data, facetProducts);
   const activeFiltersCount = [q, brandSlug, priceFrom, priceTo, inStock, ...specFilterEntries.map(([, value]) => value)].filter(Boolean).length;
-  const title = activeCollection?.name ?? activeCategory?.name ?? "Каталог";
+  const title = isRootSearchListing ? `Поиск: ${q.trim()}` : (activeCollection?.name ?? activeCategory?.name ?? "Каталог");
   return (
     <main className="catalog_page">
       <div className="catalog_page_inner">
@@ -707,7 +708,9 @@ export function CatalogPage() {
 
         <section className="catalog_page_header">
           <div>
-            <h1>{title}(<strong className="max_h_1">{isTotalLoading ? "..." : total}</strong>)</h1>
+            <h1>
+              {title} <strong>{isTotalLoading ? "..." : total}</strong>
+            </h1>
           </div>
         </section>
 
@@ -733,7 +736,7 @@ export function CatalogPage() {
           </CategoryState>
         ) : null}
 
-        {!categoriesQuery.isLoading && !categoriesQuery.isError && isCatalogRoot ? (
+        {!categoriesQuery.isLoading && !categoriesQuery.isError && isCatalogRoot && !isRootSearchListing ? (
           <section className="catalog_page_catalog_grid" aria-label="Основные разделы каталога">
             {categories.map((category) => (
               <CategoryTile category={category} key={category.id} />

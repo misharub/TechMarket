@@ -33,6 +33,7 @@ export function AdminProductFormPage() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const [parentCategoryId, setParentCategoryId] = useState("");
+  const [subcategoryId, setSubcategoryId] = useState("");
   const [form, setForm] = useState<ProductPayload>({
     title: "",
     slug: "",
@@ -71,6 +72,10 @@ export function AdminProductFormPage() {
     () => (parentCategoryId ? getChildCategories(categories, parentCategoryId) : []),
     [categories, parentCategoryId],
   );
+  const grandchildCategories = useMemo(
+    () => (subcategoryId ? getChildCategories(categories, subcategoryId) : []),
+    [categories, subcategoryId],
+  );
   const templateQuery = useQuery({
     queryKey: ["admin", "specification_template_by_category", form.categoryId],
     queryFn: () => getSpecificationTemplateByCategory(form.categoryId),
@@ -95,7 +100,12 @@ export function AdminProductFormPage() {
 
   useEffect(() => {
     if (productQuery.data) {
-      setParentCategoryId(productQuery.data.category.parentId ?? "");
+      const selectedCategory = categories.find((category) => category.id === productQuery.data.categoryId);
+      const selectedParent = selectedCategory?.parentId ? categories.find((category) => category.id === selectedCategory.parentId) : undefined;
+      const selectedRoot = selectedParent?.parentId ? categories.find((category) => category.id === selectedParent.parentId) : selectedParent;
+
+      setParentCategoryId(selectedRoot?.id ?? selectedParent?.id ?? "");
+      setSubcategoryId(selectedParent?.parentId ? selectedParent.id : selectedCategory?.parentId ? selectedCategory.id : "");
       setForm({
         title: productQuery.data.title,
         slug: productQuery.data.slug,
@@ -114,18 +124,15 @@ export function AdminProductFormPage() {
       });
       setSlugEdited(true);
     }
-  }, [productQuery.data]);
+  }, [categories, productQuery.data]);
 
   const groupedSpecs = useMemo(() => templateQuery.data?.groups ?? [], [templateQuery.data]);
   const visibleSpecs = useMemo(() => groupedSpecs.flatMap((group) => group.specifications), [groupedSpecs]);
 
   useEffect(() => {
-    if (!visibleSpecs.length) {
-      return;
-    }
-
     setForm((current) => {
-      const nextSpecs = { ...current.specs };
+      const allowedSpecKeys = new Set(visibleSpecs.map((spec) => spec.key));
+      const nextSpecs = Object.fromEntries(Object.entries(current.specs).filter(([key]) => allowedSpecKeys.has(key)));
 
       for (const spec of visibleSpecs) {
         if (!(spec.key in nextSpecs)) {
@@ -149,7 +156,7 @@ export function AdminProductFormPage() {
     }
 
     try {
-      await saveMutation.mutateAsync(form);
+      await saveMutation.mutateAsync({ ...form, specs: {} });
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "Не удалось сохранить товар");
     }
@@ -263,6 +270,7 @@ export function AdminProductFormPage() {
               value={parentCategoryId}
               onChange={(event) => {
                 setParentCategoryId(event.target.value);
+                setSubcategoryId("");
                 setForm((current) => ({ ...current, categoryId: "", specs: {} }));
               }}
             >
@@ -282,14 +290,18 @@ export function AdminProductFormPage() {
               className="admin_select"
               required
               disabled={!parentCategoryId}
-              value={form.categoryId}
-              onChange={(event) =>
+              value={subcategoryId || (!grandchildCategories.length ? form.categoryId : "")}
+              onChange={(event) => {
+                const selectedId = event.target.value;
+                const selectedChildren = getChildCategories(categories, selectedId);
+
+                setSubcategoryId(selectedId);
                 setForm((current) => ({
                   ...current,
-                  categoryId: event.target.value,
+                  categoryId: selectedChildren.length ? "" : selectedId,
                   specs: {},
-                }))
-              }
+                }));
+              }}
             >
               <option value="" disabled hidden>
                 Выберите подкатегорию
@@ -301,6 +313,32 @@ export function AdminProductFormPage() {
               ))}
             </select>
           </label>
+          {subcategoryId && grandchildCategories.length ? (
+            <label className="admin_field">
+              <span>Категория товара</span>
+              <select
+                className="admin_select"
+                required
+                value={form.categoryId}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    categoryId: event.target.value,
+                    specs: {},
+                  }))
+                }
+              >
+                <option value="" disabled hidden>
+                  Выберите категорию
+                </option>
+                {grandchildCategories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
           <label className="admin_field">
             <span>Бренд</span>
             <select
@@ -426,21 +464,35 @@ export function AdminProductFormPage() {
               <p>Поля подстраиваются под выбранную подкатегорию.</p>
             </div>
             {groupedSpecs.map((group) => (
-              <div className="admin_specs_group" key={group.id}>
-                <h3>{group.name}</h3>
-                <div className="admin_form_grid">
+              <section className="admin_specs_group admin_product_specs_group" key={group.id}>
+                <header className="admin_product_specs_group_header">
+                  <div>
+                    <span>Категория характеристик</span>
+                    <h3>{group.name}</h3>
+                  </div>
+                  <b>{group.specifications.length} полей</b>
+                </header>
+                <div className="admin_form_grid admin_product_specs_fields">
                   {group.specifications.map((spec) => (
-                    <label className="admin_field" key={spec.id}>
+                    <label
+                      className={`admin_field admin_product_spec_field${
+                        spec.type === "BOOLEAN" ? " admin_product_spec_field_boolean" : ""
+                      }`}
+                      key={spec.id}
+                    >
                       <span>
                         {spec.name}
                         {spec.unit ? `, ${spec.unit}` : ""}
                       </span>
                       {spec.type === "BOOLEAN" ? (
-                        <input
-                          type="checkbox"
-                          checked={Boolean(form.specs[spec.key])}
-                          onChange={(event) => updateSpecValue(spec.key, event.target.checked)}
-                        />
+                        <span className="admin_product_toggle">
+                          <input
+                            type="checkbox"
+                            checked={Boolean(form.specs[spec.key])}
+                            onChange={(event) => updateSpecValue(spec.key, event.target.checked)}
+                          />
+                          <i aria-hidden="true" />
+                        </span>
                       ) : spec.type === "SELECT" ? (
                         <select
                           className="admin_select"
@@ -479,7 +531,7 @@ export function AdminProductFormPage() {
                     </label>
                   ))}
                 </div>
-              </div>
+              </section>
             ))}
           </section>
         ) : form.categoryId ? (
@@ -492,8 +544,8 @@ export function AdminProductFormPage() {
             <p>Добавляй только то, что не покрыто основным шаблоном.</p>
           </div>
           {(form.additionalSpecs ?? []).map((spec, index) => (
-            <div className="admin_inline_actions" key={`${spec.label}-${index}`}>
-              <span>
+            <div className="admin_inline_actions admin_product_extra_spec" key={`${spec.label}-${index}`}>
+              <span className="admin_product_extra_spec_value">
                 {spec.label}: {spec.value}
               </span>
               <button className="admin_button_muted" type="button" onClick={() => removeAdditionalSpec(index)}>

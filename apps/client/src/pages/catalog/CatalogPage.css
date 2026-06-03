@@ -64,8 +64,17 @@
   letter-spacing: 0;
 }
 
-.max_h_1 {
-  max-height: 0.25rem;
+.catalog_page_header h1 strong {
+  display: inline-flex;
+  min-width: 32px;
+  min-height: 30px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: #0f766e;
+  font-size: 0.7em;
+  line-height: 1;
+  vertical-align: middle;
 }
 
 .catalog_page_header p {

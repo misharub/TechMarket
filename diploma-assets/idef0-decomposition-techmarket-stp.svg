@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1300" viewBox="0 0 2200 1300">
+  <defs>
+    <marker id="arrow" markerWidth="16" markerHeight="16" refX="14" refY="8" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 14 8 L 0 16" fill="none" stroke="#111111" stroke-width="1.2" stroke-linecap="butt" stroke-linejoin="miter"/>
+    </marker>
+    <style>
+      .group { font-family: "Times New Roman", serif; font-size: 34px; fill: #111111; }
+      .label { font-family: "Times New Roman", serif; font-size: 26px; fill: #111111; }
+      .small { font-family: "Times New Roman", serif; font-size: 24px; fill: #111111; }
+      .box-text { font-family: "Times New Roman", serif; font-size: 28px; font-weight: 700; fill: #111111; }
+      .node-id { font-family: "Times New Roman", serif; font-size: 26px; font-weight: 700; fill: #111111; }
+      .line { stroke: #111111; stroke-width: 1.7; fill: none; marker-end: url(#arrow); stroke-linecap: butt; stroke-linejoin: miter; }
+      .plain { stroke: #111111; stroke-width: 1.7; fill: none; stroke-linecap: butt; stroke-linejoin: miter; }
+      .thin { stroke: #111111; stroke-width: 1.4; fill: none; marker-end: url(#arrow); stroke-linecap: butt; stroke-linejoin: miter; }
+      .box { fill: #ffffff; stroke: #111111; stroke-width: 2.3; }
+      .caption-bg { fill: #ffffff; stroke: none; }
+    </style>
+  </defs>
+
+  <!-- Function blocks -->
+  <rect x="190" y="350" width="285" height="145" class="box"/>
+  <text x="332" y="408" text-anchor="middle" class="box-text">Просмотр каталога</text>
+  <text x="332" y="444" text-anchor="middle" class="box-text">и выбор товара</text>
+  <text x="445" y="472" text-anchor="end" class="node-id">A1</text>
+
+  <rect x="650" y="350" width="285" height="145" class="box"/>
+  <text x="792" y="410" text-anchor="middle" class="box-text">Формирование</text>
+  <text x="792" y="446" text-anchor="middle" class="box-text">корзины</text>
+  <text x="905" y="472" text-anchor="end" class="node-id">A2</text>
+
+  <rect x="1110" y="350" width="285" height="145" class="box"/>
+  <text x="1252" y="410" text-anchor="middle" class="box-text">Оформление</text>
+  <text x="1252" y="446" text-anchor="middle" class="box-text">заказа</text>
+  <text x="1365" y="472" text-anchor="end" class="node-id">A3</text>
+
+  <rect x="1570" y="350" width="285" height="145" class="box"/>
+  <text x="1712" y="410" text-anchor="middle" class="box-text">Обработка</text>
+  <text x="1712" y="446" text-anchor="middle" class="box-text">заказа</text>
+  <text x="1825" y="472" text-anchor="end" class="node-id">A4</text>
+
+  <rect x="650" y="780" width="285" height="145" class="box"/>
+  <text x="792" y="840" text-anchor="middle" class="box-text">Управление</text>
+  <text x="792" y="876" text-anchor="middle" class="box-text">каталогом</text>
+  <text x="905" y="902" text-anchor="end" class="node-id">A5</text>
+
+  <!-- Group captions -->
+  <text x="75" y="315" class="group">Входы</text>
+  <text x="1915" y="330" class="group">Выходы</text>
+  <text x="1100" y="90" text-anchor="middle" class="group">Управление</text>
+
+  <!-- Inputs -->
+  <rect x="54" y="382" width="125" height="32" class="caption-bg"/>
+  <text x="70" y="405" class="label">Данные о товарах</text>
+  <path d="M 55 430 L 190 430" class="line"/>
+
+  <rect x="54" y="812" width="300" height="32" class="caption-bg"/>
+  <text x="70" y="835" class="label">Данные администратора</text>
+  <path d="M 55 860 L 650 860" class="line"/>
+
+  <!-- Main data flow -->
+  <rect x="505" y="382" width="175" height="32" class="caption-bg"/>
+  <text x="510" y="405" class="small">Выбранный товар</text>
+  <path d="M 475 430 L 650 430" class="line"/>
+
+  <rect x="975" y="382" width="160" height="32" class="caption-bg"/>
+  <text x="980" y="405" class="small">Состав корзины</text>
+  <path d="M 935 430 L 1110 430" class="line"/>
+
+  <rect x="1445" y="382" width="145" height="32" class="caption-bg"/>
+  <text x="1450" y="405" class="small">Данные заказа</text>
+  <path d="M 1395 430 L 1570 430" class="line"/>
+
+  <!-- Outputs -->
+  <rect x="1885" y="382" width="250" height="32" class="caption-bg"/>
+  <text x="1900" y="405" class="label">Оформленный заказ</text>
+  <path d="M 1855 430 L 2140 430" class="line"/>
+
+  <rect x="1885" y="492" width="220" height="32" class="caption-bg"/>
+  <text x="1900" y="515" class="label">Сведения о заказе</text>
+  <path d="M 1712 495 L 1712 540 L 2140 540" class="line"/>
+
+  <rect x="1010" y="812" width="350" height="32" class="caption-bg"/>
+  <text x="1025" y="835" class="label">Обновленные данные каталога</text>
+  <path d="M 935 860 L 2140 860" class="line"/>
+
+  <!-- Catalog data, merged with product input before A1 -->
+  <rect x="250" y="642" width="360" height="32" class="caption-bg"/>
+  <text x="265" y="665" class="label">Актуальные сведения о товарах</text>
+  <path d="M 792 780 L 792 690 L 120 690 L 120 430" class="plain"/>
+
+  <!-- Controls -->
+  <rect x="210" y="145" width="245" height="64" class="caption-bg"/>
+  <text x="332" y="170" text-anchor="middle" class="label">Правила отображения</text>
+  <text x="332" y="200" text-anchor="middle" class="label">каталога</text>
+  <path d="M 332 225 L 332 350" class="thin"/>
+
+  <rect x="686" y="145" width="214" height="32" class="caption-bg"/>
+  <text x="792" y="170" text-anchor="middle" class="label">Права доступа</text>
+  <path d="M 792 195 L 792 350" class="thin"/>
+
+  <rect x="1130" y="145" width="245" height="64" class="caption-bg"/>
+  <text x="1252" y="170" text-anchor="middle" class="label">Правила оформления</text>
+  <text x="1252" y="200" text-anchor="middle" class="label">заказа</text>
+  <path d="M 1252 225 L 1252 350" class="thin"/>
+
+  <rect x="1590" y="145" width="245" height="64" class="caption-bg"/>
+  <text x="1712" y="170" text-anchor="middle" class="label">Правила обработки</text>
+  <text x="1712" y="200" text-anchor="middle" class="label">заказа</text>
+  <path d="M 1712 225 L 1712 350" class="thin"/>
+
+  <!-- Mechanisms -->
+  <rect x="225" y="1022" width="215" height="32" class="caption-bg"/>
+  <text x="332" y="1045" text-anchor="middle" class="label">Покупатель</text>
+  <path d="M 332 1010 L 332 495" class="thin"/>
+
+  <rect x="685" y="1022" width="215" height="32" class="caption-bg"/>
+  <text x="792" y="1045" text-anchor="middle" class="label">Администратор</text>
+  <path d="M 792 1010 L 792 925" class="thin"/>
+
+  <rect x="1020" y="1132" width="465" height="32" class="caption-bg"/>
+  <text x="1252" y="1155" text-anchor="middle" class="label">Веб-приложение и база данных</text>
+  <path d="M 1252 1120 L 1252 495" class="thin"/>
+
+  <rect x="1605" y="1022" width="215" height="32" class="caption-bg"/>
+  <text x="1712" y="1045" text-anchor="middle" class="label">Администратор</text>
+  <path d="M 1712 1010 L 1712 495" class="thin"/>
+</svg>

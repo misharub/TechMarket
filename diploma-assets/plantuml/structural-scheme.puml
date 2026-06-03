@@ -1,0 +1,133 @@
+@startuml
+' Структурная схема веб-приложения интернет-магазина бытовой техники.
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam linetype ortho
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 22
+skinparam titleFontName "Times New Roman"
+skinparam titleFontSize 40
+skinparam ArrowColor #000000
+skinparam ArrowThickness 2
+skinparam ArrowMessageAlignment center
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam nodesep 70
+skinparam ranksep 70
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  BorderThickness 2
+  FontColor #000000
+}
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  BorderThickness 2
+  FontColor #000000
+}
+skinparam database {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  BorderThickness 2
+  FontColor #000000
+}
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontColor #000000
+}
+skinparam cloud {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  BorderThickness 2
+  FontColor #000000
+}
+skinparam folder {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  BorderThickness 2
+  FontColor #000000
+}
+
+title Структурная схема веб-приложения интернет-магазина
+
+left to right direction
+
+together {
+  actor "Покупатель" as Buyer
+  actor "Администратор" as Admin
+}
+
+rectangle "Браузер пользователя" as Browser {
+  component "Вход покупателя" as BuyerAccess
+  component "Вход администратора" as AdminAccess
+  component "Клиентское приложение\nReact + Vite + TypeScript" as Client
+
+  rectangle "Пользовательский интерфейс" as PublicUi {
+    component "Главная страница" as HomePage
+    component "Каталог и карточка товара" as CatalogPages
+    component "Корзина и оформление заказа" as CheckoutPages
+    component "Личный кабинет" as AccountPages
+  }
+
+  rectangle "Административный интерфейс" as AdminUi {
+    component "Управление каталогом" as CatalogAdmin
+    component "Управление заказами" as OrderAdmin
+    component "Пользователи и статистика" as UserAdmin
+  }
+
+  component "Маршрутизация\nReact Router" as Router
+  component "Состояние и запросы\nReact Query, Zustand" as State
+  component "API-клиент" as ApiClient
+}
+
+rectangle "Серверное приложение\nNestJS + TypeScript" as Server {
+  component "REST API\nи Swagger-документация" as RestApi
+
+  rectangle "Функциональные модули" as FeatureModules {
+    component "Модуль авторизации\nAuth, Users" as AuthModule
+    component "Модуль каталога\nProducts, Categories,\nBrands, Specifications" as CatalogModule
+    component "Модуль покупок\nCart, Wishlist,\nCompare" as ShoppingModule
+    component "Модуль заказов\nOrders, Checkout,\nPromoCodes, Notifications" as OrdersModule
+    component "Модуль администрирования\nAdminStats" as AdminModule
+    component "Модуль загрузки файлов\nUploads" as UploadsModule
+  }
+
+  component "Слой доступа к данным\nPrismaService" as DataAccess
+  component "Prisma ORM" as PrismaOrm
+}
+
+database "База данных\nPostgreSQL" as Database
+folder "Файловое хранилище\nизображений товаров" as UploadsStorage
+cloud "Внешние сервисы\nGoogle OAuth, VK ID" as OAuthProviders
+
+Buyer -[hidden]down- Admin
+Buyer -[hidden]right- BuyerAccess
+Admin -[hidden]right- AdminAccess
+Buyer --> BuyerAccess
+Admin --> AdminAccess
+BuyerAccess --> Client
+AdminAccess --> Client
+
+Client --> Router
+Router --> PublicUi
+Router --> AdminUi
+PublicUi --> State
+AdminUi --> State
+State --> ApiClient
+
+ApiClient --> RestApi
+
+RestApi --> FeatureModules
+
+AuthModule --> OAuthProviders : OAuth
+FeatureModules --> DataAccess
+DataAccess --> PrismaOrm
+UploadsModule --> UploadsStorage
+
+PrismaOrm --> Database
+
+@enduml

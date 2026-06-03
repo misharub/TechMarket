@@ -1,0 +1,675 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - link "Перейти на главную страницу" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]:
+          - img [ref=e9]
+          - generic [ref=e10]: TechMarket
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - link "Сравнение" [ref=e13] [cursor=pointer]:
+            - /url: /compare
+            - img [ref=e15]
+          - generic [ref=e19]: "1"
+        - link "Корзина" [ref=e21] [cursor=pointer]:
+          - /url: /cart
+          - img [ref=e23]
+        - link "Войти" [ref=e29] [cursor=pointer]:
+          - /url: /login
+          - img [ref=e31]
+      - button "Открыть меню категорий" [ref=e35] [cursor=pointer]:
+        - img [ref=e36]
+      - generic [ref=e38]:
+        - searchbox "Поиск" [active] [ref=e39]: sam
+        - button "Очистить поиск" [ref=e225] [cursor=pointer]:
+          - img [ref=e226]
+        - button "Найти" [ref=e40] [cursor=pointer]:
+          - img [ref=e41]
+        - generic [ref=e229]:
+          - button "samsung" [ref=e866] [cursor=pointer]
+          - generic [ref=e230]:
+            - button "sam" [ref=e231] [cursor=pointer]:
+              - img [ref=e232]
+              - generic [ref=e235]: sam
+              - img [ref=e236]
+            - button "sam - Стиральные машины" [ref=e867] [cursor=pointer]:
+              - img [ref=e868]
+              - generic [ref=e871]:
+                - strong [ref=e872]: sam
+                - generic [ref=e873]: "- Стиральные машины"
+              - img [ref=e874]
+            - button "sam - Холодильники" [ref=e877] [cursor=pointer]:
+              - img [ref=e878]
+              - generic [ref=e881]:
+                - strong [ref=e882]: sam
+                - generic [ref=e883]: "- Холодильники"
+              - img [ref=e884]
+            - button "sam - Телефоны и смартфоны" [ref=e887] [cursor=pointer]:
+              - img [ref=e888]
+              - generic [ref=e891]:
+                - strong [ref=e892]: sam
+                - generic [ref=e893]: "- Телефоны и смартфоны"
+              - img [ref=e894]
+            - button "Samsung WW90T554CAX" [ref=e897] [cursor=pointer]:
+              - img [ref=e898]
+              - generic [ref=e901]: Samsung WW90T554CAX
+              - img [ref=e902]
+            - button "Samsung Bespoke RB38C7B6AS9" [ref=e905] [cursor=pointer]:
+              - img [ref=e906]
+              - generic [ref=e909]: Samsung Bespoke RB38C7B6AS9
+              - img [ref=e910]
+            - button "Samsung Galaxy S25 256 ГБ" [ref=e913] [cursor=pointer]:
+              - img [ref=e914]
+              - generic [ref=e917]: Samsung Galaxy S25 256 ГБ
+              - img [ref=e918]
+    - navigation "Каталог товаров" [ref=e269]:
+      - generic:
+        - generic:
+          - generic: Каталог
+          - button:
+            - img
+        - generic:
+          - group:
+            - generic:
+              - generic: Ноутбуки и компьютеры
+              - img
+          - group:
+            - generic:
+              - generic: Аксессуары
+              - img
+          - group:
+            - generic:
+              - generic: Телефоны и умные часы
+              - img
+          - group:
+            - generic:
+              - generic: Бытовая техника
+              - img
+          - group:
+            - generic:
+              - generic: Телевизоры
+              - img
+          - group:
+            - generic:
+              - generic: Умный дом
+              - img
+          - group:
+            - generic:
+              - generic: Фото и Видео
+              - img
+  - main [ref=e45]:
+    - generic [ref=e46]:
+      - generic [ref=e48]:
+        - generic [ref=e49]:
+          - img [ref=e50]
+          - text: Умная витрина TechMarket
+        - heading "Техника для работы, учебы и дома без лишнего шума" [level=1] [ref=e53]
+        - paragraph [ref=e54]: Главная собирает категории, новинки и скидки прямо из API. Видны наличие, цена, рейтинг и быстрый переход в каталог.
+      - region "Преимущества TechMarket" [ref=e56]:
+        - generic [ref=e57]:
+          - img [ref=e58]
+          - generic [ref=e63]: Доставка по Минску
+        - generic [ref=e64]:
+          - img [ref=e65]
+          - generic [ref=e70]: Самовывоз из магазина
+        - generic [ref=e71]:
+          - img [ref=e72]
+          - generic [ref=e74]: Оплата картой или при получении
+        - generic [ref=e75]:
+          - img [ref=e76]
+          - generic [ref=e79]: Официальная гарантия
+      - region "Популярные разделы" [ref=e80]:
+        - generic [ref=e82]:
+          - heading "Популярные разделы" [level=2] [ref=e83]
+          - paragraph [ref=e84]: Быстрый переход к основным категориям каталога.
+        - generic [ref=e270]:
+          - link "Ноутбуки и компьютеры 6 подразделов" [ref=e271] [cursor=pointer]:
+            - /url: /catalog/laptops-computers
+            - generic [ref=e272]: Ноутбуки и компьютеры
+            - generic [ref=e273]: 6 подразделов
+            - img [ref=e274]
+          - link "Аксессуары 2 подразделов" [ref=e276] [cursor=pointer]:
+            - /url: /catalog/accessories
+            - generic [ref=e277]: Аксессуары
+            - generic [ref=e278]: 2 подразделов
+            - img [ref=e279]
+          - link "Телефоны и умные часы 4 подразделов" [ref=e281] [cursor=pointer]:
+            - /url: /catalog/phones-smartwatch
+            - generic [ref=e282]: Телефоны и умные часы
+            - generic [ref=e283]: 4 подразделов
+            - img [ref=e284]
+          - link "Бытовая техника 5 подразделов" [ref=e286] [cursor=pointer]:
+            - /url: /catalog/home-appliances
+            - generic [ref=e287]: Бытовая техника
+            - generic [ref=e288]: 5 подразделов
+            - img [ref=e289]
+          - link "Телевизоры 4 подразделов" [ref=e291] [cursor=pointer]:
+            - /url: /catalog/tv-audio
+            - generic [ref=e292]: Телевизоры
+            - generic [ref=e293]: 4 подразделов
+            - img [ref=e294]
+          - link "Умный дом 3 подразделов" [ref=e296] [cursor=pointer]:
+            - /url: /catalog/smart-home
+            - generic [ref=e297]: Умный дом
+            - generic [ref=e298]: 3 подразделов
+            - img [ref=e299]
+          - link "Фото и Видео 4 подразделов" [ref=e301] [cursor=pointer]:
+            - /url: /catalog/photo-video
+            - generic [ref=e302]: Фото и Видео
+            - generic [ref=e303]: 4 подразделов
+            - img [ref=e304]
+      - region "Новинки каталога" [ref=e94]:
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - heading "Новинки каталога" [level=2] [ref=e97]
+            - paragraph [ref=e98]: Свежие позиции, которые только появились в TechMarket.
+          - link "Все товары" [ref=e99] [cursor=pointer]:
+            - /url: /catalog
+            - text: Все товары
+            - img [ref=e100]
+        - generic [ref=e306]:
+          - article [ref=e307]:
+            - link "Samsung WW90T554CAX" [ref=e308] [cursor=pointer]:
+              - /url: /product/samsung-ww90t554cax
+              - generic [ref=e309]: "-10%"
+              - img "Samsung WW90T554CAX" [ref=e310]
+            - generic [ref=e311]:
+              - generic [ref=e312]:
+                - generic [ref=e313]: Samsung
+                - generic [ref=e314]: В наличии
+              - link "Samsung WW90T554CAX" [ref=e315] [cursor=pointer]:
+                - /url: /product/samsung-ww90t554cax
+              - generic "Рейтинг 0" [ref=e316]:
+                - img [ref=e317]
+                - generic [ref=e319]: Нет оценок
+              - generic [ref=e320]:
+                - strong [ref=e321]: 1 900 Br
+                - generic [ref=e322]: 2 100 Br
+              - generic [ref=e323]:
+                - button [ref=e324] [cursor=pointer]:
+                  - img [ref=e325]
+                - button "Сравнить Samsung WW90T554CAX" [ref=e329] [cursor=pointer]:
+                  - img [ref=e330]
+          - article [ref=e334]:
+            - link "Bosch Serie 4 SMS4HVI31E" [ref=e335] [cursor=pointer]:
+              - /url: /product/bosch-serie-4-sms4hvi31e
+              - img "Bosch Serie 4 SMS4HVI31E" [ref=e336]
+            - generic [ref=e337]:
+              - generic [ref=e338]:
+                - generic [ref=e339]: Bosch
+                - generic [ref=e340]: В наличии
+              - link "Bosch Serie 4 SMS4HVI31E" [ref=e341] [cursor=pointer]:
+                - /url: /product/bosch-serie-4-sms4hvi31e
+              - generic "Рейтинг 0" [ref=e342]:
+                - img [ref=e343]
+                - generic [ref=e345]: Нет оценок
+              - strong [ref=e347]: 2 200 Br
+              - generic [ref=e348]:
+                - button [ref=e349] [cursor=pointer]:
+                  - img [ref=e350]
+                - button "Сравнить Bosch Serie 4 SMS4HVI31E" [ref=e354] [cursor=pointer]:
+                  - img [ref=e355]
+          - article [ref=e359]:
+            - link "LG OLED evo C4 55 OLED55C4RLA" [ref=e360] [cursor=pointer]:
+              - /url: /product/lg-oled-evo-c4-55-oled55c4rla
+              - generic [ref=e361]: "-9%"
+              - img "LG OLED evo C4 55 OLED55C4RLA" [ref=e362]
+            - generic [ref=e363]:
+              - generic [ref=e364]:
+                - generic [ref=e365]: LG
+                - generic [ref=e366]: В наличии
+              - link "LG OLED evo C4 55 OLED55C4RLA" [ref=e367] [cursor=pointer]:
+                - /url: /product/lg-oled-evo-c4-55-oled55c4rla
+              - generic "Рейтинг 0" [ref=e368]:
+                - img [ref=e369]
+                - generic [ref=e371]: Нет оценок
+              - generic [ref=e372]:
+                - strong [ref=e373]: 5 000 Br
+                - generic [ref=e374]: 5 500 Br
+              - generic [ref=e375]:
+                - button [ref=e376] [cursor=pointer]:
+                  - img [ref=e377]
+                - button "Сравнить LG OLED evo C4 55 OLED55C4RLA" [ref=e381] [cursor=pointer]:
+                  - img [ref=e382]
+          - article [ref=e386]:
+            - link "Samsung Bespoke RB38C7B6AS9" [ref=e387] [cursor=pointer]:
+              - /url: /product/samsung-bespoke-rb38c7b6as9
+              - generic [ref=e388]: "-8%"
+              - img "Samsung Bespoke RB38C7B6AS9" [ref=e389]
+            - generic [ref=e390]:
+              - generic [ref=e391]:
+                - generic [ref=e392]: Samsung
+                - generic [ref=e393]: В наличии
+              - link "Samsung Bespoke RB38C7B6AS9" [ref=e394] [cursor=pointer]:
+                - /url: /product/samsung-bespoke-rb38c7b6as9
+              - generic "Рейтинг 0" [ref=e395]:
+                - img [ref=e396]
+                - generic [ref=e398]: Нет оценок
+              - generic [ref=e399]:
+                - strong [ref=e400]: 3 300 Br
+                - generic [ref=e401]: 3 600 Br
+              - generic [ref=e402]:
+                - button [ref=e403] [cursor=pointer]:
+                  - img [ref=e404]
+                - button "Сравнить Samsung Bespoke RB38C7B6AS9" [ref=e408] [cursor=pointer]:
+                  - img [ref=e409]
+          - article [ref=e413]:
+            - link "Xiaomi 15 512 ГБ" [ref=e414] [cursor=pointer]:
+              - /url: /product/xiaomi-15-512gb
+              - img "Xiaomi 15 512 ГБ" [ref=e415]
+            - generic [ref=e416]:
+              - generic [ref=e417]:
+                - generic [ref=e418]: Xiaomi
+                - generic [ref=e419]: В наличии
+              - link "Xiaomi 15 512 ГБ" [ref=e420] [cursor=pointer]:
+                - /url: /product/xiaomi-15-512gb
+              - generic "Рейтинг 0" [ref=e421]:
+                - img [ref=e422]
+                - generic [ref=e424]: Нет оценок
+              - strong [ref=e426]: 2 800 Br
+              - generic [ref=e427]:
+                - button [ref=e428] [cursor=pointer]:
+                  - img [ref=e429]
+                - button "Сравнить Xiaomi 15 512 ГБ" [ref=e433] [cursor=pointer]:
+                  - img [ref=e434]
+          - article [ref=e438]:
+            - link "Samsung Galaxy S25 256 ГБ" [ref=e439] [cursor=pointer]:
+              - /url: /product/samsung-galaxy-s25-256gb
+              - generic [ref=e440]: "-6%"
+              - img "Samsung Galaxy S25 256 ГБ" [ref=e441]
+            - generic [ref=e442]:
+              - generic [ref=e443]:
+                - generic [ref=e444]: Samsung
+                - generic [ref=e445]: В наличии
+              - link "Samsung Galaxy S25 256 ГБ" [ref=e446] [cursor=pointer]:
+                - /url: /product/samsung-galaxy-s25-256gb
+              - generic "Рейтинг 0" [ref=e447]:
+                - img [ref=e448]
+                - generic [ref=e450]: Нет оценок
+              - generic [ref=e451]:
+                - strong [ref=e452]: 3 100 Br
+                - generic [ref=e453]: 3 300 Br
+              - generic [ref=e454]:
+                - button [ref=e455] [cursor=pointer]:
+                  - img [ref=e456]
+                - button "Сравнить Samsung Galaxy S25 256 ГБ" [ref=e460] [cursor=pointer]:
+                  - img [ref=e461]
+          - article [ref=e465]:
+            - link "Apple iPhone 17 256 ГБ" [ref=e466] [cursor=pointer]:
+              - /url: /product/apple-iphone-17-256gb
+              - img "Apple iPhone 17 256 ГБ" [ref=e467]
+            - generic [ref=e468]:
+              - generic [ref=e469]:
+                - generic [ref=e470]: Apple
+                - generic [ref=e471]: В наличии
+              - link "Apple iPhone 17 256 ГБ" [ref=e472] [cursor=pointer]:
+                - /url: /product/apple-iphone-17-256gb
+              - generic "Рейтинг 0" [ref=e473]:
+                - img [ref=e474]
+                - generic [ref=e476]: Нет оценок
+              - strong [ref=e478]: 3 900 Br
+              - generic [ref=e479]:
+                - button [ref=e480] [cursor=pointer]:
+                  - img [ref=e481]
+                - button "Сравнить Apple iPhone 17 256 ГБ" [pressed] [ref=e485] [cursor=pointer]:
+                  - img [ref=e486]
+          - article [ref=e490]:
+            - link "Apple iPhone 16 256 ГБ" [ref=e491] [cursor=pointer]:
+              - /url: /product/apple-iphone-16-256gb
+              - generic [ref=e492]: "-6%"
+              - img "Apple iPhone 16 256 ГБ" [ref=e493]
+            - generic [ref=e494]:
+              - generic [ref=e495]:
+                - generic [ref=e496]: Apple
+                - generic [ref=e497]: В наличии
+              - link "Apple iPhone 16 256 ГБ" [ref=e498] [cursor=pointer]:
+                - /url: /product/apple-iphone-16-256gb
+              - generic "Рейтинг 0" [ref=e499]:
+                - img [ref=e500]
+                - generic [ref=e502]: Нет оценок
+              - generic [ref=e503]:
+                - strong [ref=e504]: 3 300 Br
+                - generic [ref=e505]: 3 500 Br
+              - generic [ref=e506]:
+                - button [ref=e507] [cursor=pointer]:
+                  - img [ref=e508]
+                - button "Сравнить Apple iPhone 16 256 ГБ" [ref=e512] [cursor=pointer]:
+                  - img [ref=e513]
+      - region "Скидки недели" [ref=e123]:
+        - generic [ref=e124]:
+          - generic [ref=e125]:
+            - heading "Скидки недели" [level=2] [ref=e126]
+            - paragraph [ref=e127]: Товары с выгодной старой ценой из актуального каталога.
+          - link "Все товары" [ref=e128] [cursor=pointer]:
+            - /url: /catalog
+            - text: Все товары
+            - img [ref=e129]
+        - generic [ref=e517]:
+          - article [ref=e518]:
+            - link "Samsung WW90T554CAX" [ref=e519] [cursor=pointer]:
+              - /url: /product/samsung-ww90t554cax
+              - generic [ref=e520]: "-10%"
+              - img "Samsung WW90T554CAX" [ref=e521]
+            - generic [ref=e522]:
+              - generic [ref=e523]:
+                - generic [ref=e524]: Samsung
+                - generic [ref=e525]: В наличии
+              - link "Samsung WW90T554CAX" [ref=e526] [cursor=pointer]:
+                - /url: /product/samsung-ww90t554cax
+              - generic "Рейтинг 0" [ref=e527]:
+                - img [ref=e528]
+                - generic [ref=e530]: Нет оценок
+              - generic [ref=e531]:
+                - strong [ref=e532]: 1 900 Br
+                - generic [ref=e533]: 2 100 Br
+              - generic [ref=e534]:
+                - button [ref=e535] [cursor=pointer]:
+                  - img [ref=e536]
+                - button "Сравнить Samsung WW90T554CAX" [ref=e540] [cursor=pointer]:
+                  - img [ref=e541]
+          - article [ref=e545]:
+            - link "LG OLED evo C4 55 OLED55C4RLA" [ref=e546] [cursor=pointer]:
+              - /url: /product/lg-oled-evo-c4-55-oled55c4rla
+              - generic [ref=e547]: "-9%"
+              - img "LG OLED evo C4 55 OLED55C4RLA" [ref=e548]
+            - generic [ref=e549]:
+              - generic [ref=e550]:
+                - generic [ref=e551]: LG
+                - generic [ref=e552]: В наличии
+              - link "LG OLED evo C4 55 OLED55C4RLA" [ref=e553] [cursor=pointer]:
+                - /url: /product/lg-oled-evo-c4-55-oled55c4rla
+              - generic "Рейтинг 0" [ref=e554]:
+                - img [ref=e555]
+                - generic [ref=e557]: Нет оценок
+              - generic [ref=e558]:
+                - strong [ref=e559]: 5 000 Br
+                - generic [ref=e560]: 5 500 Br
+              - generic [ref=e561]:
+                - button [ref=e562] [cursor=pointer]:
+                  - img [ref=e563]
+                - button "Сравнить LG OLED evo C4 55 OLED55C4RLA" [ref=e567] [cursor=pointer]:
+                  - img [ref=e568]
+          - article [ref=e572]:
+            - link "Samsung Bespoke RB38C7B6AS9" [ref=e573] [cursor=pointer]:
+              - /url: /product/samsung-bespoke-rb38c7b6as9
+              - generic [ref=e574]: "-8%"
+              - img "Samsung Bespoke RB38C7B6AS9" [ref=e575]
+            - generic [ref=e576]:
+              - generic [ref=e577]:
+                - generic [ref=e578]: Samsung
+                - generic [ref=e579]: В наличии
+              - link "Samsung Bespoke RB38C7B6AS9" [ref=e580] [cursor=pointer]:
+                - /url: /product/samsung-bespoke-rb38c7b6as9
+              - generic "Рейтинг 0" [ref=e581]:
+                - img [ref=e582]
+                - generic [ref=e584]: Нет оценок
+              - generic [ref=e585]:
+                - strong [ref=e586]: 3 300 Br
+                - generic [ref=e587]: 3 600 Br
+              - generic [ref=e588]:
+                - button [ref=e589] [cursor=pointer]:
+                  - img [ref=e590]
+                - button "Сравнить Samsung Bespoke RB38C7B6AS9" [ref=e594] [cursor=pointer]:
+                  - img [ref=e595]
+          - article [ref=e599]:
+            - link "Samsung Galaxy S25 256 ГБ" [ref=e600] [cursor=pointer]:
+              - /url: /product/samsung-galaxy-s25-256gb
+              - generic [ref=e601]: "-6%"
+              - img "Samsung Galaxy S25 256 ГБ" [ref=e602]
+            - generic [ref=e603]:
+              - generic [ref=e604]:
+                - generic [ref=e605]: Samsung
+                - generic [ref=e606]: В наличии
+              - link "Samsung Galaxy S25 256 ГБ" [ref=e607] [cursor=pointer]:
+                - /url: /product/samsung-galaxy-s25-256gb
+              - generic "Рейтинг 0" [ref=e608]:
+                - img [ref=e609]
+                - generic [ref=e611]: Нет оценок
+              - generic [ref=e612]:
+                - strong [ref=e613]: 3 100 Br
+                - generic [ref=e614]: 3 300 Br
+              - generic [ref=e615]:
+                - button [ref=e616] [cursor=pointer]:
+                  - img [ref=e617]
+                - button "Сравнить Samsung Galaxy S25 256 ГБ" [ref=e621] [cursor=pointer]:
+                  - img [ref=e622]
+          - article [ref=e626]:
+            - link "Apple iPhone 16 256 ГБ" [ref=e627] [cursor=pointer]:
+              - /url: /product/apple-iphone-16-256gb
+              - generic [ref=e628]: "-6%"
+              - img "Apple iPhone 16 256 ГБ" [ref=e629]
+            - generic [ref=e630]:
+              - generic [ref=e631]:
+                - generic [ref=e632]: Apple
+                - generic [ref=e633]: В наличии
+              - link "Apple iPhone 16 256 ГБ" [ref=e634] [cursor=pointer]:
+                - /url: /product/apple-iphone-16-256gb
+              - generic "Рейтинг 0" [ref=e635]:
+                - img [ref=e636]
+                - generic [ref=e638]: Нет оценок
+              - generic [ref=e639]:
+                - strong [ref=e640]: 3 300 Br
+                - generic [ref=e641]: 3 500 Br
+              - generic [ref=e642]:
+                - button [ref=e643] [cursor=pointer]:
+                  - img [ref=e644]
+                - button "Сравнить Apple iPhone 16 256 ГБ" [ref=e648] [cursor=pointer]:
+                  - img [ref=e649]
+      - region "Премиальная техника" [ref=e152]:
+        - generic [ref=e153]:
+          - generic [ref=e154]:
+            - heading "Премиальная техника" [level=2] [ref=e155]
+            - paragraph [ref=e156]: Флагманские модели для тех, кто выбирает максимум возможностей.
+          - link "Все товары" [ref=e157] [cursor=pointer]:
+            - /url: /catalog
+            - text: Все товары
+            - img [ref=e158]
+        - generic [ref=e653]:
+          - article [ref=e654]:
+            - link "Lenovo Legion 5 16IRX9" [ref=e655] [cursor=pointer]:
+              - /url: /product/lenovo-legion-5-16irx9
+              - img "Lenovo Legion 5 16IRX9" [ref=e656]
+            - generic [ref=e657]:
+              - generic [ref=e658]:
+                - generic [ref=e659]: Lenovo
+                - generic [ref=e660]: В наличии
+              - link "Lenovo Legion 5 16IRX9" [ref=e661] [cursor=pointer]:
+                - /url: /product/lenovo-legion-5-16irx9
+              - generic "Рейтинг 5" [ref=e662]:
+                - img [ref=e663]
+                - generic [ref=e665]: "5.0"
+                - generic [ref=e666]: 1 отзыв.
+              - strong [ref=e668]: 5 500 Br
+              - generic [ref=e669]:
+                - button [ref=e670] [cursor=pointer]:
+                  - img [ref=e671]
+                - button "Сравнить Lenovo Legion 5 16IRX9" [ref=e675] [cursor=pointer]:
+                  - img [ref=e676]
+          - article [ref=e680]:
+            - link "LG OLED evo C4 55 OLED55C4RLA" [ref=e681] [cursor=pointer]:
+              - /url: /product/lg-oled-evo-c4-55-oled55c4rla
+              - generic [ref=e682]: "-9%"
+              - img "LG OLED evo C4 55 OLED55C4RLA" [ref=e683]
+            - generic [ref=e684]:
+              - generic [ref=e685]:
+                - generic [ref=e686]: LG
+                - generic [ref=e687]: В наличии
+              - link "LG OLED evo C4 55 OLED55C4RLA" [ref=e688] [cursor=pointer]:
+                - /url: /product/lg-oled-evo-c4-55-oled55c4rla
+              - generic "Рейтинг 0" [ref=e689]:
+                - img [ref=e690]
+                - generic [ref=e692]: Нет оценок
+              - generic [ref=e693]:
+                - strong [ref=e694]: 5 000 Br
+                - generic [ref=e695]: 5 500 Br
+              - generic [ref=e696]:
+                - button [ref=e697] [cursor=pointer]:
+                  - img [ref=e698]
+                - button "Сравнить LG OLED evo C4 55 OLED55C4RLA" [ref=e702] [cursor=pointer]:
+                  - img [ref=e703]
+          - article [ref=e707]:
+            - link "Apple MacBook Air 13 M3" [ref=e708] [cursor=pointer]:
+              - /url: /product/apple-macbook-air-13-m3
+              - img "Apple MacBook Air 13 M3" [ref=e709]
+            - generic [ref=e710]:
+              - generic [ref=e711]:
+                - generic [ref=e712]: Apple
+                - generic [ref=e713]: В наличии
+              - link "Apple MacBook Air 13 M3" [ref=e714] [cursor=pointer]:
+                - /url: /product/apple-macbook-air-13-m3
+              - generic "Рейтинг 5" [ref=e715]:
+                - img [ref=e716]
+                - generic [ref=e718]: "5.0"
+                - generic [ref=e719]: 1 отзыв.
+              - strong [ref=e721]: 4 400 Br
+              - generic [ref=e722]:
+                - button [ref=e723] [cursor=pointer]:
+                  - img [ref=e724]
+                - button "Сравнить Apple MacBook Air 13 M3" [ref=e728] [cursor=pointer]:
+                  - img [ref=e729]
+          - article [ref=e733]:
+            - link "Apple iPhone 17 256 ГБ" [ref=e734] [cursor=pointer]:
+              - /url: /product/apple-iphone-17-256gb
+              - img "Apple iPhone 17 256 ГБ" [ref=e735]
+            - generic [ref=e736]:
+              - generic [ref=e737]:
+                - generic [ref=e738]: Apple
+                - generic [ref=e739]: В наличии
+              - link "Apple iPhone 17 256 ГБ" [ref=e740] [cursor=pointer]:
+                - /url: /product/apple-iphone-17-256gb
+              - generic "Рейтинг 0" [ref=e741]:
+                - img [ref=e742]
+                - generic [ref=e744]: Нет оценок
+              - strong [ref=e746]: 3 900 Br
+              - generic [ref=e747]:
+                - button [ref=e748] [cursor=pointer]:
+                  - img [ref=e749]
+                - button "Сравнить Apple iPhone 17 256 ГБ" [pressed] [ref=e753] [cursor=pointer]:
+                  - img [ref=e754]
+          - article [ref=e758]:
+            - link "ASUS ExpertBook B5 B5404" [ref=e759] [cursor=pointer]:
+              - /url: /product/asus-expertbook-b5-b5404
+              - img "ASUS ExpertBook B5 B5404" [ref=e760]
+            - generic [ref=e761]:
+              - generic [ref=e762]:
+                - generic [ref=e763]: ASUS
+                - generic [ref=e764]: В наличии
+              - link "ASUS ExpertBook B5 B5404" [ref=e765] [cursor=pointer]:
+                - /url: /product/asus-expertbook-b5-b5404
+              - generic "Рейтинг 4" [ref=e766]:
+                - img [ref=e767]
+                - generic [ref=e769]: "4.0"
+                - generic [ref=e770]: 1 отзыв.
+              - strong [ref=e772]: 3 900 Br
+              - generic [ref=e773]:
+                - button [ref=e774] [cursor=pointer]:
+                  - img [ref=e775]
+                - button "Сравнить ASUS ExpertBook B5 B5404" [ref=e779] [cursor=pointer]:
+                  - img [ref=e780]
+          - article [ref=e784]:
+            - link "Apple iPhone 16 256 ГБ" [ref=e785] [cursor=pointer]:
+              - /url: /product/apple-iphone-16-256gb
+              - generic [ref=e786]: "-6%"
+              - img "Apple iPhone 16 256 ГБ" [ref=e787]
+            - generic [ref=e788]:
+              - generic [ref=e789]:
+                - generic [ref=e790]: Apple
+                - generic [ref=e791]: В наличии
+              - link "Apple iPhone 16 256 ГБ" [ref=e792] [cursor=pointer]:
+                - /url: /product/apple-iphone-16-256gb
+              - generic "Рейтинг 0" [ref=e793]:
+                - img [ref=e794]
+                - generic [ref=e796]: Нет оценок
+              - generic [ref=e797]:
+                - strong [ref=e798]: 3 300 Br
+                - generic [ref=e799]: 3 500 Br
+              - generic [ref=e800]:
+                - button [ref=e801] [cursor=pointer]:
+                  - img [ref=e802]
+                - button "Сравнить Apple iPhone 16 256 ГБ" [ref=e806] [cursor=pointer]:
+                  - img [ref=e807]
+          - article [ref=e811]:
+            - link "Samsung Bespoke RB38C7B6AS9" [ref=e812] [cursor=pointer]:
+              - /url: /product/samsung-bespoke-rb38c7b6as9
+              - generic [ref=e813]: "-8%"
+              - img "Samsung Bespoke RB38C7B6AS9" [ref=e814]
+            - generic [ref=e815]:
+              - generic [ref=e816]:
+                - generic [ref=e817]: Samsung
+                - generic [ref=e818]: В наличии
+              - link "Samsung Bespoke RB38C7B6AS9" [ref=e819] [cursor=pointer]:
+                - /url: /product/samsung-bespoke-rb38c7b6as9
+              - generic "Рейтинг 0" [ref=e820]:
+                - img [ref=e821]
+                - generic [ref=e823]: Нет оценок
+              - generic [ref=e824]:
+                - strong [ref=e825]: 3 300 Br
+                - generic [ref=e826]: 3 600 Br
+              - generic [ref=e827]:
+                - button [ref=e828] [cursor=pointer]:
+                  - img [ref=e829]
+                - button "Сравнить Samsung Bespoke RB38C7B6AS9" [ref=e833] [cursor=pointer]:
+                  - img [ref=e834]
+          - article [ref=e838]:
+            - link "Samsung Galaxy S25 256 ГБ" [ref=e839] [cursor=pointer]:
+              - /url: /product/samsung-galaxy-s25-256gb
+              - generic [ref=e840]: "-6%"
+              - img "Samsung Galaxy S25 256 ГБ" [ref=e841]
+            - generic [ref=e842]:
+              - generic [ref=e843]:
+                - generic [ref=e844]: Samsung
+                - generic [ref=e845]: В наличии
+              - link "Samsung Galaxy S25 256 ГБ" [ref=e846] [cursor=pointer]:
+                - /url: /product/samsung-galaxy-s25-256gb
+              - generic "Рейтинг 0" [ref=e847]:
+                - img [ref=e848]
+                - generic [ref=e850]: Нет оценок
+              - generic [ref=e851]:
+                - strong [ref=e852]: 3 100 Br
+                - generic [ref=e853]: 3 300 Br
+              - generic [ref=e854]:
+                - button [ref=e855] [cursor=pointer]:
+                  - img [ref=e856]
+                - button "Сравнить Samsung Galaxy S25 256 ГБ" [ref=e860] [cursor=pointer]:
+                  - img [ref=e861]
+  - contentinfo [ref=e181]:
+    - generic [ref=e182]:
+      - generic [ref=e183]:
+        - generic [ref=e184]:
+          - group [ref=e185]:
+            - generic "Компания" [ref=e186] [cursor=pointer]:
+              - generic [ref=e187]: Компания
+              - img [ref=e188]
+          - group [ref=e190]:
+            - generic "Покупателям" [ref=e191] [cursor=pointer]:
+              - generic [ref=e192]: Покупателям
+              - img [ref=e193]
+        - generic "Социальные сети" [ref=e195]:
+          - link "Telegram" [ref=e196] [cursor=pointer]:
+            - /url: https://t.me/
+            - img [ref=e197]
+          - link "Чат" [ref=e200] [cursor=pointer]:
+            - /url: /contacts
+            - img [ref=e201]
+          - link "Видео" [ref=e203] [cursor=pointer]:
+            - /url: https://youtube.com/
+            - img [ref=e204]
+        - navigation "Быстрые ссылки" [ref=e207]:
+          - link "Адреса магазинов" [ref=e208] [cursor=pointer]:
+            - /url: /stores
+            - generic [ref=e209]: Адреса магазинов
+            - img [ref=e210]
+          - link "Контакты" [ref=e212] [cursor=pointer]:
+            - /url: /contacts
+            - generic [ref=e213]: Контакты
+            - img [ref=e214]
+          - link "Вакансии" [ref=e216] [cursor=pointer]:
+            - /url: /careers
+            - generic [ref=e217]: Вакансии
+            - img [ref=e218]
+        - generic [ref=e220]:
+          - generic [ref=e221]: "Контактный номер телефона:"
+          - link "+375 12 345-67-89" [ref=e222] [cursor=pointer]:
+            - /url: tel:+375123456789
+      - paragraph [ref=e224]: 2024-2026 © TechMarket. Интернет-магазин техники для дипломного проекта.

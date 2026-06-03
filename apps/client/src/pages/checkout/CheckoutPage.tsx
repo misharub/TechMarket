@@ -436,8 +436,8 @@ function PickupStores({
               onChange={() => onSelect(point.id)}
             />
             <span>
-              <strong>Магазин {index + 1}</strong>
-              <span>Адрес: Адрес магазина {index + 1}</span>
+              <strong>{point.name || `Магазин ${index + 1}`}</strong>
+              <span>{point.address}</span>
             </span>
           </label>
         ))}

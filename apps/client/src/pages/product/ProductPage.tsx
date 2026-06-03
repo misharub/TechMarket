@@ -1,10 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BadgeCheck, ChevronLeft, ChevronRight, Heart, Scale, ShoppingCart, Star, Store, Truck } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useAuthStore } from "../../lib/auth-store";
 import { useAddToCart } from "../../lib/cart-hooks";
+import {
+  addCompareProductId,
+  getCompareProductIds,
+  removeCompareProductId,
+  subscribeCompareProducts,
+} from "../../lib/compare-store";
 import { getProductBySlug, resolveUploadUrl } from "../../lib/products-api";
 import { getSpecificationTemplateByCategory } from "../../lib/specification-templates-api";
+import { addWishlistItem, getWishlist, removeWishlistItem } from "../../lib/wishlist-api";
 import "./ProductPage.css";
 
 const currencyFormatter = new Intl.NumberFormat("ru-BY", {
@@ -15,7 +23,11 @@ const currencyFormatter = new Intl.NumberFormat("ru-BY", {
 
 export function ProductPage() {
   const { slug = "" } = useParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const user = useAuthStore((state) => state.user);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isCompared, setIsCompared] = useState(false);
   const productQuery = useQuery({
     queryKey: ["product", slug],
     queryFn: () => getProductBySlug(slug),
@@ -23,6 +35,19 @@ export function ProductPage() {
   });
   const product = productQuery.data;
   const { addProduct, isPending } = useAddToCart();
+  const wishlistQuery = useQuery({
+    queryKey: ["wishlist"],
+    queryFn: getWishlist,
+    enabled: Boolean(user && product),
+  });
+  const addFavoriteMutation = useMutation({
+    mutationFn: addWishlistItem,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["wishlist"] }),
+  });
+  const removeFavoriteMutation = useMutation({
+    mutationFn: removeWishlistItem,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["wishlist"] }),
+  });
   const templateQuery = useQuery({
     queryKey: ["product", "specification_template", product?.categoryId],
     queryFn: () => getSpecificationTemplateByCategory(product!.categoryId),
@@ -63,6 +88,50 @@ export function ProductPage() {
       .filter((group) => group.items.length > 0)
       .sort((left, right) => left.sortOrder - right.sortOrder || left.name.localeCompare(right.name));
   }, [product, templateQuery.data]);
+  const isFavorite = Boolean(product && wishlistQuery.data?.items.some((item) => item.productId === product.id));
+  const isFavoritePending = addFavoriteMutation.isPending || removeFavoriteMutation.isPending;
+
+  useEffect(() => {
+    if (!product) {
+      setIsCompared(false);
+      return;
+    }
+
+    setIsCompared(getCompareProductIds().includes(product.id));
+
+    return subscribeCompareProducts((productIds) => {
+      setIsCompared(productIds.includes(product.id));
+    });
+  }, [product]);
+
+  function toggleFavorite() {
+    if (!product) {
+      return;
+    }
+
+    if (!user) {
+      navigate("/login", { state: { from: `/product/${product.slug}` } });
+      return;
+    }
+
+    if (isFavorite) {
+      removeFavoriteMutation.mutate(product.id);
+    } else {
+      addFavoriteMutation.mutate(product.id);
+    }
+  }
+
+  function toggleCompare() {
+    if (!product) {
+      return;
+    }
+
+    if (isCompared) {
+      removeCompareProductId(product.id);
+    } else {
+      addCompareProductId(product.id);
+    }
+  }
 
   if (productQuery.isLoading) {
     return (
@@ -193,13 +262,24 @@ export function ProductPage() {
 
             <div className="product_page_meta">
               <span>Код товара: {product.sku}</span>
-              <button type="button">
+              <button
+                className={isFavorite ? "product_page_meta_button product_page_meta_button__active" : "product_page_meta_button"}
+                type="button"
+                aria-pressed={isFavorite}
+                disabled={isFavoritePending}
+                onClick={toggleFavorite}
+              >
                 <Heart />
-                В избранное
+                {isFavorite ? "В избранном" : "В избранное"}
               </button>
-              <button type="button">
+              <button
+                className={isCompared ? "product_page_meta_button product_page_meta_button__active" : "product_page_meta_button"}
+                type="button"
+                aria-pressed={isCompared}
+                onClick={toggleCompare}
+              >
                 <Scale />
-                Сравнить
+                {isCompared ? "В сравнении" : "Сравнить"}
               </button>
             </div>
           </div>
